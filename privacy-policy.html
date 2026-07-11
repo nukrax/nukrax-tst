@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Privacy Policy — NUKRAX</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Mono:wght@400;700&family=Outfit:wght@200;300;400;600&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --black:    #01060B;
+  --deep:     #050E13;
+  --charcoal: #061B21;
+  --mid:      #07222E;
+  --steel:    #1A3E51;
+  --muted:    #366378;
+  --smoke:    #5AB1C8;
+  --offwhite: #cfe9f0;
+  --white:    #ADE2EC;
+  --accent:   #5AB1C8;
+  --glow:     rgba(90,177,200,0.08);
+  --font-d:   'Bebas Neue', sans-serif;
+  --font-m:   'Space Mono', monospace;
+  --font-b:   'Outfit', sans-serif;
+  --ease:     cubic-bezier(0.16,1,0.3,1);
+}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;font-size:16px}
+body{
+  background:var(--black);
+  color:var(--offwhite);
+  font-family:var(--font-b);
+  font-weight:300;
+  overflow-x:hidden;
+}
+
+::-webkit-scrollbar{width:2px}
+::-webkit-scrollbar-track{background:var(--black)}
+::-webkit-scrollbar-thumb{background:var(--steel);border-radius:2px}
+
+/* ── GRAIN ── */
+body::after{
+  content:'';
+  position:fixed;inset:0;
+  z-index:9998;
+  pointer-events:none;
+  opacity:0.028;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size:180px 180px;
+  animation:grain .5s steps(1) infinite;
+}
+@keyframes grain{
+  0%,100%{transform:translate(0,0)}10%{transform:translate(-2%,-3%)}
+  20%{transform:translate(3%,2%)}30%{transform:translate(-1%,4%)}
+  40%{transform:translate(4%,-1%)}50%{transform:translate(-3%,3%)}
+  60%{transform:translate(2%,-4%)}70%{transform:translate(-4%,2%)}
+  80%{transform:translate(3%,1%)}90%{transform:translate(-2%,-2%)}
+}
+
+/* ── PAGE CURTAIN ── */
+#page-curtain{
+  position:fixed;inset:0;
+  z-index:10000;
+  background:var(--black);
+  pointer-events:none;
+  opacity:0;
+  transition:opacity .5s var(--ease);
+}
+#page-curtain.active{
+  opacity:1;
+  pointer-events:all;
+}
+
+/* ── NAV ── */
+nav{
+  position:fixed;top:0;left:0;right:0;
+  z-index:100;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:20px 52px;
+  background:rgba(6,6,6,0.88);
+  backdrop-filter:blur(20px);
+  border-bottom:1px solid rgba(46,46,46,0.5);
+}
+.nav-logo-container{
+  display:flex;align-items:center;gap:16px;
+}
+.nav-logo-img{
+  width:42px;height:42px;
+  border-radius:50%;overflow:hidden;
+  background:var(--charcoal);
+  border:1px solid var(--steel);
+  display:flex;align-items:center;justify-content:center;
+  transition:all 0.3s var(--ease);
+  text-decoration:none;
+}
+.nav-logo-img:hover{
+  border-color:var(--muted);
+  box-shadow:0 0 20px rgba(90,177,200,0.1);
+}
+.nav-logo-img img{width:100%;height:100%;object-fit:cover;}
+.nav-logo{
+  font-family:var(--font-d);
+  font-size:22px;letter-spacing:0.22em;
+  color:var(--white);text-decoration:none;
+}
+.nav-back{
+  display:flex;align-items:center;gap:8px;
+  font-family:var(--font-m);
+  font-size:10px;font-weight:700;
+  letter-spacing:0.18em;text-transform:uppercase;
+  color:var(--muted);text-decoration:none;
+  transition:color .25s;
+}
+.nav-back:hover{color:var(--smoke)}
+.nav-back svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+
+/* ── HERO ── */
+.pp-hero{
+  position:relative;z-index:1;
+  padding:160px 52px 80px;
+  max-width:900px;
+  margin:0 auto;
+  border-bottom:1px solid var(--steel);
+}
+.pp-label{
+  font-family:var(--font-m);
+  font-size:9px;letter-spacing:0.3em;
+  text-transform:uppercase;
+  color:var(--muted);
+  margin-bottom:28px;
+  opacity:0;
+  animation:fadeUp .8s var(--ease) .2s forwards;
+}
+.pp-title{
+  font-family:var(--font-d);
+  font-size:clamp(52px,8vw,96px);
+  letter-spacing:0.1em;
+  line-height:1;
+  color:var(--white);
+  opacity:0;
+  animation:fadeUp .9s var(--ease) .35s forwards;
+}
+.pp-meta{
+  display:flex;align-items:center;gap:24px;
+  margin-top:28px;
+  opacity:0;
+  animation:fadeUp .8s var(--ease) .5s forwards;
+}
+.pp-meta-item{
+  font-family:var(--font-m);
+  font-size:9px;letter-spacing:0.16em;
+  text-transform:uppercase;
+  color:var(--muted);
+}
+.pp-meta-divider{
+  width:1px;height:14px;background:var(--steel);
+}
+
+@keyframes fadeUp{
+  from{opacity:0;transform:translateY(20px)}
+  to{opacity:1;transform:translateY(0)}
+}
+
+/* ── CONTENT ── */
+.pp-content{
+  position:relative;z-index:1;
+  max-width:900px;
+  margin:0 auto;
+  padding:72px 52px 120px;
+}
+
+/* Table of contents */
+.pp-toc{
+  background:rgba(20,20,20,0.5);
+  border:1px solid var(--steel);
+  padding:28px 32px;
+  margin-bottom:64px;
+  opacity:0;
+  animation:fadeUp .8s var(--ease) .65s forwards;
+}
+.pp-toc-title{
+  font-family:var(--font-m);
+  font-size:9px;font-weight:700;
+  letter-spacing:0.22em;text-transform:uppercase;
+  color:var(--muted);margin-bottom:20px;
+}
+.pp-toc-list{
+  list-style:none;
+  display:grid;grid-template-columns:repeat(2,1fr);
+  gap:10px 32px;
+}
+.pp-toc-list a{
+  font-family:var(--font-m);
+  font-size:10px;font-weight:700;
+  letter-spacing:0.14em;
+  color:var(--smoke);
+  text-decoration:none;
+  display:flex;align-items:center;gap:10px;
+  transition:color .2s;
+}
+.pp-toc-list a:hover{color:var(--offwhite)}
+.pp-toc-list a::before{
+  content:'';
+  display:inline-block;
+  width:16px;height:1px;
+  background:var(--steel);
+  flex-shrink:0;
+  transition:background .2s, width .2s;
+}
+.pp-toc-list a:hover::before{
+  background:var(--muted);width:24px;
+}
+
+/* Sections */
+.pp-section{
+  margin-bottom:64px;
+  opacity:0;
+  transform:translateY(16px);
+  transition:opacity .7s var(--ease), transform .7s var(--ease);
+}
+.pp-section.visible{
+  opacity:1;transform:translateY(0);
+}
+.pp-section-num{
+  font-family:var(--font-d);
+  font-size:13px;letter-spacing:0.2em;
+  color:var(--steel);
+  margin-bottom:12px;
+}
+.pp-section-title{
+  font-family:var(--font-d);
+  font-size:clamp(22px,3vw,32px);
+  letter-spacing:0.08em;
+  color:var(--white);
+  margin-bottom:24px;
+  padding-bottom:16px;
+  border-bottom:1px solid var(--steel);
+}
+.pp-section p{
+  font-size:14px;
+  line-height:1.85;
+  color:var(--smoke);
+  margin-bottom:16px;
+}
+.pp-section p:last-child{margin-bottom:0}
+.pp-section p strong{
+  font-weight:600;color:var(--offwhite);
+}
+.pp-section ul{
+  list-style:none;
+  margin:16px 0;
+  display:flex;flex-direction:column;gap:10px;
+}
+.pp-section ul li{
+  font-size:14px;line-height:1.7;
+  color:var(--smoke);
+  padding-left:20px;
+  position:relative;
+}
+.pp-section ul li::before{
+  content:'—';
+  position:absolute;left:0;
+  color:var(--steel);
+  font-family:var(--font-m);
+}
+.pp-section a{
+  color:var(--smoke);
+  text-decoration:underline;
+  text-underline-offset:3px;
+  text-decoration-color:var(--steel);
+  transition:color .2s, text-decoration-color .2s;
+}
+.pp-section a:hover{
+  color:var(--offwhite);
+  text-decoration-color:var(--muted);
+}
+
+/* Contact box */
+.pp-contact-box{
+  background:rgba(20,20,20,0.5);
+  border:1px solid var(--steel);
+  padding:28px 32px;
+  margin-top:24px;
+  transition:border-color .3s;
+}
+.pp-contact-box:hover{border-color:var(--muted)}
+.pp-contact-box p{margin:0}
+
+/* ── FOOTER ── */
+footer{
+  position:relative;z-index:1;
+  background:var(--deep);
+  border-top:1px solid var(--steel);
+  padding:40px 52px;
+}
+.footer-inner{
+  max-width:900px;margin:0 auto;
+  display:flex;justify-content:space-between;align-items:center;
+  flex-wrap:wrap;gap:20px;
+}
+.footer-logo{
+  font-family:var(--font-d);
+  font-size:20px;letter-spacing:0.2em;color:var(--white);
+}
+.footer-copy{
+  font-family:var(--font-m);
+  font-size:9px;letter-spacing:0.12em;color:var(--muted);
+}
+.footer-back{
+  font-family:var(--font-m);
+  font-size:9px;font-weight:700;
+  letter-spacing:0.16em;text-transform:uppercase;
+  color:var(--muted);text-decoration:none;
+  transition:color .25s;
+}
+.footer-back:hover{color:var(--smoke)}
+
+/* ── RESPONSIVE ── */
+@media(max-width:768px){
+  nav{padding:16px 20px;}
+  .pp-hero{padding:120px 24px 60px;}
+  .pp-content{padding:48px 24px 80px;}
+  .pp-toc-list{grid-template-columns:1fr;}
+  footer{padding:32px 24px;}
+}
+@media(max-width:480px){
+  .nav-logo{font-size:16px;letter-spacing:0.15em;}
+  .nav-logo-img{width:36px;height:36px;}
+}
+
+/* ── NUKRAX mountain-glass overlay (auto-applied) ── */
+.card,.card-plain,.risk-item,.pair-item,.pair-card,.fvg-card,.confirm-card,.amd-card,
+.session-card,.kz-card,.pillar,.rule-box,.step-detail-inner,.chart-box,.model-block,
+.condition,.score-bar-wrap,.params-wrap,.tf-item,.state-box,.psych-card,.check-item,
+table.tf-table,table.params-table,table.risk-table,nav {
+  background-color: rgba(6,27,33,0.5) !important;
+  backdrop-filter: blur(14px) saturate(115%);
+  -webkit-backdrop-filter: blur(14px) saturate(115%);
+}
+.card:hover,.card-plain:hover,.risk-item:hover,.pair-item:hover,.pair-card:hover,
+.fvg-card:hover,.confirm-card:hover,.session-card:hover,.tf-item:hover,.state-box:hover,
+.model-block:hover {
+  background-color: rgba(7,34,46,0.6) !important;
+}
+</style>
+</head>
+<body>
+
+<!-- PAGE CURTAIN -->
+<div id="page-curtain"></div>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo-container">
+    <a href="index.html" class="nav-logo-img">
+      <img src="assets/logo.png" alt="NUKRAX Logo">
+    </a>
+    <a href="index.html" class="nav-logo">nukrax</a>
+  </div>
+  <a href="index.html" class="nav-back">
+    <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+    Back to Home
+  </a>
+</nav>
+
+<!-- HERO -->
+<div class="pp-hero">
+  <p class="pp-label">Legal &nbsp;/&nbsp; Documentation</p>
+  <h1 class="pp-title">Privacy<br/>Policy</h1>
+  <div class="pp-meta">
+    <span class="pp-meta-item">Effective: January 1, 2025</span>
+    <div class="pp-meta-divider"></div>
+    <span class="pp-meta-item">Last Updated: January 1, 2025</span>
+    <div class="pp-meta-divider"></div>
+    <span class="pp-meta-item">NUKRAX</span>
+  </div>
+</div>
+
+<!-- CONTENT -->
+<div class="pp-content">
+
+  <!-- Table of Contents -->
+  <div class="pp-toc">
+    <div class="pp-toc-title">Contents</div>
+    <ol class="pp-toc-list">
+      <li><a href="#s1">Information We Collect</a></li>
+      <li><a href="#s2">How We Use Information</a></li>
+      <li><a href="#s3">Cookies & Tracking</a></li>
+      <li><a href="#s4">Data Sharing</a></li>
+      <li><a href="#s5">Data Retention</a></li>
+      <li><a href="#s6">Your Rights</a></li>
+      <li><a href="#s7">Security</a></li>
+      <li><a href="#s8">Third-Party Links</a></li>
+      <li><a href="#s9">Changes to This Policy</a></li>
+      <li><a href="#s10">Contact Us</a></li>
+    </ol>
+  </div>
+
+  <!-- Intro -->
+  <div class="pp-section" id="intro">
+    <p>
+      This Privacy Policy describes how <strong>NUKRAX</strong> ("we", "us", or "our") collects, uses, and protects information when you visit our website and use our services, including our Expert Advisor suite, trading platforms (<strong>nukrax.tr</strong> and <strong>nukrax.cr</strong>), and any associated tools or content. By using our site, you agree to the practices described in this policy.
+    </p>
+    <p>
+      We are committed to handling your data with transparency and respect. We do not sell your personal information to third parties under any circumstances.
+    </p>
+  </div>
+
+  <!-- 01 -->
+  <div class="pp-section" id="s1">
+    <div class="pp-section-num">01</div>
+    <h2 class="pp-section-title">Information We Collect</h2>
+    <p>We may collect the following categories of information depending on how you interact with our site:</p>
+    <ul>
+      <li><strong>Usage Data</strong> — Pages visited, time spent, referring URLs, browser type, device type, and IP address, collected automatically via analytics tools.</li>
+      <li><strong>Preference Data</strong> — Choices you make on the site, such as cookie consent decisions, stored locally in your browser via <code>localStorage</code>.</li>
+      <li><strong>Communication Data</strong> — Any information you voluntarily provide when contacting us through linked channels (e.g. Telegram, email).</li>
+      <li><strong>Technical Data</strong> — Error logs and performance metrics used to diagnose and improve site functionality.</li>
+    </ul>
+    <p>We do <strong>not</strong> collect payment information, government IDs, or sensitive personal data directly through this website.</p>
+  </div>
+
+  <!-- 02 -->
+  <div class="pp-section" id="s2">
+    <div class="pp-section-num">02</div>
+    <h2 class="pp-section-title">How We Use Information</h2>
+    <p>Information collected is used strictly for the following purposes:</p>
+    <ul>
+      <li>Operating and maintaining the NUKRAX website and its associated platforms.</li>
+      <li>Analysing site traffic and user behaviour to improve performance and content quality.</li>
+      <li>Remembering your cookie consent preferences so we do not repeat the prompt unnecessarily.</li>
+      <li>Diagnosing technical issues and ensuring security and stability of our services.</li>
+      <li>Communicating with you if you have reached out to us directly.</li>
+    </ul>
+    <p>We do not use your data for advertising, profiling, or automated decision-making.</p>
+  </div>
+
+  <!-- 03 -->
+  <div class="pp-section" id="s3">
+    <div class="pp-section-num">03</div>
+    <h2 class="pp-section-title">Cookies &amp; Tracking</h2>
+    <p>We use cookies and similar browser storage technologies to enhance your experience. Specifically:</p>
+    <ul>
+      <li><strong>Essential Storage</strong> — We store your cookie consent preference in <code>localStorage</code> under the key <code>nukrax_cookie_consent</code>. This is required for the site to remember your choice and is not used for tracking.</li>
+      <li><strong>Analytics Cookies</strong> — If you accept cookies, we may use anonymised analytics tools to understand how visitors use our site. No personally identifiable information is associated with these cookies.</li>
+      <li><strong>No Advertising Cookies</strong> — We do not place advertising or retargeting cookies of any kind.</li>
+    </ul>
+    <p>You may withdraw your consent at any time by clearing your browser's <code>localStorage</code> data for this site, or by adjusting your browser settings to block cookies. Note that refusing cookies will not affect your ability to use the site.</p>
+  </div>
+
+  <!-- 04 -->
+  <div class="pp-section" id="s4">
+    <div class="pp-section-num">04</div>
+    <h2 class="pp-section-title">Data Sharing</h2>
+    <p>We do <strong>not</strong> sell, rent, or trade your personal information. We may share limited data only in the following circumstances:</p>
+    <ul>
+      <li><strong>Service Providers</strong> — Trusted third-party providers (such as hosting or analytics services) who process data on our behalf, bound by confidentiality obligations.</li>
+      <li><strong>Legal Obligations</strong> — Where required by law, court order, or governmental authority.</li>
+      <li><strong>Protection of Rights</strong> — Where necessary to protect the rights, safety, or property of NUKRAX, our users, or the public.</li>
+    </ul>
+    <p>Any third-party services embedded in or linked from this site (e.g. YouTube, Telegram, GitHub) have their own privacy policies, which we encourage you to review independently.</p>
+  </div>
+
+  <!-- 05 -->
+  <div class="pp-section" id="s5">
+    <div class="pp-section-num">05</div>
+    <h2 class="pp-section-title">Data Retention</h2>
+    <p>We retain data only for as long as necessary to fulfil the purposes outlined in this policy:</p>
+    <ul>
+      <li>Analytics data is retained for a maximum of <strong>26 months</strong>, after which it is automatically deleted or anonymised.</li>
+      <li>Cookie consent preferences stored in your browser persist until you clear your browser data or revoke consent manually.</li>
+      <li>Any communication data you provide by contacting us is retained only as long as needed to resolve your enquiry.</li>
+    </ul>
+  </div>
+
+  <!-- 06 -->
+  <div class="pp-section" id="s6">
+    <div class="pp-section-num">06</div>
+    <h2 class="pp-section-title">Your Rights</h2>
+    <p>Depending on your jurisdiction, you may have the following rights regarding your personal data:</p>
+    <ul>
+      <li><strong>Right of Access</strong> — Request a copy of the data we hold about you.</li>
+      <li><strong>Right to Rectification</strong> — Request correction of inaccurate data.</li>
+      <li><strong>Right to Erasure</strong> — Request deletion of your personal data, subject to legal obligations.</li>
+      <li><strong>Right to Restrict Processing</strong> — Request that we limit how we use your data.</li>
+      <li><strong>Right to Object</strong> — Object to processing based on legitimate interests.</li>
+      <li><strong>Right to Data Portability</strong> — Request your data in a structured, machine-readable format.</li>
+      <li><strong>Right to Withdraw Consent</strong> — Withdraw cookie consent at any time without affecting prior lawful processing.</li>
+    </ul>
+    <p>To exercise any of these rights, please contact us using the details in Section 10.</p>
+  </div>
+
+  <!-- 07 -->
+  <div class="pp-section" id="s7">
+    <div class="pp-section-num">07</div>
+    <h2 class="pp-section-title">Security</h2>
+    <p>We implement appropriate technical and organisational measures to protect your information against unauthorised access, alteration, disclosure, or destruction. These include:</p>
+    <ul>
+      <li>HTTPS encryption for all data transmitted to and from the site.</li>
+      <li>Restricted access to any collected data on a need-to-know basis.</li>
+      <li>Regular review of our data handling practices and third-party service providers.</li>
+    </ul>
+    <p>No method of transmission over the internet is 100% secure. While we strive to use commercially acceptable means to protect your data, we cannot guarantee absolute security.</p>
+  </div>
+
+  <!-- 08 -->
+  <div class="pp-section" id="s8">
+    <div class="pp-section-num">08</div>
+    <h2 class="pp-section-title">Third-Party Links</h2>
+    <p>Our site contains links to external platforms including YouTube, Telegram, GitHub, X (Twitter), Linktree, and Phantom Wallet. These services are operated by independent third parties and are governed by their own privacy policies.</p>
+    <p>We have no control over, and assume no responsibility for, the content, privacy policies, or practices of any third-party services. We encourage you to review the privacy policy of every site you visit.</p>
+  </div>
+
+  <!-- 09 -->
+  <div class="pp-section" id="s9">
+    <div class="pp-section-num">09</div>
+    <h2 class="pp-section-title">Changes to This Policy</h2>
+    <p>We reserve the right to update this Privacy Policy at any time. When we do, we will revise the "Last Updated" date at the top of this page. Material changes will be communicated through a notice on our website.</p>
+    <p>Your continued use of the site after any changes constitutes acceptance of the revised policy. We encourage you to review this page periodically to stay informed.</p>
+  </div>
+
+  <!-- 10 -->
+  <div class="pp-section" id="s10">
+    <div class="pp-section-num">10</div>
+    <h2 class="pp-section-title">Contact Us</h2>
+    <p>If you have any questions, concerns, or requests regarding this Privacy Policy or our data practices, please reach out through any of the following channels:</p>
+    <div class="pp-contact-box">
+      <p>
+        <strong>NUKRAX</strong> — operated by <strong>@CosmoLanex</strong><br/><br/>
+        Telegram: <a href="https://t.me/CosmoLanex" target="_blank" rel="noopener noreferrer">t.me/CosmoLanex</a><br/>
+        X (Twitter): <a href="https://x.com/CosmoLanex" target="_blank" rel="noopener noreferrer">x.com/CosmoLanex</a><br/>
+        YouTube: <a href="https://www.youtube.com/@CosmoLanex" target="_blank" rel="noopener noreferrer">youtube.com/@CosmoLanex</a>
+      </p>
+    </div>
+    <p style="margin-top:20px;">We aim to respond to all enquiries within <strong>5 business days</strong>.</p>
+  </div>
+
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-logo">NUKRAX</div>
+    <div class="footer-copy">© 2024 NUKRAX. All rights reserved. Built by @CosmoLanex</div>
+    <a href="index.html" class="footer-back">← Return to Site</a>
+  </div>
+</footer>
+
+<script>
+/* ── PAGE TRANSITIONS ── */
+const curtain = document.getElementById('page-curtain');
+document.querySelectorAll('a[href]:not([href^="#"]):not([target="_blank"])').forEach(a => {
+  a.addEventListener('click', function(e) {
+    const href = this.getAttribute('href');
+    if (!href || href.startsWith('http') || href.startsWith('mailto')) return;
+    e.preventDefault();
+    curtain.classList.add('active');
+    setTimeout(() => { window.location.href = href; }, 500);
+  });
+});
+
+/* ── REVEAL ON SCROLL ── */
+const sections = document.querySelectorAll('.pp-section');
+const io = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+      io.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.08 });
+sections.forEach(el => io.observe(el));
+</script>
+
+<script src="assets/nukrax-mountain-bg.js"></script>
+</body>
+</html>
