@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>nukrax.cr — Deposit</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:       #01060B;
+  --layer1:   #050E13;
+  --layer2:   #061B21;
+  --layer3:   #07222E;
+  --layer4:   #0C2E3D;
+  --border:   #1A3E51;
+  --border2:  #366378;
+  --mid:      #5AB1C8;
+  --secondary:#5AB1C8;
+  --text:     #ADE2EC;
+  --white:    #ADE2EC;
+  --warn:     #E85B6B;
+  --warn-bg:  rgba(232,91,107,0.08);
+  --glass:    rgba(173,226,236,0.03);
+  --glass2:   rgba(173,226,236,0.06);
+  --radius:   16px;
+  --radius-sm:10px;
+  --shadow:   0 4px 24px rgba(0,0,0,0.6);
+  --shadow-lg:0 8px 48px rgba(0,0,0,0.8);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--white);
+  font-family: 'Inter', sans-serif;
+  font-size: 15px;
+  line-height: 1.5;
+  overflow-x: hidden;
+  min-height: 100vh;
+}
+
+/* ── CANVAS ── */
+#bgCanvas {
+  position: fixed; inset: 0;
+  pointer-events: none; z-index: 0;
+  opacity: 0.35;
+}
+
+/* ── PRELOADER ── */
+#preloader {
+  position: fixed; inset: 0; z-index: 9999;
+  background: #000;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 20px;
+  transition: opacity 0.5s ease, visibility 0.5s;
+}
+#preloader.out { opacity: 0; visibility: hidden; }
+
+.pre-ring {
+  width: 64px; height: 64px; position: relative;
+  display: flex; align-items: center; justify-content: center;
+}
+.pre-ring::before {
+  content: '';
+  position: absolute; inset: 0;
+  border: 1.5px solid transparent;
+  border-top-color: #fff;
+  border-right-color: rgba(173,226,236,0.3);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.pre-ring-inner {
+  width: 40px; height: 40px;
+  border: 1px solid var(--border2);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 14px; font-weight: 700; color: var(--white);
+}
+.pre-name {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 18px; font-weight: 600;
+  color: var(--white); letter-spacing: -0.02em;
+}
+.pre-name span { color: var(--secondary); }
+.pre-sub {
+  font-size: 11px; color: var(--mid);
+  letter-spacing: 0.12em; text-transform: uppercase;
+  font-family: 'Space Mono', monospace;
+}
+.pre-track {
+  width: 120px; height: 1px; background: var(--layer4);
+  border-radius: 1px; overflow: hidden;
+}
+.pre-fill {
+  height: 100%; background: var(--white);
+  animation: load 2s ease forwards;
+}
+@keyframes load { 0%{width:0} 100%{width:100%} }
+
+/* ── LAYOUT ── */
+#app { position: relative; z-index: 1; opacity: 0; transform: translateY(12px); transition: opacity 0.6s ease, transform 0.6s ease; }
+#app.show { opacity: 1; transform: none; }
+
+/* ── NAV ── */
+nav {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(0,0,0,0.7);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px);
+  border-bottom: 1px solid var(--border);
+  height: 60px;
+  display: flex; align-items: center;
+  padding: 0 clamp(16px,4vw,40px);
+  justify-content: space-between; gap: 16px;
+}
+
+.nav-logo {
+  display: flex; align-items: center; gap: 10px;
+  text-decoration: none;
+}
+.nav-logo-mark {
+  width: 32px; height: 32px;
+  background: var(--layer3);
+  border: 1px solid var(--border2);
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 13px; font-weight: 700; color: var(--white);
+  overflow: hidden; position: relative;
+}
+.nav-logo-mark img { width:100%;height:100%;object-fit:cover;display:none; }
+.nav-logo-mark img.ok { display:block; }
+.nav-logo-mark span.fb { display:block; }
+.nav-brand {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 16px; font-weight: 600; color: var(--white);
+  letter-spacing: -0.02em;
+}
+.nav-brand em { color: var(--secondary); font-style: normal; }
+
+.nav-pill {
+  display: flex; align-items: center; gap: 6px;
+  background: var(--layer3);
+  border: 1px solid var(--border);
+  border-radius: 40px;
+  padding: 5px 12px 5px 8px;
+  font-size: 11px; color: var(--text);
+  font-family: 'Space Mono', monospace;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+}
+.nav-pill .dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: #3ecf8e;
+  box-shadow: 0 0 6px #3ecf8e;
+}
+
+/* ── MAIN ── */
+main {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: clamp(28px,5vw,60px) clamp(16px,4vw,32px);
+}
+
+/* ── HERO ── */
+.hero {
+  text-align: center;
+  margin-bottom: clamp(36px,5vw,56px);
+  animation: riseIn 0.7s ease 0.2s both;
+}
+@keyframes riseIn {
+  from { opacity:0; transform: translateY(20px); }
+  to   { opacity:1; transform: none; }
+}
+.hero-sup {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: var(--layer3); border: 1px solid var(--border2);
+  border-radius: 40px; padding: 5px 14px;
+  font-size: 11px; color: var(--secondary);
+  font-family: 'Space Mono', monospace;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  margin-bottom: 20px;
+}
+.hero-sup .dot2 { width:5px;height:5px;border-radius:50%;background:var(--mid); }
+.hero h1 {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: clamp(28px,5vw,46px);
+  font-weight: 700; line-height: 1.1;
+  color: var(--white);
+  letter-spacing: -0.03em;
+  margin-bottom: 14px;
+}
+.hero h1 span { color: var(--secondary); }
+.hero p {
+  font-size: 15px; color: var(--secondary);
+  max-width: 420px; margin: 0 auto;
+  line-height: 1.6; font-weight: 400;
+}
+
+/* ── SECTION LABEL ── */
+.sec-label {
+  font-size: 11px; font-family: 'Space Mono', monospace;
+  color: var(--mid); letter-spacing: 0.12em;
+  text-transform: uppercase; margin-bottom: 14px;
+  display: flex; align-items: center; gap: 10px;
+}
+.sec-label::after { content:''; flex:1; height:1px; background:var(--border); }
+
+/* ── CRYPTO GRID ── */
+.crypto-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: 10px;
+  margin-bottom: 36px;
+  animation: riseIn 0.7s ease 0.35s both;
+}
+
+.cc {
+  background: var(--layer2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 18px 12px 16px;
+  cursor: pointer;
+  text-align: center;
+  transition: border-color 0.2s, background 0.2s, transform 0.2s, box-shadow 0.2s;
+  user-select: none;
+  position: relative;
+  overflow: hidden;
+}
+.cc::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(135deg, rgba(173,226,236,0.04), transparent);
+  opacity: 0; transition: opacity 0.2s;
+  border-radius: inherit;
+}
+.cc:hover { border-color: var(--border2); background: var(--layer3); transform: translateY(-2px); box-shadow: var(--shadow); }
+.cc:hover::before { opacity: 1; }
+.cc:active { transform: translateY(0) scale(0.97); }
+.cc.active {
+  border-color: rgba(173,226,236,0.25);
+  background: var(--layer3);
+  box-shadow: 0 0 0 1px rgba(173,226,236,0.12), var(--shadow);
+}
+.cc.active::before { opacity: 1; }
+
+.cc-icon {
+  width: 42px; height: 42px; border-radius: 50%;
+  background: var(--layer4);
+  border: 1px solid var(--border2);
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 10px;
+  font-size: 17px; font-weight: 700; color: var(--white);
+  font-family: 'Space Mono', monospace;
+  transition: border-color 0.2s;
+}
+.cc.active .cc-icon { border-color: rgba(173,226,236,0.3); }
+.cc-name {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 12px; font-weight: 600;
+  color: var(--text); letter-spacing: -0.01em;
+  transition: color 0.2s;
+}
+.cc.active .cc-name { color: var(--white); }
+.cc-ticker {
+  font-family: 'Space Mono', monospace;
+  font-size: 9px; color: var(--mid);
+  margin-top: 2px; letter-spacing: 0.05em;
+}
+
+/* ── NETWORK PANEL ── */
+#net-section { margin-bottom: 32px; animation: riseIn 0.4s ease both; }
+
+.net-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px,1fr));
+  gap: 8px;
+}
+
+.nc {
+  background: var(--layer2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 13px 16px;
+  cursor: pointer;
+  display: flex; align-items: center; gap: 12px;
+  transition: all 0.18s ease;
+  position: relative; overflow: hidden;
+}
+.nc::after {
+  content: '';
+  position: absolute; left:0; top:0; bottom:0; width:2px;
+  background: var(--white); opacity: 0;
+  transition: opacity 0.18s; border-radius: 2px 0 0 2px;
+}
+.nc:hover { border-color: var(--border2); background: var(--layer3); transform: translateX(2px); }
+.nc.active { border-color: rgba(173,226,236,0.2); background: var(--layer3); }
+.nc.active::after { opacity: 1; }
+.nc:active { transform: scale(0.98); }
+
+.nc-dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--mid); flex-shrink: 0;
+  transition: background 0.18s;
+}
+.nc.active .nc-dot, .nc:hover .nc-dot { background: var(--white); }
+
+.nc-info { flex: 1; min-width: 0; }
+.nc-name {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 12px; font-weight: 500; color: var(--text);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  transition: color 0.18s;
+}
+.nc.active .nc-name { color: var(--white); }
+.nc-badge {
+  font-family: 'Space Mono', monospace;
+  font-size: 9px; color: var(--mid); letter-spacing: 0.06em;
+  margin-top: 1px;
+}
+
+.tag-best {
+  font-family: 'Space Mono', monospace; font-size: 8px;
+  padding: 2px 7px; border-radius: 20px;
+  background: rgba(173,226,236,0.06);
+  border: 1px solid rgba(173,226,236,0.12);
+  color: var(--white); letter-spacing: 0.08em;
+  text-transform: uppercase; flex-shrink: 0;
+}
+.tag-sug {
+  font-family: 'Space Mono', monospace; font-size: 8px;
+  padding: 2px 7px; border-radius: 20px;
+  background: transparent;
+  border: 1px solid var(--border2);
+  color: var(--secondary); letter-spacing: 0.08em;
+  text-transform: uppercase; flex-shrink: 0;
+}
+
+/* ── HIDDEN ── */
+.hidden { display: none !important; }
+
+/* ── TOAST ── */
+#toast {
+  position: fixed; bottom: 24px; left: 50%;
+  transform: translateX(-50%) translateY(16px);
+  background: var(--layer3); border: 1px solid var(--border2);
+  backdrop-filter: blur(16px);
+  border-radius: 40px; padding: 9px 20px;
+  font-family: 'Space Mono', monospace;
+  font-size: 11px; color: var(--white);
+  letter-spacing: 0.1em; text-transform: uppercase;
+  z-index: 9000;
+  transition: transform 0.25s ease, opacity 0.25s ease;
+  opacity: 0; white-space: nowrap;
+  box-shadow: var(--shadow);
+}
+#toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+
+/* ── FOOTER ── */
+footer {
+  border-top: 1px solid var(--border);
+  padding: clamp(32px,5vw,56px) clamp(16px,4vw,40px);
+}
+.footer-inner {
+  max-width: 900px; margin: 0 auto;
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(200px,1fr));
+  gap: 32px 40px;
+}
+.footer-col h3 {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 12px; font-weight: 600;
+  color: var(--text); letter-spacing: 0.04em;
+  margin-bottom: 10px; text-transform: uppercase;
+}
+.footer-col p { font-size: 13px; color: var(--mid); line-height: 1.65; }
+.footer-col p strong { color: var(--secondary); font-weight: 500; }
+.footer-bottom {
+  max-width: 900px; margin: 28px auto 0;
+  padding-top: 20px; border-top: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;
+}
+.footer-bottom-l { font-family: 'Space Grotesk', sans-serif; font-size: 12px; color: var(--mid); }
+.footer-bottom-r { font-family: 'Space Mono', monospace; font-size: 9px; color: var(--border2); letter-spacing: 0.1em; text-transform: uppercase; }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 480px) {
+  .crypto-grid { grid-template-columns: repeat(3,1fr); gap: 8px; }
+  .cc { padding: 14px 8px 12px; }
+  .cc-icon { width: 36px; height: 36px; font-size: 14px; }
+  .net-grid { grid-template-columns: 1fr; }
+  nav .nav-pill { display: none; }
+}
+@media (max-width: 340px) { .crypto-grid { grid-template-columns: repeat(2,1fr); } }
+
+/* ── NUKRAX mountain-glass overlay (auto-applied) ── */
+.card,.card-plain,.risk-item,.pair-item,.pair-card,.fvg-card,.confirm-card,.amd-card,
+.session-card,.kz-card,.pillar,.rule-box,.step-detail-inner,.chart-box,.model-block,
+.condition,.score-bar-wrap,.params-wrap,.tf-item,.state-box,.psych-card,.check-item,
+table.tf-table,table.params-table,table.risk-table,nav {
+  background-color: rgba(6,27,33,0.5) !important;
+  backdrop-filter: blur(14px) saturate(115%);
+  -webkit-backdrop-filter: blur(14px) saturate(115%);
+}
+.card:hover,.card-plain:hover,.risk-item:hover,.pair-item:hover,.pair-card:hover,
+.fvg-card:hover,.confirm-card:hover,.session-card:hover,.tf-item:hover,.state-box:hover,
+.model-block:hover {
+  background-color: rgba(7,34,46,0.6) !important;
+}
+</style>
+</head>
+<body>
+
+<canvas id="bgCanvas"></canvas>
+
+<div id="preloader">
+  <div class="pre-ring">
+    <div class="pre-ring-inner">
+      <img src="assets/logo.png" id="preLogo" style="width:100%;height:100%;object-fit:cover;display:none;border-radius:50%">
+      <span id="preFb">N</span>
+    </div>
+  </div>
+  <div class="pre-name">nukrax<span>.cr</span></div>
+  <div class="pre-track"><div class="pre-fill"></div></div>
+  <div class="pre-sub">deposit portal</div>
+</div>
+
+<div id="toast"></div>
+
+<div id="app">
+  <nav>
+    <a href="nukrax-cr.html" class="nav-logo">
+      <div class="nav-logo-mark">
+        <img src="assets/logo.png" id="navLogo" alt="N">
+        <span class="fb" id="navFb">N</span>
+      </div>
+      <span class="nav-brand">nukrax<em>.cr</em></span>
+    </a>
+    <div class="nav-pill"><span class="dot"></span>Deposit Only</div>
+  </nav>
+
+  <main>
+    <div class="hero">
+      <div class="hero-sup"><span class="dot2"></span>Secure · Non-custodial · Read-only</div>
+      <h1>Deposit <span>Crypto</span><br>With Precision</h1>
+      <p>Select an asset and network to instantly receive your verified deposit address.</p>
+    </div>
+
+    <div class="sec-label">Select Asset</div>
+    <div class="crypto-grid" id="cryptoGrid"></div>
+
+    <div id="net-section" class="hidden">
+      <div class="sec-label" id="netLabel">Select Network</div>
+      <div class="net-grid" id="netGrid"></div>
+    </div>
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-col">
+        <h3>About</h3>
+        <p>nukrax.cr is a <strong>deposit-only</strong> crypto portal. View addresses, copy, and send — nothing else. No withdrawals, no trading, no account required.</p>
+      </div>
+      <div class="footer-col">
+        <h3>Creator</h3>
+        <p>Built around the <strong>XRP</strong> ecosystem and the <strong>nukrax</strong> project — minimal crypto infrastructure, maximum clarity.</p>
+      </div>
+      <div class="footer-col">
+        <h3>Assets</h3>
+        <p>XRP · SOL · USDT · USDC · BTC · ETH · MATIC · BNB · TRX · TWT · ADA</p>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="footer-bottom-l">nukrax.cr — Deposit Portal</div>
+      <div class="footer-bottom-r">Deposit Only · No Withdrawals · No Trading</div>
+    </div>
+  </footer>
+</div>
+
+<script src="data.js"></script>
+<script>
+// ── Logo load ──
+['preLogo','navLogo'].forEach(id => {
+  const img = document.getElementById(id);
+  img.onload = () => { img.style.display = 'block'; document.getElementById(id === 'preLogo' ? 'preFb' : 'navFb').style.display = 'none'; };
+  img.onerror = () => { img.style.display = 'none'; };
+});
+
+// ── Preloader ──
+setTimeout(() => {
+  document.getElementById('preloader').classList.add('out');
+  setTimeout(() => document.getElementById('app').classList.add('show'), 80);
+}, 2200);
+
+// ── Toast ──
+let _toastT;
+function toast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  clearTimeout(_toastT);
+  _toastT = setTimeout(() => t.classList.remove('show'), 1800);
+}
+
+// ── Render crypto grid ──
+let activeCrypto = null;
+
+function renderCryptoGrid() {
+  const g = document.getElementById('cryptoGrid');
+  Object.entries(CRYPTO_DATA).forEach(([key, c]) => {
+    const el = document.createElement('div');
+    el.className = 'cc'; el.dataset.key = key;
+    el.innerHTML = `
+      <div class="cc-icon">${c.icon}</div>
+      <div class="cc-name">${c.name}</div>
+      <div class="cc-ticker">${c.ticker}</div>`;
+    el.addEventListener('click', () => { playClick(); selectCrypto(key, el); });
+    el.addEventListener('mousemove', e => tilt(e, el));
+    el.addEventListener('mouseleave', () => el.style.transform = '');
+    g.appendChild(el);
+  });
+}
+
+function tilt(e, el) {
+  const r = el.getBoundingClientRect();
+  const x = (e.clientX - r.left) / r.width  - 0.5;
+  const y = (e.clientY - r.top)  / r.height - 0.5;
+  el.style.transform = `translateY(-2px) rotateX(${-y*6}deg) rotateY(${x*6}deg)`;
+}
+
+function selectCrypto(key, el) {
+  activeCrypto = key;
+  document.querySelectorAll('.cc').forEach(c => c.classList.toggle('active', c === el));
+  renderNetGrid(key);
+  document.getElementById('net-section').classList.remove('hidden');
+  document.getElementById('netLabel').textContent = `Select Network — ${CRYPTO_DATA[key].name}`;
+  setTimeout(() => document.getElementById('net-section').scrollIntoView({ behavior:'smooth', block:'start' }), 80);
+}
+
+// ── Render network grid ──
+function renderNetGrid(key) {
+  const g = document.getElementById('netGrid');
+  g.innerHTML = '';
+  CRYPTO_DATA[key].networks.forEach((n, i) => {
+    const el = document.createElement('div');
+    el.className = 'nc'; el.dataset.idx = i;
+    let tag = '';
+    if (n.tag === 'best') tag = '<span class="tag-best">★ Best</span>';
+    else if (n.tag === 'suggested') tag = '<span class="tag-sug">Suggested</span>';
+    el.innerHTML = `
+      <div class="nc-dot"></div>
+      <div class="nc-info">
+        <div class="nc-name">${n.name}</div>
+        <div class="nc-badge">${n.badge}</div>
+      </div>${tag}`;
+    el.addEventListener('click', () => { playClick(); goToDeposit(key, i); });
+    g.appendChild(el);
+  });
+}
+
+function goToDeposit(cryptoKey, netIdx) {
+  // highlight briefly then redirect
+  document.querySelectorAll('.nc').forEach((el,i) => el.classList.toggle('active', i === netIdx));
+  setTimeout(() => {
+    sessionStorage.setItem('nukrax_from_cr', 'true');
+    window.location.href = `cr-redirect.html?c=${cryptoKey}&n=${netIdx}`;
+  }, 160);
+}
+
+// ── Particle bg ──
+(function() {
+  const cv = document.getElementById('bgCanvas'), ctx = cv.getContext('2d');
+  let W, H;
+  const N = window.innerWidth < 600 ? 40 : 70;
+  let pts = [];
+
+  function resize() { W = cv.width = innerWidth; H = cv.height = innerHeight; }
+  resize(); window.addEventListener('resize', resize);
+
+  for (let i = 0; i < N; i++) pts.push({
+    x: Math.random()*1000, y: Math.random()*1000,
+    vx: (Math.random()-.5)*.25, vy: (Math.random()-.5)*.25,
+    r: Math.random()*.8+.2
+  });
+
+  function draw() {
+    ctx.clearRect(0,0,W,H);
+    pts.forEach(p => {
+      p.x += p.vx; p.y += p.vy;
+      if (p.x < 0 || p.x > W) p.vx *= -1;
+      if (p.y < 0 || p.y > H) p.vy *= -1;
+    });
+    for (let i = 0; i < N; i++) for (let j = i+1; j < N; j++) {
+      const dx = pts[i].x-pts[j].x, dy = pts[i].y-pts[j].y;
+      const d = Math.sqrt(dx*dx+dy*dy);
+      if (d < 130) {
+        ctx.strokeStyle = `rgba(173,226,236,${0.06*(1-d/130)})`;
+        ctx.lineWidth = .4;
+        ctx.beginPath(); ctx.moveTo(pts[i].x,pts[i].y); ctx.lineTo(pts[j].x,pts[j].y); ctx.stroke();
+      }
+    }
+    pts.forEach(p => {
+      ctx.fillStyle = `rgba(173,226,236,0.12)`;
+      ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2); ctx.fill();
+    });
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+// Clear navigation flags
+if (sessionStorage.getItem('nukrax_from_cr')) {
+  sessionStorage.removeItem('nukrax_from_cr');
+}
+
+renderCryptoGrid();
+
+// auto-select if returning from crypto.html with ?preselect=KEY
+const preselect = new URLSearchParams(location.search).get('preselect');
+if (preselect && CRYPTO_DATA[preselect]) {
+  const target = document.querySelector(`.cc[data-key="${preselect}"]`);
+  if (target) {
+    target.classList.add('active');
+    activeCrypto = preselect;
+    renderNetGrid(preselect);
+    document.getElementById('net-section').classList.remove('hidden');
+    document.getElementById('netLabel').textContent = `Select Network — ${CRYPTO_DATA[preselect].name}`;
+    setTimeout(() => target.scrollIntoView({ behavior:'smooth', block:'center' }), 200);
+  }
+}
+</script>
+
+<script src="assets/nukrax-mountain-bg.js"></script>
+</body>
+</html>

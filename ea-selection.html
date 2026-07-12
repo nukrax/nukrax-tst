@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>NUKRAX — Expert Advisors</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Mono:wght@400;700&family=Outfit:wght@200;300;400;600&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --black:#01060B;--deep:#050E13;--charcoal:#061B21;
+  --steel:#1A3E51;--muted:#366378;--smoke:#5AB1C8;--offwhite:#cfe9f0;--white:#ADE2EC;
+  --font-d:'Bebas Neue',sans-serif;--font-m:'Space Mono',monospace;--font-b:'Outfit',sans-serif;
+  --ease:cubic-bezier(0.16,1,0.3,1);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--black);color:var(--offwhite);font-family:var(--font-b);overflow-x:hidden}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:20px 52px;background:rgba(1,6,11,0.82);backdrop-filter:blur(20px);border-bottom:1px solid rgba(90,177,200,0.18)}
+.nav-logo-container{display:flex;align-items:center;gap:16px}
+.nav-logo-img{width:38px;height:38px;border-radius:50%;overflow:hidden;background:var(--charcoal);border:1px solid var(--steel);display:flex;align-items:center;justify-content:center;transition:all .3s}
+.nav-logo-img img{width:100%;height:100%;object-fit:cover}
+.nav-logo{font-family:var(--font-d);font-size:22px;letter-spacing:0.22em;color:var(--white);text-decoration:none}
+.nav-back{display:flex;align-items:center;gap:8px;font-family:var(--font-m);font-size:10px;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:var(--muted);text-decoration:none}
+.nav-back:hover{color:var(--smoke)}
+.page-header{padding:160px 52px 60px;text-align:center}
+.page-label{font-family:var(--font-m);font-size:10px;letter-spacing:0.3em;text-transform:uppercase;color:var(--muted);margin-bottom:24px}
+.page-title{font-family:var(--font-d);font-size:clamp(48px,10vw,96px);letter-spacing:0.08em;color:var(--white);line-height:1.1;margin-bottom:16px}
+.page-subtitle{font-size:16px;color:var(--smoke);max-width:600px;margin:0 auto}
+.ea-grid{max-width:1280px;margin:0 auto;padding:0 52px 120px;display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:32px}
+.ea-card{position:relative;background:rgba(6,27,33,0.5);backdrop-filter:blur(14px);border:1px solid var(--steel);padding:36px;text-decoration:none;color:inherit;display:block;transition:all .4s var(--ease)}
+.ea-card:hover{background:rgba(7,34,46,0.6);border-color:var(--muted);transform:translateY(-8px);box-shadow:0 20px 60px rgba(0,0,0,0.5),0 0 0 1px rgba(90,177,200,0.15)}
+.card-tag{font-family:var(--font-m);font-size:9px;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted);margin-bottom:16px}
+.card-name{font-family:var(--font-d);font-size:32px;letter-spacing:0.08em;color:var(--offwhite);margin-bottom:12px}
+.card-desc{font-size:13px;line-height:1.7;color:var(--smoke);margin-bottom:24px}
+.card-btn{display:inline-block;font-family:var(--font-m);font-size:10px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:var(--smoke);border:1px solid var(--steel);padding:12px 24px;transition:all .3s}
+.ea-card:hover .card-btn{border-color:var(--muted);color:var(--offwhite)}
+@media (max-width: 768px) {
+  nav{padding:16px 20px}
+  .nav-logo{font-size:18px}
+  .nav-back{font-size:9px}
+  .page-header{padding:140px 24px 40px}
+  .page-title{font-size:48px}
+  .ea-grid{padding:0 24px 80px;gap:24px}
+}
+@media (max-width: 480px) {
+  nav{padding:12px 16px}
+  .nav-logo{font-size:16px}
+  .nav-logo-img{width:32px;height:32px}
+  .page-header{padding:120px 20px 32px}
+  .ea-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<nav>
+  <div class="nav-logo-container">
+    <a href="index.html" class="nav-logo-img"><img src="assets/logo.png" alt="NUKRAX Logo"></a>
+    <a href="index.html" class="nav-logo">nukrax</a>
+  </div>
+  <a href="index.html" class="nav-back"><span>←</span> Back to Hub</a>
+</nav>
+<div class="page-header">
+  <div class="page-label">02 — Expert Advisor Suite</div>
+  <h1 class="page-title">EXPERT ADVISORS</h1>
+  <p class="page-subtitle">Institutional-grade automated trading systems with proven performance</p>
+</div>
+<div class="ea-grid">
+  <a href="ea/apex.html" class="ea-card">
+    <div class="card-tag">HFT · v1.0</div>
+    <div class="card-name">APEX</div>
+    <div class="card-desc">Ultra-fast execution engine with adaptive scalping logic and multi-timeframe confirmation system.</div>
+    <span class="card-btn">View Details →</span>
+  </a>
+  <a href="ea/aurum.html" class="ea-card">
+    <div class="card-tag">HFT · v1.0</div>
+    <div class="card-name">AURUM</div>
+    <div class="card-desc">Gold-specialist HFT system with advanced liquidity-targeting algorithms and session-based filters.</div>
+    <span class="card-btn">View Details →</span>
+  </a>
+  <a href="ea/smc-ict.html" class="ea-card">
+    <div class="card-tag">SMC · ICT</div>
+    <div class="card-name">SMC ICT</div>
+    <div class="card-desc">Smart Money Concepts implementation with ICT methodology, FVG detection, and order block validation.</div>
+    <span class="card-btn">View Details →</span>
+  </a>
+  <a href="ea/404.html" class="ea-card">
+    <div class="card-tag">COMING SOON</div>
+    <div class="card-name">MORE SYSTEMS</div>
+    <div class="card-desc">Additional expert advisors currently in development and rigorous testing phases.</div>
+    <span class="card-btn">Learn More →</span>
+  </a>
+</div>
+<script src="assets/nukrax-mountain-bg.js"></script>
+<script>
+// Handle back button clicks
+document.querySelectorAll('a[href="index.html"]').forEach(link => {
+  link.addEventListener('click', function(e) {
+    e.preventDefault();
+    sessionStorage.setItem('nukrax_from_ea_selection', 'true');
+    window.location.href = 'index.html';
+  });
+});
+</script>
+</body>
+</html>

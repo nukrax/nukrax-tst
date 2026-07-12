@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>nukrax.cr — Loading</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Space+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: #01060B;
+  color: #ADE2EC;
+  font-family: 'Space Grotesk', sans-serif;
+  height: 100vh;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  overflow: hidden;
+  perspective: 800px;
+}
+
+canvas#bg {
+  position: fixed; inset: 0;
+  pointer-events: none; z-index: 0; opacity: 0.2;
+}
+
+/* ── 3D card that flies in ── */
+.scene {
+  position: relative; z-index: 1;
+  display: flex; flex-direction: column;
+  align-items: center; gap: 28px;
+  transform-style: preserve-3d;
+  animation: sceneIn 0.5s cubic-bezier(0.16,1,0.3,1) forwards;
+}
+@keyframes sceneIn {
+  from { opacity: 0; transform: translateZ(-120px) translateY(30px); }
+  to   { opacity: 1; transform: translateZ(0)      translateY(0); }
+}
+
+.card {
+  width: min(320px, 88vw);
+  background: #0d0d0d;
+  border: 1px solid #222;
+  border-radius: 20px;
+  padding: 32px 28px;
+  display: flex; flex-direction: column; align-items: center; gap: 20px;
+  box-shadow: 0 32px 80px rgba(0,0,0,0.9), 0 0 0 1px rgba(173,226,236,0.04) inset;
+  transform-style: preserve-3d;
+  position: relative;
+  overflow: hidden;
+}
+.card::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(173,226,236,0.12), transparent);
+}
+
+/* rotating hex ring */
+.hex-ring {
+  width: 72px; height: 72px; position: relative;
+  display: flex; align-items: center; justify-content: center;
+}
+.hex-ring svg {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  animation: rotRing 1.4s linear infinite;
+}
+@keyframes rotRing { to { transform: rotate(360deg); } }
+.hex-ring svg.rev { animation-direction: reverse; animation-duration: 2.2s; }
+
+.hex-center {
+  width: 44px; height: 44px;
+  background: #1a1a1a; border: 1px solid #2a2a2a;
+  border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px; z-index: 1;
+  animation: iconPop 0.4s cubic-bezier(0.34,1.56,0.64,1) 0.3s both;
+}
+@keyframes iconPop { from { transform: scale(0.5); opacity:0; } to { transform:scale(1); opacity:1; } }
+
+.card-meta { text-align: center; }
+.card-meta .from {
+  font-family: 'Space Mono', monospace;
+  font-size: 9px; color: #555; letter-spacing: 0.15em; text-transform: uppercase;
+  margin-bottom: 6px;
+}
+.card-meta .crypto-name {
+  font-size: 22px; font-weight: 700; color: #ADE2EC;
+  letter-spacing: -0.02em; line-height: 1;
+  animation: fadeUp 0.4s ease 0.25s both;
+}
+.card-meta .net-name {
+  font-size: 13px; color: #666; margin-top: 4px;
+  font-family: 'Space Mono', monospace; letter-spacing: 0.04em;
+  animation: fadeUp 0.4s ease 0.35s both;
+}
+@keyframes fadeUp { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:none; } }
+
+/* progress bar */
+.progress-track {
+  width: 100%; height: 2px; background: #1a1a1a; border-radius: 2px; overflow: hidden;
+  animation: fadeUp 0.4s ease 0.4s both;
+}
+.progress-fill {
+  height: 100%; background: #fff; border-radius: 2px;
+  width: 0;
+  transition: width 0.05s linear;
+}
+
+.status-text {
+  font-family: 'Space Mono', monospace;
+  font-size: 10px; color: #444; letter-spacing: 0.12em; text-transform: uppercase;
+  animation: fadeUp 0.4s ease 0.45s both;
+}
+
+/* ── page exit ── */
+body.exit .scene {
+  animation: sceneOut 0.45s cubic-bezier(0.7,0,1,1) forwards;
+}
+@keyframes sceneOut {
+  from { opacity:1; transform: translateZ(0) translateY(0); }
+  to   { opacity:0; transform: translateZ(60px) translateY(-20px) scale(1.04); }
+}
+body.exit::after {
+  content: '';
+  position: fixed; inset: 0; z-index: 9999;
+  background: #01060B;
+  animation: flashIn 0.45s ease forwards;
+}
+@keyframes flashIn { from{opacity:0} to{opacity:1} }
+</style>
+</head>
+<body>
+<canvas id="bg"></canvas>
+
+<div class="scene" id="scene">
+  <div class="card" id="card">
+    <div class="hex-ring">
+      <!-- outer ring -->
+      <svg viewBox="0 0 72 72" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="36" cy="36" r="34" stroke="rgba(173,226,236,0.08)" stroke-width="1"/>
+        <circle cx="36" cy="36" r="34" stroke="rgba(173,226,236,0.5)" stroke-width="1.5"
+          stroke-dasharray="60 154" stroke-linecap="round"/>
+      </svg>
+      <!-- inner ring (reverse) -->
+      <svg viewBox="0 0 72 72" fill="none" xmlns="http://www.w3.org/2000/svg" class="rev">
+        <circle cx="36" cy="36" r="26" stroke="rgba(173,226,236,0.12)" stroke-width="1"/>
+        <circle cx="36" cy="36" r="26" stroke="rgba(173,226,236,0.3)" stroke-width="1"
+          stroke-dasharray="20 143" stroke-linecap="round"/>
+      </svg>
+      <div class="hex-center" id="cryptoIcon">·</div>
+    </div>
+
+    <div class="card-meta">
+      <div class="from">Preparing deposit</div>
+      <div class="crypto-name" id="cryptoName">—</div>
+      <div class="net-name" id="netName">—</div>
+    </div>
+
+    <div class="progress-track">
+      <div class="progress-fill" id="progressFill"></div>
+    </div>
+    <div class="status-text" id="statusText">Verifying address</div>
+  </div>
+</div>
+
+<script src="data.js"></script>
+<script>
+const params  = new URLSearchParams(location.search);
+const cKey    = params.get('c');
+const nIdx    = parseInt(params.get('n') || '0');
+
+const crypto  = CRYPTO_DATA[cKey];
+const network = crypto ? crypto.networks[nIdx] : null;
+
+// populate card
+document.getElementById('cryptoIcon').textContent = crypto ? crypto.icon : '?';
+document.getElementById('cryptoName').textContent  = crypto ? `${crypto.name}` : 'Unknown';
+document.getElementById('netName').textContent     = network ? network.name : '—';
+
+// animated progress
+const fill    = document.getElementById('progressFill');
+const statEl  = document.getElementById('statusText');
+const STEPS   = [
+  { pct: 28, label: 'Verifying address' },
+  { pct: 60, label: 'Resolving network' },
+  { pct: 88, label: 'Generating QR code' },
+  { pct: 100, label: 'Ready' },
+];
+let step = 0;
+
+function nextStep() {
+  if (step >= STEPS.length) return;
+  const s = STEPS[step++];
+  fill.style.width = s.pct + '%';
+  statEl.textContent = s.label;
+  if (step < STEPS.length) {
+    setTimeout(nextStep, step === 1 ? 200 : step === 2 ? 180 : 150);
+  } else {
+    // exit and redirect
+    setTimeout(() => {
+      document.body.classList.add('exit');
+      setTimeout(() => {
+        sessionStorage.setItem('nukrax_navigate', 'true');
+        location.href = `crypto.html?c=${cKey}&n=${nIdx}`;
+      }, 250);
+    }, 150);
+  }
+}
+setTimeout(nextStep, 200);
+
+// minimal particle bg
+(function() {
+  const cv = document.getElementById('bg'), ctx = cv.getContext('2d');
+  cv.width = innerWidth; cv.height = innerHeight;
+  const pts = Array.from({length:30}, () => ({
+    x: Math.random()*cv.width, y: Math.random()*cv.height,
+    vx:(Math.random()-.5)*.3, vy:(Math.random()-.5)*.3, r:Math.random()*.6+.2
+  }));
+  function draw() {
+    ctx.clearRect(0,0,cv.width,cv.height);
+    pts.forEach(p => {
+      p.x+=p.vx; p.y+=p.vy;
+      if(p.x<0||p.x>cv.width) p.vx*=-1;
+      if(p.y<0||p.y>cv.height) p.vy*=-1;
+      ctx.fillStyle='rgba(173,226,236,0.15)';
+      ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2); ctx.fill();
+    });
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+</script>
+</body>
+</html>
