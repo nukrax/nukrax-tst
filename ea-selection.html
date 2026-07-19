@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>NUKRAX — Expert Advisors</title>
+<meta name="description" content="Institutional-grade automated trading systems — APEX, AURUM, and SMC ICT. Built for serious market participants."/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Outfit:wght@200;300;400;500;600&display=swap" rel="stylesheet"/>
+<link rel="icon" href="assets/logo.png" type="image/png"/>
+<style>
+
+/* ── Wordmark display face — matches main page, loaded from assets/fonts ── */
+@font-face{
+  font-family:'NKX Display';
+  src:url('assets/fonts/nukrax-display.woff2') format('woff2'),
+      url('assets/fonts/nukrax-display.otf') format('opentype');
+  font-weight:400;
+  font-style:normal;
+  font-display:swap;
+}
+
+:root {
+  --black:    #030507;
+  --panel:    #0A0F13;
+  --line:     #1B2328;
+  --line-lit: #2A353C;
+  --muted:    #8A9BA3;
+  --text:     #D3DBDD;
+  --white:    #F2F5F5;
+  --accent:   #8FB8C4;
+  --accent-dim: #46626B;
+
+  --font-logo: 'NKX Display', 'Outfit', sans-serif;
+  --font-m:   'Space Mono', monospace;
+  --font-b:   'Outfit', sans-serif;
+  --ease:     cubic-bezier(0.22,1,0.36,1);
+  --ease-out: cubic-bezier(0.16,1,0.3,1);
+
+  --container: 1180px;
+  --gutter: clamp(24px, 5vw, 64px);
+}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;font-size:16px}
+body{
+  background:var(--black);
+  color:var(--text);
+  font-family:var(--font-b);
+  font-weight:300;
+  overflow-x:hidden;
+  line-height:1.65;
+  -webkit-font-smoothing:antialiased;
+}
+
+::selection{background:rgba(143,184,196,0.22);color:var(--white)}
+::-webkit-scrollbar{width:3px}
+::-webkit-scrollbar-track{background:var(--black)}
+::-webkit-scrollbar-thumb{background:var(--line-lit);border-radius:2px}
+
+a{color:inherit;text-decoration:none}
+img{max-width:100%;display:block}
+
+/* ── Page curtain ── */
+#page-curtain{
+  position:fixed;inset:0;z-index:9999;
+  background:var(--black);
+  transform:translateY(101%);
+  transition:transform .5s var(--ease);
+  pointer-events:none;
+}
+#page-curtain.active{transform:translateY(0)}
+
+/* ── Reveal on scroll — quiet fade ── */
+.reveal{opacity:0;transform:translateY(12px);transition:opacity .6s var(--ease-out),transform .6s var(--ease-out)}
+.reveal.visible{opacity:1;transform:translateY(0)}
+.reveal-delay-1.visible{transition-delay:.05s}
+.reveal-delay-2.visible{transition-delay:.1s}
+.reveal-delay-3.visible{transition-delay:.15s}
+.reveal-delay-4.visible{transition-delay:.2s}
+
+/* ══════════ NAV ══════════ */
+nav{
+  position:fixed;top:0;left:0;right:0;
+  z-index:100;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:26px var(--gutter);
+  background:rgba(3,5,7,0.88);
+  backdrop-filter:blur(16px);
+  border-bottom:1px solid var(--line);
+}
+
+.nav-logo-container{display:flex;align-items:center;gap:11px}
+.nav-logo-img{
+  width:30px;height:30px;border-radius:7px;overflow:hidden;
+  border:1px solid var(--line);
+  background:var(--panel);
+}
+.nav-logo-img img{width:100%;height:100%;object-fit:cover}
+.nav-logo{
+  font-family:var(--font-logo);font-weight:400;font-size:16px;
+  letter-spacing:.05em;text-transform:uppercase;color:var(--white);
+}
+
+.nav-back{
+  display:flex;align-items:center;gap:8px;
+  font-family:var(--font-m);font-size:11px;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--muted);
+  transition:color .3s var(--ease);
+}
+.nav-back:hover{color:var(--white)}
+.nav-back .arrow{transition:transform .3s var(--ease-out)}
+.nav-back:hover .arrow{transform:translateX(-3px)}
+
+/* ══════════ PAGE HEADER ══════════ */
+.page-header{
+  max-width:var(--container);
+  margin:0 auto;
+  padding:160px var(--gutter) 70px;
+  position:relative;
+  z-index:2;
+}
+
+.section-label{
+  display:flex;align-items:center;gap:12px;
+  font-family:var(--font-m);
+  font-size:11px;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--muted);
+  margin-bottom:22px;
+}
+.section-label::before{content:'';width:20px;height:1px;background:var(--line-lit)}
+
+.page-title{
+  font-family:var(--font-b);
+  font-weight:200;
+  font-size:clamp(34px,5vw,58px);
+  letter-spacing:-.01em;
+  color:var(--white);
+  line-height:1.08;
+  margin-bottom:18px;
+}
+
+.page-subtitle{
+  font-size:14.5px;
+  color:var(--muted);
+  max-width:56ch;
+  font-weight:300;
+}
+
+/* ══════════ EA GRID ══════════ */
+.ea-grid{
+  max-width:var(--container);
+  margin:0 auto;
+  padding:0 var(--gutter) 150px;
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  border-top:1px solid var(--line);
+  border-left:1px solid var(--line);
+  position:relative;
+  z-index:2;
+}
+
+.ea-card{
+  padding:32px 26px 34px;
+  border-right:1px solid var(--line);
+  border-bottom:1px solid var(--line);
+  transition:background .3s var(--ease);
+}
+.ea-card:hover{background:rgba(143,184,196,0.03)}
+
+.card-tag{
+  font-family:var(--font-m);font-size:10px;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--accent-dim);
+  margin-bottom:20px;display:block;
+}
+.card-name{
+  font-family:var(--font-logo);font-weight:400;font-size:21px;letter-spacing:.03em;
+  color:var(--white);margin-bottom:13px;
+}
+.card-desc{
+  font-size:12.5px;line-height:1.7;color:var(--muted);margin-bottom:26px;
+}
+.card-btn{
+  display:inline-flex;align-items:center;gap:6px;
+  font-family:var(--font-m);font-size:10.5px;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--muted);
+  border-bottom:1px solid var(--line-lit);
+  padding-bottom:3px;
+  transition:color .3s var(--ease),border-color .3s var(--ease),gap .3s var(--ease);
+}
+.ea-card:hover .card-btn{color:var(--accent);border-color:var(--accent-dim);gap:10px}
+
+@media (max-width: 1000px){
+  .ea-grid{grid-template-columns:repeat(2,1fr)}
+}
+@media (max-width: 560px){
+  .ea-grid{grid-template-columns:1fr}
+}
+
+@media (max-width: 768px) {
+  nav{padding:18px 24px}
+  .page-header{padding:130px 24px 50px}
+}
+@media (max-width: 480px) {
+  nav{padding:16px 18px}
+  .nav-logo-img{width:26px;height:26px}
+  .page-header{padding:112px 20px 40px}
+}
+
+/* ══════════ TITLE ACCENT LETTERS ══════════ */
+.ea-letter{color:var(--accent)}
+
+/* ══════════ INTRO COPY ══════════ */
+.page-intro{
+  max-width:var(--container);
+  margin:0 auto;
+  padding:0 var(--gutter) 60px;
+  position:relative;
+  z-index:2;
+}
+.page-intro p{
+  font-size:14px;
+  line-height:1.8;
+  color:var(--muted);
+  max-width:68ch;
+}
+.page-intro p + p{margin-top:14px}
+.page-intro strong{color:var(--white);font-weight:500}
+
+/* ══════════ STATS ══════════ */
+.stats{
+  max-width:var(--container);
+  margin:0 auto;
+  padding:0 var(--gutter) 90px;
+  position:relative;
+  z-index:2;
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  border-top:1px solid var(--line);
+  border-left:1px solid var(--line);
+}
+.stat{
+  padding:32px 24px;
+  border-right:1px solid var(--line);
+  border-bottom:1px solid var(--line);
+  text-align:center;
+}
+.stat-num{
+  font-family:var(--font-b);font-weight:200;font-size:clamp(26px,3vw,38px);
+  color:var(--white);letter-spacing:-.01em;margin-bottom:8px;
+}
+.stat-label{
+  font-family:var(--font-m);font-size:10px;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--muted);
+}
+@media(max-width:700px){.stats{grid-template-columns:repeat(2,1fr)}}
+
+/* ══════════ WHY SECTION ══════════ */
+.why-section{
+  max-width:var(--container);
+  margin:0 auto;
+  padding:0 var(--gutter) 130px;
+  position:relative;
+  z-index:2;
+}
+.why-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:1px;
+  background:var(--line);
+  border:1px solid var(--line);
+}
+.why-card{background:var(--black);padding:30px 26px}
+.why-icon{color:var(--accent);font-family:var(--font-m);font-size:11px;letter-spacing:.14em;text-transform:uppercase;margin-bottom:16px;display:block}
+.why-title{font-family:var(--font-b);font-weight:500;font-size:16px;color:var(--white);margin-bottom:10px}
+.why-desc{font-size:12.5px;line-height:1.7;color:var(--muted)}
+@media(max-width:860px){.why-grid{grid-template-columns:1fr}}
+
+/* ══════════ FOOTER ══════════ */
+footer{
+  border-top:1px solid var(--line);
+  padding:88px var(--gutter) 32px;
+  position:relative;
+  z-index:2;
+  background:rgba(3,5,7,0.45);
+}
+.footer-content{max-width:var(--container);margin:0 auto}
+.footer-grid{
+  display:grid;
+  grid-template-columns:1fr 1.3fr;
+  gap:clamp(40px,6vw,96px);
+  padding-bottom:52px;
+}
+.footer-column h3{
+  font-family:var(--font-m);font-size:10.5px;letter-spacing:.16em;
+  color:var(--muted);margin-bottom:22px;font-weight:400;
+}
+.footer-ea-list{display:flex;flex-direction:column}
+.footer-ea-item{
+  display:block;padding:13px 0;border-bottom:1px solid var(--line);
+  transition:padding-left .3s var(--ease);
+}
+.footer-ea-item:first-child{border-top:1px solid var(--line)}
+.footer-ea-item:hover{padding-left:8px}
+.footer-ea-name{font-family:var(--font-logo);font-size:13.5px;font-weight:400;letter-spacing:.03em;color:var(--white);margin-bottom:3px}
+.footer-ea-desc{font-size:11.5px;color:var(--muted)}
+.footer-info{font-size:12.5px;color:var(--muted);line-height:1.75;margin-bottom:24px;max-width:56ch}
+.footer-info strong{color:var(--white);font-weight:500}
+.footer-social-title{font-family:var(--font-m);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:14px}
+.footer-social-links{display:flex;flex-wrap:wrap;gap:8px}
+.social-icon{
+  width:32px;height:32px;border-radius:6px;
+  display:flex;align-items:center;justify-content:center;
+  border:1px solid var(--line);
+  transition:border-color .3s var(--ease),background .3s var(--ease);
+}
+.social-icon svg{width:13px;height:13px;fill:var(--muted);transition:fill .3s var(--ease)}
+.social-icon:hover{border-color:var(--accent-dim);background:rgba(143,184,196,0.05)}
+.social-icon:hover svg{fill:var(--white)}
+.footer-bottom{
+  display:flex;justify-content:space-between;align-items:center;
+  flex-wrap:wrap;gap:16px;
+  padding-top:26px;
+  border-top:1px solid var(--line);
+}
+.footer-logo{font-family:var(--font-logo);font-weight:400;font-size:14px;letter-spacing:.05em;color:var(--muted)}
+.footer-copy{font-size:11px;color:var(--muted)}
+.footer-links{display:flex;gap:20px;flex-wrap:wrap}
+.footer-links a{font-size:11px;color:var(--muted);transition:color .3s var(--ease)}
+.footer-links a:hover{color:var(--white)}
+@media(max-width:760px){
+  .footer-grid{grid-template-columns:1fr}
+  .footer-bottom{flex-direction:column;align-items:flex-start}
+}
+@media (max-width: 1000px){
+  .stats{grid-template-columns:repeat(2,1fr)}
+}
+</style>
+</head>
+<body>
+
+<!-- PAGE CURTAIN -->
+<div id="page-curtain"></div>
+
+<nav>
+  <div class="nav-logo-container">
+    <a href="index.html" class="nav-logo-img"><img src="assets/logo.png" alt="NUKRAX Logo"></a>
+    <a href="index.html" class="nav-logo">nukrax</a>
+  </div>
+  <a href="index.html" class="nav-back"><span class="arrow">←</span> Back to Hub</a>
+</nav>
+
+<div class="page-header">
+  <div class="section-label reveal">02 — Expert Advisor Suite</div>
+  <h1 class="page-title reveal"><span class="ea-letter">E</span>xpert <span class="ea-letter">A</span>dvisors</h1>
+  <p class="page-subtitle reveal">Institutional-grade automated trading systems with proven performance.</p>
+</div>
+
+<div class="page-intro">
+  <p class="reveal">Every NUKRAX Expert Advisor is engineered in-house, backtested across years of tick data, and forward-tested live before release. No mass-market templates, no recycled logic — <strong>each system is purpose-built</strong> for a specific market structure, from ultra-fast HFT scalping to Smart Money Concepts and ICT-based execution.</p>
+  <p class="reveal">All EAs run natively on <strong>MetaTrader 5</strong>, ship with configurable risk engines, and are designed to survive prop-firm rule sets without sacrificing edge.</p>
+</div>
+
+<div class="stats">
+  <div class="stat reveal reveal-delay-1">
+    <div class="stat-num" data-count-target="3">0</div>
+    <div class="stat-label">Expert Advisors</div>
+  </div>
+  <div class="stat reveal reveal-delay-2">
+    <div class="stat-num" data-count-target="4">0</div>
+    <div class="stat-label">Pairs Covered</div>
+  </div>
+  <div class="stat reveal reveal-delay-3">
+    <div class="stat-num">24/7</div>
+    <div class="stat-label">Automated Execution</div>
+  </div>
+  <div class="stat reveal reveal-delay-4">
+    <div class="stat-num">MT5</div>
+    <div class="stat-label">Native Platform</div>
+  </div>
+</div>
+
+<div class="ea-grid">
+  <a href="ea/apex.html" class="ea-card reveal reveal-delay-1">
+    <span class="card-tag">HFT · v1.0</span>
+    <div class="card-name">APEX</div>
+    <div class="card-desc">Ultra-fast execution engine with adaptive scalping logic and multi-timeframe confirmation system.</div>
+    <span class="card-btn">View Details →</span>
+  </a>
+  <a href="ea/aurum.html" class="ea-card reveal reveal-delay-2">
+    <span class="card-tag">HFT · v1.0</span>
+    <div class="card-name">AURUM</div>
+    <div class="card-desc">Gold-specialist HFT system with advanced liquidity-targeting algorithms and session-based filters.</div>
+    <span class="card-btn">View Details →</span>
+  </a>
+  <a href="ea/smc-ict.html" class="ea-card reveal reveal-delay-3">
+    <span class="card-tag">SMC · ICT</span>
+    <div class="card-name">SMC ICT</div>
+    <div class="card-desc">Smart Money Concepts implementation with ICT methodology, FVG detection, and order block validation.</div>
+    <span class="card-btn">View Details →</span>
+  </a>
+  <a href="ea/404.html" class="ea-card reveal reveal-delay-4">
+    <span class="card-tag">Coming Soon</span>
+    <div class="card-name">MORE SYSTEMS</div>
+    <div class="card-desc">Additional expert advisors currently in development and rigorous testing phases.</div>
+    <span class="card-btn">Learn More →</span>
+  </a>
+</div>
+
+<div class="why-section">
+  <div class="why-grid">
+    <div class="why-card reveal reveal-delay-1">
+      <span class="why-icon">01 — Built In-House</span>
+      <div class="why-title">No Templates</div>
+      <div class="why-desc">Every EA is written from scratch — original entry models, exit logic, and risk engines, not recycled marketplace code.</div>
+    </div>
+    <div class="why-card reveal reveal-delay-2">
+      <span class="why-icon">02 — Rigorously Tested</span>
+      <div class="why-title">Backtested &amp; Forward-Tested</div>
+      <div class="why-desc">Years of tick-level backtesting followed by live forward-testing before any system is released.</div>
+    </div>
+    <div class="why-card reveal reveal-delay-3">
+      <span class="why-icon">03 — Prop-Firm Safe</span>
+      <div class="why-title">Rule-Compliant Risk</div>
+      <div class="why-desc">Configurable risk engines built to respect drawdown limits and daily loss rules across major prop-firm frameworks.</div>
+    </div>
+  </div>
+</div>
+
+<footer class="reveal reveal-delay-1">
+  <div class="footer-content">
+    <div class="footer-grid">
+      <div class="footer-column">
+        <h3>EXPERT ADVISORS</h3>
+        <div class="footer-ea-list">
+          <a href="ea/apex.html" class="footer-ea-item">
+            <div class="footer-ea-name">APEX</div>
+            <div class="footer-ea-desc">Ultra-fast execution with adaptive scalping logic</div>
+          </a>
+          <a href="ea/aurum.html" class="footer-ea-item">
+            <div class="footer-ea-name">AURUM</div>
+            <div class="footer-ea-desc">Gold-specialist liquidity-targeting system</div>
+          </a>
+          <a href="ea/smc-ict.html" class="footer-ea-item">
+            <div class="footer-ea-name">SMC ICT</div>
+            <div class="footer-ea-desc">Smart Money Concepts with ICT methodology</div>
+          </a>
+        </div>
+      </div>
+
+      <div class="footer-column">
+        <h3>ABOUT THE CREATOR</h3>
+        <p class="footer-info">
+          Built by <strong>@CosmoLanex</strong> / <strong>@nukrax</strong> — a professional trading systems developer specializing in institutional-grade algorithmic strategies, high-frequency trading architectures, and comprehensive market analysis tools.
+        </p>
+        <div class="footer-social-title">Connect &amp; Follow</div>
+        <div class="footer-social-links">
+          <a href="https://github.com/CosmoLanex" class="social-icon" target="_blank" rel="noopener noreferrer" title="GitHub">
+            <svg viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+          </a>
+          <a href="https://x.com/CosmoLanex" class="social-icon" target="_blank" rel="noopener noreferrer" title="X/Twitter">
+            <svg viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+          </a>
+          <a href="https://t.me/CosmoLanex" class="social-icon" target="_blank" rel="noopener noreferrer" title="Telegram">
+            <svg viewBox="0 0 24 24"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
+          </a>
+          <a href="https://www.youtube.com/@CosmoLanex" class="social-icon" target="_blank" rel="noopener noreferrer" title="YouTube">
+            <svg viewBox="0 0 24 24"><path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z"/></svg>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <a href="index.html" class="footer-logo">NUKRAX</a>
+      <div class="footer-copy">© 2024 NUKRAX. All rights reserved. Built by @CosmoLanex</div>
+      <div class="footer-links">
+        <a href="index.html">Home</a>
+        <a href="redirect.html?dest=tr">nukrax.tr</a>
+        <a href="nukrax-cr.html">nukrax.cr</a>
+        <a href="p.html" target="_blank">Privacy Policy</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+/* ── PAGE TRANSITIONS ── */
+const curtain=document.getElementById('page-curtain');
+
+document.querySelectorAll('a[href]:not([href^="#"]):not([target="_blank"])').forEach(a=>{
+  a.addEventListener('click',function(e){
+    const href=this.getAttribute('href');
+    if(!href||href.startsWith('http')||href.startsWith('mailto')) return;
+    e.preventDefault();
+    curtain.classList.add('active');
+    setTimeout(()=>{
+      sessionStorage.setItem('nukrax_from_ea_selection', 'true');
+      window.location.href=href;
+    },500);
+  });
+});
+
+// Handle back button - remove curtain immediately if arriving via history
+if(sessionStorage.getItem('nukrax_from_ea_selection')) {
+  sessionStorage.removeItem('nukrax_from_ea_selection');
+  curtain.classList.remove('active');
+}
+window.addEventListener('pageshow', function(event) {
+  if (event.persisted || (window.performance && window.performance.navigation.type === 2)) {
+    curtain.classList.remove('active');
+  }
+});
+
+/* ── REVEAL ON SCROLL ── */
+const reveals=document.querySelectorAll('.reveal');
+const io=new IntersectionObserver(entries=>{
+  entries.forEach(entry=>{
+    if(entry.isIntersecting) entry.target.classList.add('visible');
+  });
+},{threshold:0.1});
+reveals.forEach(el=>io.observe(el));
+
+/* ── NUMBER COUNT-UP ── */
+(function(){
+  const REDUCE_MOTION = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const nums = document.querySelectorAll('[data-count-target]');
+  if(!nums.length) return;
+  function animateCount(el, target){
+    if(REDUCE_MOTION){ el.textContent = target; return; }
+    const duration = 1200;
+    const start = performance.now();
+    function tick(now){
+      const p = Math.min(1, (now - start) / duration);
+      const eased = 1 - Math.pow(1 - p, 3);
+      el.textContent = Math.round(eased * target);
+      if(p < 1) requestAnimationFrame(tick);
+      else el.textContent = target;
+    }
+    requestAnimationFrame(tick);
+  }
+  const countIO = new IntersectionObserver(entries=>{
+    entries.forEach(entry=>{
+      const el = entry.target;
+      const target = parseFloat(el.dataset.countTarget);
+      if(entry.isIntersecting){
+        animateCount(el, target);
+      } else if(entry.boundingClientRect.top > 0){
+        el.textContent = 0;
+      }
+    });
+  }, { threshold:0.5 });
+  nums.forEach(el=>countIO.observe(el));
+})();
+</script>
+
+<script type="module" src="assets/ai/widget.js"></script>
+</body>
+</html>
