@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>NUKRAX — Expert Advisors</title>
+<meta name="description" content="Institutional-grade automated trading systems — APEX, AURUM, and SMC ICT. Built for serious market participants."/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Outfit:wght@200;300;400;500;600&display=swap" rel="stylesheet"/>
+<link rel="icon" href="assets/logo.png" type="image/png"/>
+<style>
+
+/* ── Wordmark display face — matches main page, loaded from assets/fonts ── */
+@font-face{
+  font-family:'NKX Display';
+  src:url('assets/fonts/nukrax-display.woff2') format('woff2'),
+      url('assets/fonts/nukrax-display.otf') format('opentype');
+  font-weight:400;
+  font-style:normal;
+  font-display:swap;
+}
+
+:root {
+  --black:    #030507;
+  --panel:    #0A0F13;
+  --line:     #1B2328;
+  --line-lit: #2A353C;
+  --muted:    #8A9BA3;
+  --text:     #D3DBDD;
+  --white:    #F2F5F5;
+  --accent:   #8FB8C4;
+  --accent-dim: #46626B;
+
+  --font-logo: 'NKX Display', 'Outfit', sans-serif;
+  --font-m:   'Space Mono', monospace;
+  --font-b:   'Outfit', sans-serif;
+  --ease:     cubic-bezier(0.22,1,0.36,1);
+  --ease-out: cubic-bezier(0.16,1,0.3,1);
+
+  --container: 1180px;
+  --gutter: clamp(24px, 5vw, 64px);
+}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;font-size:16px}
+body{
+  background:var(--black);
+  color:var(--text);
+  font-family:var(--font-b);
+  font-weight:300;
+  overflow-x:hidden;
+  line-height:1.65;
+  -webkit-font-smoothing:antialiased;
+}
+
+::selection{background:rgba(143,184,196,0.22);color:var(--white)}
+::-webkit-scrollbar{width:3px}
+::-webkit-scrollbar-track{background:var(--black)}
+::-webkit-scrollbar-thumb{background:var(--line-lit);border-radius:2px}
+
+a{color:inherit;text-decoration:none}
+img{max-width:100%;display:block}
+
+/* ── Page curtain ── */
+#page-curtain{
+  position:fixed;inset:0;z-index:9999;
+  background:var(--black);
+  transform:translateY(101%);
+  transition:transform .5s var(--ease);
+  pointer-events:none;
+}
+#page-curtain.active{transform:translateY(0)}
+
+/* ── Reveal on scroll — quiet fade ── */
+.reveal{opacity:0;transform:translateY(12px);transition:opacity .6s var(--ease-out),transform .6s var(--ease-out)}
+.reveal.visible{opacity:1;transform:translateY(0)}
+.reveal-delay-1.visible{transition-delay:.05s}
+.reveal-delay-2.visible{transition-delay:.1s}
+.reveal-delay-3.visible{transition-delay:.15s}
+.reveal-delay-4.visible{transition-delay:.2s}
+
+/* ══════════ NAV ══════════ */
+nav{
+  position:fixed;top:0;left:0;right:0;
+  z-index:100;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:26px var(--gutter);
+  background:rgba(3,5,7,0.88);
+  backdrop-filter:blur(16px);
+  border-bottom:1px solid var(--line);
+}
+
+.nav-logo-container{display:flex;align-items:center;gap:11px}
+.nav-logo-img{
+  width:30px;height:30px;border-radius:7px;overflow:hidden;
+  border:1px solid var(--line);
+  background:var(--panel);
+}
+.nav-logo-img img{width:100%;height:100%;object-fit:cover}
+.nav-logo{
+  font-family:var(--font-logo);font-weight:400;font-size:16px;
+  letter-spacing:.05em;text-transform:uppercase;color:var(--white);
+}
+
+.nav-back{
+  display:flex;align-items:center;gap:8px;
+  font-family:var(--font-m);font-size:11px;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--muted);
+  transition:color .3s var(--ease);
+}
+.nav-back:hover{color:var(--white)}
+.nav-back .arrow{transition:transform .3s var(--ease-out)}
+.nav-back:hover .arrow{transform:translateX(-3px)}
+
+/* ══════════ PAGE HEADER ══════════ */
+.page-header{
+  max-width:var(--container);
+  margin:0 auto;
+  padding:160px var(--gutter) 70px;
+  position:relative;
+  z-index:2;
+}
+
+.section-label{
+  display:flex;align-items:center;gap:12px;
+  font-family:var(--font-m);
+  font-size:11px;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--muted);
+  margin-bottom:22px;
+}
+.section-label::before{content:'';width:20px;height:1px;background:var(--line-lit)}
+
+.page-title{
+  font-family:var(--font-b);
+  font-weight:200;
+  font-size:clamp(34px,5vw,58px);
+  letter-spacing:-.01em;
+  color:var(--white);
+  line-height:1.08;
+  margin-bottom:18px;
+}
+
+.page-subtitle{
+  font-size:14.5px;
+  color:var(--muted);
+  max-width:56ch;
+  font-weight:300;
+}
+
+/* ══════════ EA GRID ══════════ */
+.ea-grid{
+  max-width:var(--container);
+  margin:0 auto;
+  padding:0 var(--gutter) 150px;
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  border-top:1px solid var(--line);
+  border-left:1px solid var(--line);
+  position:relative;
+  z-index:2;
+}
+
+.ea-card{
+  padding:32px 26px 34px;
+  border-right:1px solid var(--line);
+  border-bottom:1px solid var(--line);
+  transition:background .3s var(--ease);
+}
+.ea-card:hover{background:rgba(143,184,196,0.03)}
+
+.card-tag{
+  font-family:var(--font-m);font-size:10px;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--accent-dim);
+  margin-bottom:20px;display:block;
+}
+.card-name{
+  font-family:var(--font-b);font-weight:500;font-size:21px;letter-spacing:.01em;
+  color:var(--white);margin-bottom:13px;
+}
+.card-desc{
+  font-size:12.5px;line-height:1.7;color:var(--muted);margin-bottom:26px;
+}
+.card-btn{
+  display:inline-flex;align-items:center;gap:6px;
+  font-family:var(--font-m);font-size:10.5px;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--muted);
+  border-bottom:1px solid var(--line-lit);
+  padding-bottom:3px;
+  transition:color .3s var(--ease),border-color .3s var(--ease),gap .3s var(--ease);
+}
+.ea-card:hover .card-btn{color:var(--accent);border-color:var(--accent-dim);gap:10px}
+
+@media (max-width: 1000px){
+  .ea-grid{grid-template-columns:repeat(2,1fr)}
+}
+@media (max-width: 560px){
+  .ea-grid{grid-template-columns:1fr}
+}
+
+@media (max-width: 768px) {
+  nav{padding:18px 24px}
+  .page-header{padding:130px 24px 50px}
+}
+@media (max-width: 480px) {
+  nav{padding:16px 18px}
+  .nav-logo-img{width:26px;height:26px}
+  .page-header{padding:112px 20px 40px}
+}
+</style>
+</head>
+<body>
+
+<!-- PAGE CURTAIN -->
+<div id="page-curtain"></div>
+
+<nav>
+  <div class="nav-logo-container">
+    <a href="index.html" class="nav-logo-img"><img src="assets/logo.png" alt="NUKRAX Logo"></a>
+    <a href="index.html" class="nav-logo">nukrax</a>
+  </div>
+  <a href="index.html" class="nav-back"><span class="arrow">←</span> Back to Hub</a>
+</nav>
+
+<div class="page-header">
+  <div class="section-label reveal">02 — Expert Advisor Suite</div>
+  <h1 class="page-title reveal">Expert Advisors</h1>
+  <p class="page-subtitle reveal">Institutional-grade automated trading systems with proven performance.</p>
+</div>
+
+<div class="ea-grid">
+  <a href="ea/apex.html" class="ea-card reveal reveal-delay-1">
+    <span class="card-tag">HFT · v1.0</span>
+    <div class="card-name">APEX</div>
+    <div class="card-desc">Ultra-fast execution engine with adaptive scalping logic and multi-timeframe confirmation system.</div>
+    <span class="card-btn">View Details →</span>
+  </a>
+  <a href="ea/aurum.html" class="ea-card reveal reveal-delay-2">
+    <span class="card-tag">HFT · v1.0</span>
+    <div class="card-name">AURUM</div>
+    <div class="card-desc">Gold-specialist HFT system with advanced liquidity-targeting algorithms and session-based filters.</div>
+    <span class="card-btn">View Details →</span>
+  </a>
+  <a href="ea/smc-ict.html" class="ea-card reveal reveal-delay-3">
+    <span class="card-tag">SMC · ICT</span>
+    <div class="card-name">SMC ICT</div>
+    <div class="card-desc">Smart Money Concepts implementation with ICT methodology, FVG detection, and order block validation.</div>
+    <span class="card-btn">View Details →</span>
+  </a>
+  <a href="ea/404.html" class="ea-card reveal reveal-delay-4">
+    <span class="card-tag">Coming Soon</span>
+    <div class="card-name">MORE SYSTEMS</div>
+    <div class="card-desc">Additional expert advisors currently in development and rigorous testing phases.</div>
+    <span class="card-btn">Learn More →</span>
+  </a>
+</div>
+
+<script>
+/* ── PAGE TRANSITIONS ── */
+const curtain=document.getElementById('page-curtain');
+
+document.querySelectorAll('a[href]:not([href^="#"]):not([target="_blank"])').forEach(a=>{
+  a.addEventListener('click',function(e){
+    const href=this.getAttribute('href');
+    if(!href||href.startsWith('http')||href.startsWith('mailto')) return;
+    e.preventDefault();
+    curtain.classList.add('active');
+    setTimeout(()=>{
+      sessionStorage.setItem('nukrax_from_ea_selection', 'true');
+      window.location.href=href;
+    },500);
+  });
+});
+
+// Handle back button - remove curtain immediately if arriving via history
+if(sessionStorage.getItem('nukrax_from_ea_selection')) {
+  sessionStorage.removeItem('nukrax_from_ea_selection');
+  curtain.classList.remove('active');
+}
+window.addEventListener('pageshow', function(event) {
+  if (event.persisted || (window.performance && window.performance.navigation.type === 2)) {
+    curtain.classList.remove('active');
+  }
+});
+
+/* ── REVEAL ON SCROLL ── */
+const reveals=document.querySelectorAll('.reveal');
+const io=new IntersectionObserver(entries=>{
+  entries.forEach(entry=>{
+    if(entry.isIntersecting) entry.target.classList.add('visible');
+  });
+},{threshold:0.1});
+reveals.forEach(el=>io.observe(el));
+</script>
+
+<script type="module" src="assets/ai/widget.js"></script>
+</body>
+</html>
