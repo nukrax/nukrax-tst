@@ -1,0 +1,1794 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>AURUM HFT ELITE v1.0 — Strategy Overview</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Outfit:wght@200;300;400;500;600&display=swap" rel="stylesheet"/>
+<link rel="icon" href="assets/logo.png" type="image/png"/>
+<style>
+
+/* Wordmark display face — matches main NUKRAX site */
+@font-face{
+  font-family:'NKX Display';
+  src:url('../assets/fonts/nukrax-display.woff2') format('woff2'),
+      url('../assets/fonts/nukrax-display.otf') format('opentype');
+  font-weight:400;
+  font-style:normal;
+  font-display:swap;
+}
+
+  :root {
+    --bg:         #030507;
+    --surface:    #0A0F13;
+    --surface2:   #0A0F13;
+    --border:     #1B2328;
+    --border2:    #2A353C;
+    --silver:     #8FB8C4;
+    --silver-dim: #46626B;
+    --silver-hi:  #F2F5F5;
+    --green:      #4ade80;
+    --red:        #f87171;
+    --amber:      #fbbf24;
+    --card:       #0A0F13;
+    --text:       #D3DBDD;
+    --muted:      #8A9BA3;
+    --premium:    #46626B;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Outfit', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: radial-gradient(circle, rgba(160,160,160,0.1) 1px, transparent 1px);
+    background-size: 32px 32px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  body::after {
+    content: '';
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--silver), transparent);
+    z-index: 200;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 52px;
+    background: rgba(10,10,10,0.92);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .nav-logo-container {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  
+  .nav-logo-img {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    overflow: hidden;
+    background: var(--surface);
+    border: 1px solid var(--border2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+  }
+  
+  .nav-logo-img:hover {
+    border-color: var(--silver-dim);
+    box-shadow: 0 0 16px rgba(160,160,160,0.1);
+  }
+  
+  .nav-logo-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .nav-logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    color: var(--silver-hi);
+    text-transform: uppercase;
+    text-decoration: none;
+    cursor: pointer;
+  }
+
+  .nav-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--silver);
+    animation: pulse 2s ease-in-out infinite;
+  }
+
+  @keyframes pulse { 0%,100%{opacity:1;} 50%{opacity:0.3;} }
+
+  .nav-links { display: flex; gap: 32px; list-style: none; }
+
+  .nav-links a {
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    transition: color .2s;
+    font-family: 'Space Mono', monospace;
+  }
+  .nav-links a:hover { color: var(--silver); }
+
+  /* ── HERO ── */
+  .hero {
+    position: relative;
+    z-index: 1;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 140px 24px 100px;
+  }
+
+  .hero-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    color: var(--silver);
+    text-transform: uppercase;
+    border: 1px solid var(--border2);
+    padding: 7px 20px;
+    border-radius: 2px;
+    margin-bottom: 40px;
+    animation: fadeUp .6s ease both;
+    background: var(--surface);
+  }
+
+  .hero-tag::before {
+    content: '';
+    width: 5px; height: 5px;
+    border-radius: 50%;
+    background: var(--silver);
+    flex-shrink: 0;
+    animation: pulse 2s ease-in-out infinite;
+  }
+
+  .hero h1 {
+    font-size: clamp(48px, 8vw, 96px);
+    font-weight: 800;
+    line-height: 0.95;
+    letter-spacing: -0.03em;
+    margin-bottom: 12px;
+    animation: fadeUp .7s ease both;
+    color: var(--silver-hi);
+  }
+
+  .hero h1 .accent { color: var(--silver); opacity: 0.6; }
+  .hero h1 .sub-title {
+    display: block;
+    font-size: clamp(14px, 2.2vw, 24px);
+    font-weight: 400;
+    color: var(--muted);
+    letter-spacing: 0.06em;
+    margin-top: 20px;
+    font-family: 'Space Mono', monospace;
+  }
+
+  .hero-desc {
+    font-size: clamp(14px, 1.8vw, 17px);
+    color: var(--muted);
+    max-width: 600px;
+    line-height: 1.8;
+    margin: 36px 0 64px;
+    animation: fadeUp .8s ease both;
+    font-weight: 400;
+  }
+
+  .hero-stats {
+    display: flex;
+    animation: fadeUp .9s ease both;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+    background: var(--surface);
+  }
+
+  .stat {
+    text-align: center;
+    padding: 24px 36px;
+    border-right: 1px solid var(--border);
+  }
+  .stat:last-child { border-right: none; }
+
+  .stat-val {
+    font-size: 28px;
+    font-weight: 800;
+    color: var(--silver-hi);
+    line-height: 1;
+    letter-spacing: -0.02em;
+  }
+
+  .stat-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    margin-top: 8px;
+  }
+
+  .scroll-hint {
+    position: absolute;
+    bottom: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    animation: fadeUp 1.2s ease both, scrollBounce 2s ease-in-out 1.5s infinite;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+  }
+
+  @keyframes scrollBounce {
+    0%,100%{transform:translateX(-50%) translateY(0);}
+    50%{transform:translateX(-50%) translateY(6px);}
+  }
+
+  .scroll-arrow {
+    width: 18px; height: 18px;
+    border-right: 1px solid var(--muted);
+    border-bottom: 1px solid var(--muted);
+    transform: rotate(45deg);
+    margin-top: -4px;
+  }
+
+  /* ── SECTIONS ── */
+  section {
+    position: relative;
+    z-index: 1;
+    max-width: 1120px;
+    margin: 0 auto;
+    padding: 110px 28px;
+  }
+
+  .section-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    color: var(--silver-dim);
+    text-transform: uppercase;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+    max-width: 80px;
+  }
+
+  .section-title {
+    font-size: clamp(30px, 4.5vw, 52px);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    line-height: 1.05;
+    margin-bottom: 52px;
+    color: var(--silver-hi);
+  }
+  .section-title span { color: var(--silver); opacity: 0.5; }
+
+  /* ── CARDS ── */
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .card {
+    background: var(--card);
+    padding: 32px 28px;
+    transition: background .2s;
+  }
+  .card:hover { background: var(--surface2); }
+
+  .card-icon { font-size: 22px; margin-bottom: 18px; opacity: 0.85; }
+
+  .card h3 {
+    font-size: 15px;
+    font-weight: 700;
+    margin-bottom: 10px;
+    letter-spacing: -0.01em;
+    color: var(--silver-hi);
+  }
+
+  .card p {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.8;
+    font-weight: 400;
+  }
+
+  /* ── CARDS PLAIN ── */
+  .cards-plain {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 16px;
+  }
+
+  .card-plain {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 28px;
+    transition: border-color .2s, transform .2s;
+  }
+  .card-plain:hover { border-color: var(--silver-dim); transform: translateY(-2px); }
+
+  .card-plain h3 {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--silver-hi);
+    margin-bottom: 10px;
+  }
+
+  .card-plain p { font-size: 13px; color: var(--muted); line-height: 1.8; }
+
+  /* ── TF GRID ── */
+  .tf-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 0;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 48px;
+  }
+
+  .tf-item {
+    background: var(--card);
+    padding: 24px 16px;
+    border-right: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    text-align: center;
+    position: relative;
+    transition: background .2s;
+  }
+  .tf-item:hover { background: var(--surface2); }
+
+  .tf-item.primary { background: var(--surface2); border-top: 2px solid var(--silver-dim); }
+  .tf-item.gold    { background: var(--surface2); border-top: 2px solid var(--silver); }
+
+  .tf-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 22px;
+    font-weight: 500;
+    color: var(--silver-hi);
+    margin-bottom: 6px;
+    letter-spacing: -0.01em;
+  }
+
+  .tf-role {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    margin-bottom: 8px;
+  }
+
+  .tf-desc { font-size: 11px; color: var(--silver-dim); line-height: 1.5; }
+
+  .tf-badge {
+    position: absolute;
+    top: 8px; right: 6px;
+    font-family: 'Space Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.08em;
+    padding: 2px 6px;
+    border-radius: 2px;
+    text-transform: uppercase;
+  }
+
+  .badge-exec  { background: rgba(74,222,128,.12); color: var(--green); border: 1px solid rgba(74,222,128,.25); }
+  .badge-entry { background: rgba(160,160,160,.1); color: var(--silver); border: 1px solid var(--border2); }
+  .badge-bias  { background: rgba(160,160,160,.1); color: var(--silver);   border: 1px solid var(--border2); }
+
+  /* ── FLOW STEPS ── */
+  .flow { display: flex; flex-direction: column; gap: 0; }
+
+  .flow-step {
+    display: grid;
+    grid-template-columns: 60px 1fr;
+    gap: 28px;
+    position: relative;
+    padding-bottom: 44px;
+    cursor: pointer;
+  }
+  .flow-step:last-child { padding-bottom: 0; }
+
+  .flow-step::before {
+    content: '';
+    position: absolute;
+    left: 29px; top: 60px; bottom: 0;
+    width: 2px;
+    background: linear-gradient(to bottom, var(--border2), transparent);
+  }
+  .flow-step:last-child::before { display: none; }
+
+  .step-num {
+    width: 60px; height: 60px;
+    border-radius: 50%;
+    border: 1px solid var(--border2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    font-weight: 800;
+    color: var(--silver);
+    flex-shrink: 0;
+    background: var(--card);
+    transition: background .25s, border-color .25s, color .25s;
+    font-family: 'Space Mono', monospace;
+  }
+
+  .flow-step:hover .step-num {
+    background: var(--silver-hi);
+    color: var(--bg);
+    border-color: var(--silver-hi);
+  }
+
+  .step-content { padding-top: 12px; }
+  .step-content h3 {
+    font-size: 17px; font-weight: 700;
+    margin-bottom: 8px; color: var(--silver-hi);
+    letter-spacing: -0.01em;
+  }
+  .step-content p { font-size: 13px; color: var(--muted); line-height: 1.75; }
+
+  .step-detail {
+    display: none;
+    margin-top: 16px;
+    padding: 20px 24px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 2px solid var(--silver-dim);
+    border-radius: 0 4px 4px 0;
+    font-size: 13px;
+    color: var(--text);
+    line-height: 1.8;
+    font-family: 'Space Mono', monospace;
+    font-weight: 400;
+  }
+  .step-detail.open { display: block; animation: slideDown .25s ease; }
+
+  .hint {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    color: var(--silver-dim);
+    letter-spacing: 0.08em;
+    margin-top: 6px;
+  }
+
+  /* ── TAGS ── */
+  .tag {
+    display: inline-block;
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    padding: 3px 10px;
+    border-radius: 2px;
+    margin: 3px 2px;
+    letter-spacing: 0.06em;
+  }
+  .tag-gold   { background: rgba(160,160,160,.1); color: var(--silver-hi); border: 1px solid var(--border2); }
+  .tag-green  { background: rgba(74,222,128,.1); color: var(--green); border: 1px solid rgba(74,222,128,.25); }
+  .tag-red    { background: rgba(248,113,113,.1); color: var(--red); border: 1px solid rgba(248,113,113,.25); }
+  .tag-silver { background: rgba(160,160,160,.1); color: var(--silver); border: 1px solid var(--border2); }
+  .tag-amber  { background: rgba(251,191,36,.1); color: var(--amber); border: 1px solid rgba(251,191,36,.25); }
+  .tag-blue   { background: rgba(96,165,250,.1); color: var(--blue); border: 1px solid rgba(96,165,250,.25); }
+
+  /* ── RISK GRID ── */
+  .risk-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 0;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .risk-item {
+    background: var(--card);
+    border-right: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    padding: 28px 22px;
+    transition: background .2s;
+  }
+  .risk-item:hover { background: var(--surface2); }
+
+  .risk-item-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+
+  .risk-item-val {
+    font-size: 24px;
+    font-weight: 800;
+    color: var(--silver-hi);
+    letter-spacing: -0.02em;
+    margin-bottom: 8px;
+  }
+
+  .risk-item-desc {
+    font-size: 12px;
+    color: var(--silver-dim);
+    line-height: 1.6;
+    font-weight: 400;
+  }
+
+  /* ── PAIRS GRID ── */
+  .pairs-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 40px;
+  }
+
+  .pair-item {
+    background: var(--card);
+    padding: 24px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    transition: background .2s;
+  }
+  .pair-item:hover { background: var(--surface2); }
+  .pair-item.top { border-top: 3px solid var(--silver); }
+
+  .pair-name {
+    font-family: 'Space Mono', monospace;
+    font-size: 18px;
+    font-weight: 500;
+    color: var(--silver-hi);
+    letter-spacing: 0.04em;
+  }
+
+  .pair-rating { display: flex; gap: 4px; margin: 4px 0; }
+  .pair-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--border2); }
+  .pair-dot.filled { background: var(--silver); }
+  .pair-dot.half   { background: var(--silver-dim); }
+
+  .pair-desc { font-size: 12px; color: var(--muted); line-height: 1.5; }
+
+  /* ── ENTRY MODEL BLOCKS ── */
+  .model-block {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 32px;
+    margin-bottom: 20px;
+    transition: border-color .2s;
+  }
+  .model-block:hover { border-color: var(--border2); }
+
+  .model-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    margin-bottom: 20px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .model-tag {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    padding: 4px 14px;
+    border-radius: 2px;
+    border: 1px solid var(--border2);
+    color: var(--silver);
+    background: var(--surface);
+    text-transform: uppercase;
+    white-space: nowrap;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  .model-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--silver-hi);
+    letter-spacing: -0.01em;
+  }
+  .model-subtitle { font-size: 13px; color: var(--muted); font-weight: 400; margin-top: 4px; }
+
+  .model-conditions {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 12px;
+    margin-top: 16px;
+  }
+
+  .condition {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 16px;
+  }
+
+  .condition-num {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    color: var(--silver-dim);
+    letter-spacing: 0.12em;
+    margin-bottom: 6px;
+    text-transform: uppercase;
+  }
+
+  .condition-title { font-size: 13px; font-weight: 700; color: var(--silver-hi); margin-bottom: 6px; }
+  .condition-desc  { font-size: 12px; color: var(--muted); line-height: 1.6; }
+
+  /* ── SCORE BAR ── */
+  .score-bar-wrap {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 28px;
+    margin-bottom: 40px;
+  }
+
+  .score-bar-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+
+  .score-levels {
+    display: flex;
+    border-radius: 3px;
+    overflow: hidden;
+    height: 10px;
+    margin-bottom: 12px;
+  }
+
+  .score-seg { flex: 1; background: var(--border); border-right: 1px solid var(--bg); }
+  .score-seg.active-low  { background: var(--red); }
+  .score-seg.active-mid  { background: var(--silver-dim); }
+  .score-seg.active-high { background: var(--silver); }
+  .score-seg.active-top  { background: var(--silver-hi); }
+
+  .score-labels {
+    display: flex;
+    justify-content: space-between;
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.08em;
+  }
+
+  /* ── PARAMS TABLE ── */
+  .params-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .params-table th {
+    text-align: left;
+    padding: 12px 16px;
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    font-weight: 500;
+  }
+
+  .params-table td {
+    padding: 13px 16px;
+    border-bottom: 1px solid var(--border);
+    font-weight: 400;
+    vertical-align: top;
+    background: var(--card);
+  }
+
+  .params-table tr:last-child td { border-bottom: none; }
+  .params-table tr:hover td { background: var(--surface2); }
+
+  .params-table td:first-child {
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+    color: var(--silver-hi);
+    white-space: nowrap;
+  }
+
+  .params-table td:nth-child(2) {
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+    color: var(--silver);
+    white-space: nowrap;
+  }
+
+  .params-table td:nth-child(3) { color: var(--muted); font-size: 12px; line-height: 1.6; }
+
+  /* ── DIVIDER ── */
+  .divider { border: none; border-top: 1px solid var(--border); margin: 0; position: relative; z-index: 1; }
+
+  /* ── FOOTER ── */
+  footer {
+    position: relative; z-index: 1;
+    text-align: center;
+    padding: 56px 24px;
+    border-top: 1px solid var(--border);
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    background: var(--surface);
+  }
+
+  .footer-logo {
+    font-size: 20px;
+    font-weight: 800;
+    color: var(--silver-hi);
+    letter-spacing: -0.02em;
+    font-family: 'Outfit', sans-serif;
+    margin-bottom: 14px;
+  }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp {
+    from { opacity:0; transform: translateY(28px); }
+    to   { opacity:1; transform: translateY(0); }
+  }
+
+  @keyframes slideDown {
+    from { opacity:0; transform: translateY(-8px); }
+    to   { opacity:1; transform: translateY(0); }
+  }
+
+  .reveal {
+    opacity: 0;
+    transform: translateY(28px);
+    transition: opacity .65s ease, transform .65s ease;
+  }
+  .reveal.visible { opacity: 1; transform: none; }
+
+  /* ── INFO BOX ── */
+  .info-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--silver);
+    border-radius: 0 4px 4px 0;
+    padding: 20px 24px;
+    margin-top: 24px;
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.8;
+  }
+
+  /* ── SCROLLBAR ── */
+  ::-webkit-scrollbar { width: 5px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
+
+  @media(max-width:640px) {
+    nav { padding: 16px 20px; }
+    .nav-links { display: none; }
+    .hero-stats { flex-direction: column; }
+    .stat { border-right: none; border-bottom: 1px solid var(--border); }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo-container">
+    <a href="../index.html" class="nav-logo-img">
+      <img src="../assets/logo.png" alt="NUKRAX Logo">
+    </a>
+    <a href="../index.html" class="nav-logo">
+      <div class="nav-dot"></div>
+      AURUM HFT ELITE
+    </a>
+  </div>
+  <ul class="nav-links">
+    <li><a href="#overview">Overview</a></li>
+    <li><a href="#timeframes">Timeframes</a></li>
+    <li><a href="#pairs">Pairs</a></li>
+    <li><a href="#models">Entry Models</a></li>
+    <li><a href="#flow">Trade Flow</a></li>
+    <li><a href="#exit">Exit Logic</a></li>
+    <li><a href="#risk">Risk Engine</a></li>
+    <li><a href="#params">Parameters</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-tag">MetaTrader 5 · MQL5 Expert Advisor · v1.0 · XAUUSDm · M1</div>
+  <h1>
+    AURUM HFT<br/>
+    <span class="accent">——</span> ELITE
+    <span class="sub-title">SMC · ICT · CRT · Price Action · 7-Timeframe Engine</span>
+  </h1>
+  <p class="hero-desc">
+    An ultra-advanced institutional-grade HFT Expert Advisor reverse-engineered from six elite trading systems.
+    Combines Smart Money Concepts, ICT methodology, CRT setups and PA confirmation across seven timeframes —
+    engineered for precision gold trading with strict prop-firm-compatible risk control.
+  </p>
+  <div class="hero-stats">
+    <div class="stat">
+      <div class="stat-val">7</div>
+      <div class="stat-label">Timeframes</div>
+    </div>
+    <div class="stat">
+      <div class="stat-val">8</div>
+      <div class="stat-label">Max Trades/Day</div>
+    </div>
+    <div class="stat">
+      <div class="stat-val">4</div>
+      <div class="stat-label">Max Loss/Week</div>
+    </div>
+    <div class="stat">
+      <div class="stat-val">3.5R</div>
+      <div class="stat-label">A+ Target</div>
+    </div>
+    <div class="stat">
+      <div class="stat-val">9</div>
+      <div class="stat-label">Confluence Pillars</div>
+    </div>
+    <div class="stat">
+      <div class="stat-val">2.1R</div>
+      <div class="stat-label">Blended R:R</div>
+    </div>
+  </div>
+  <div class="scroll-hint">
+    Scroll to explore
+    <div class="scroll-arrow"></div>
+  </div>
+</div>
+
+<hr class="divider"/>
+
+<!-- OVERVIEW -->
+<section id="overview">
+  <div class="reveal">
+    <div class="section-label">01 — Foundation</div>
+    <h2 class="section-title">System <span>Architecture</span></h2>
+    <div class="cards">
+      <div class="card">
+        <div class="card-icon">🏛️</div>
+        <h3>9-Pillar Confluence Engine</h3>
+        <p>Every trade scores 0–10 across nine distinct pillars: HTF Bias (W1/D1/H4/H1 weighted votes), BOS/CHoCH structure, Liquidity Sweep, Order Block proximity, FVG alignment, Premium/Discount array, Displacement, CRT setup, and Price Action pattern. A minimum score of 4 is required — A+ setups score ≥ 7.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">⏱️</div>
+        <h3>7-Timeframe Top-Down Engine</h3>
+        <p>W1 macro bias → D1 daily structure → H4 POI zones → H1 confirmation → M30 refinement → M15 trigger → M5 precision. Every timeframe runs a dedicated rescan on each new bar. M1 is the live execution canvas where CHoCH is detected and orders are fired.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🎯</div>
+        <h3>Tiered 3-Position Exit System</h3>
+        <p>Three sub-positions at different lot splits: 40% closes at TP1 (1R), 35% closes at TP2 (2R), and 25% runs as a free structural runner to TP3 (3.5R). After TP1, SL moves to breakeven+1 pip — the trade becomes risk-free. Trailing activates after TP2 is hit.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🔒</div>
+        <h3>Institutional Risk Architecture</h3>
+        <p>Hard weekly loss cap (default 4 trades), daily drawdown halt (3%), weekly drawdown halt (6%), consecutive loss streak pauses (3→session, 4→day, 5→24h), recovery mode at 10% drawdown, crisis spread closure, and adaptive lot reduction after losing streaks.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">⚡</div>
+        <h3>HFT Execution Design</h3>
+        <p>Persistent ATR handles eliminate per-tick indicator leaks. Async order mode minimises latency. IOC fill type for immediate-or-cancel execution. Tick-based sweep detection on M1. All heavy rescans are triggered only on new bars — never on every tick — to preserve CPU efficiency.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🛡️</div>
+        <h3>Session-Gated Entries</h3>
+        <p>Trading is restricted to three high-probability killzones: London (07:00–10:00 GMT), London–NY Overlap (12:00–15:00 GMT), and NY Power Hour (14:00–17:00 GMT). Asian session is excluded by default — gold's liquidity pools are best exploited during the European and US sessions.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider"/>
+
+<!-- TIMEFRAMES -->
+<section id="timeframes">
+  <div class="reveal">
+    <div class="section-label">02 — Timeframe Stack</div>
+    <h2 class="section-title">7-Timeframe <span>Analysis Engine</span></h2>
+    <p style="color:var(--muted);font-size:14px;line-height:1.8;max-width:680px;margin-bottom:48px;font-weight:400;">
+      The EA runs a full top-down analysis on every new bar across all seven timeframes simultaneously.
+      Each layer has a precise, non-redundant role. Place the EA on a
+      <strong style="color:var(--silver)">XAUUSDm M1 chart</strong> — all higher timeframe data is fetched internally.
+    </p>
+
+    <div class="tf-grid">
+      <div class="tf-item">
+        <div class="tf-badge badge-bias">Macro</div>
+        <div class="tf-label">W1</div>
+        <div class="tf-role">Weekly</div>
+        <div class="tf-desc">Highest weight (3 pts). Dominant macro directional narrative. Only trades aligned with the weekly structure.</div>
+      </div>
+      <div class="tf-item">
+        <div class="tf-badge badge-bias">Structure</div>
+        <div class="tf-label">D1</div>
+        <div class="tf-role">Daily</div>
+        <div class="tf-desc">2 pts weight. Daily BOS defines trend direction. D1 high/low creates the Premium/Discount array used for all entries.</div>
+      </div>
+      <div class="tf-item">
+        <div class="tf-badge badge-bias">POI</div>
+        <div class="tf-label">H4</div>
+        <div class="tf-role">4-Hour</div>
+        <div class="tf-desc">1 pt weight. H4 OBs carry 1.5× strength multiplier. H4 BOS and CHoCH used for major structural confirmation.</div>
+      </div>
+      <div class="tf-item">
+        <div class="tf-badge badge-entry">Confirm</div>
+        <div class="tf-label">H1</div>
+        <div class="tf-role">1-Hour</div>
+        <div class="tf-desc">1 pt weight. H1 BOS and CHoCH arm the entry engine. H1 OBs and FVGs scanned for zone confluence.</div>
+      </div>
+      <div class="tf-item primary">
+        <div class="tf-badge badge-entry">Refine</div>
+        <div class="tf-label">M30</div>
+        <div class="tf-role">30-Minute</div>
+        <div class="tf-desc">OBs and FVGs scanned for intermediate-level zones. Bridges H1 confirmation and M15 trigger levels.</div>
+      </div>
+      <div class="tf-item primary">
+        <div class="tf-badge badge-entry">Trigger</div>
+        <div class="tf-label">M15</div>
+        <div class="tf-role">15-Minute</div>
+        <div class="tf-desc">CRT range formation. M15 BOS. Liquidity pool scanning (equal highs/lows). Primary trigger and zone identification timeframe.</div>
+      </div>
+      <div class="tf-item primary">
+        <div class="tf-badge badge-entry">Precision</div>
+        <div class="tf-label">M5</div>
+        <div class="tf-role">5-Minute</div>
+        <div class="tf-desc">Price Action patterns (Pin Bars, Engulfing, 3-Bar Reversal). Finest OB/FVG zones. ATR calculation. Market phase detection.</div>
+      </div>
+      <div class="tf-item gold">
+        <div class="tf-badge badge-exec">Execute</div>
+        <div class="tf-label">M1</div>
+        <div class="tf-role">1-Minute</div>
+        <div class="tf-desc">Live CHoCH detection post-sweep. IOC order execution. TP/BE/SL management every tick. Counter-structure invalidation.</div>
+      </div>
+    </div>
+
+    <div class="info-box">
+      <strong style="color:var(--silver);">Chart Setup:</strong> Open a <strong style="color:var(--silver-hi)">XAUUSDm M1 chart</strong> in MetaTrader 5 and drag the EA onto it.
+      The EA reads all seven timeframes (W1 → M1) automatically using internal <code style="color:var(--silver)">iTime()</code>, <code style="color:var(--silver)">CopyRates()</code>,
+      and persistent indicator handles. No additional chart windows are needed.
+      Set <strong style="color:var(--silver-hi)">Inp_GMTOffset</strong> to match your broker's server time vs GMT for accurate killzone filtering.
+    </div>
+  </div>
+</section>
+
+<hr class="divider"/>
+
+<!-- PAIRS -->
+<section id="pairs">
+  <div class="reveal">
+    <div class="section-label">03 — Instrument Selection</div>
+    <h2 class="section-title">Best <span>Trading Pairs</span></h2>
+    <p style="color:var(--muted);font-size:14px;line-height:1.8;max-width:640px;margin-bottom:40px;font-weight:400;">
+      Designed and calibrated for XAUUSD. The SMC/ICT/CRT methodology fires most cleanly on gold due to its massive institutional liquidity sweeps, defined Asian session ranges, and explosive displacement moves during London open.
+    </p>
+
+    <div class="pairs-grid">
+      <div class="pair-item top">
+        <div class="pair-name">XAUUSDm</div>
+        <div class="pair-rating">
+          <div class="pair-dot filled"></div><div class="pair-dot filled"></div>
+          <div class="pair-dot filled"></div><div class="pair-dot filled"></div><div class="pair-dot filled"></div>
+        </div>
+        <div style="font-family:'Space Mono',monospace;font-size:10px;color:var(--green);letter-spacing:0.1em;margin-bottom:6px;">★ PRIMARY — OPTIMISED FOR THIS PAIR</div>
+        <div class="pair-desc">Gold is the ideal instrument. Enormous Asian session liquidity pools feed CRT setups. H4/H1 OBs are clean and respected. London open displacement is explosive. All 9 confluence pillars fire most frequently and cleanly on XAUUSD. Run this EA specifically on XAUUSDm (micro-lot variant).</div>
+      </div>
+      <div class="pair-item">
+        <div class="pair-name">XAUUSD</div>
+        <div class="pair-rating">
+          <div class="pair-dot filled"></div><div class="pair-dot filled"></div>
+          <div class="pair-dot filled"></div><div class="pair-dot filled"></div><div class="pair-dot"></div>
+        </div>
+        <div style="font-family:'Space Mono',monospace;font-size:10px;color:var(--silver);letter-spacing:0.1em;margin-bottom:6px;">COMPATIBLE — STANDARD LOT</div>
+        <div class="pair-desc">Standard XAUUSD works identically. The pip calibration (g_pip = point × 10) is correct for both. Verify your broker's XAUUSD symbol name matches exactly. Adjust MinSLPips if the broker has wider minimum distances.</div>
+      </div>
+      <div class="pair-item">
+        <div class="pair-name">GBPUSD</div>
+        <div class="pair-rating">
+          <div class="pair-dot filled"></div><div class="pair-dot filled"></div>
+          <div class="pair-dot filled"></div><div class="pair-dot half"></div><div class="pair-dot"></div>
+        </div>
+        <div class="pair-desc">High London session volatility. Excellent for SMC sweep entries and H1 CHoCH models. Raise MinConfluence to 6 and reduce ATRMax to 60 pips. SLBuffer can be reduced to 3 pts due to tighter spreads.</div>
+      </div>
+      <div class="pair-item">
+        <div class="pair-name">EURUSD</div>
+        <div class="pair-rating">
+          <div class="pair-dot filled"></div><div class="pair-dot filled"></div>
+          <div class="pair-dot filled"></div><div class="pair-dot half"></div><div class="pair-dot"></div>
+        </div>
+        <div class="pair-desc">Tightest spreads. Clean market structure. Good for CRT breakouts on London–NY overlap. Set MaxSpreadPts to 15 and ATRMin to 3 pips. Recommended for testing the EA logic before trading gold.</div>
+      </div>
+      <div class="pair-item">
+        <div class="pair-name">USDJPY</div>
+        <div class="pair-rating">
+          <div class="pair-dot filled"></div><div class="pair-dot filled"></div>
+          <div class="pair-dot half"></div><div class="pair-dot"></div><div class="pair-dot"></div>
+        </div>
+        <div class="pair-desc">Asian session ranges usable for TBS. Moderate SMC structure. Enable Asia killzone (00:00–03:00 GMT) for best results. Reduces daily trade count — pair with other sessions disabled.</div>
+      </div>
+      <div class="pair-item">
+        <div class="pair-name">NAS100</div>
+        <div class="pair-rating">
+          <div class="pair-dot filled"></div><div class="pair-dot filled"></div>
+          <div class="pair-dot half"></div><div class="pair-dot"></div><div class="pair-dot"></div>
+        </div>
+        <div class="pair-desc">NY session only. Strong OB respect on H4. Increase ATRMax to 150+ pips. Requires SLBuffer increase to 10–15 pts. CRT model fires well during pre-market sweeps. Advanced users only.</div>
+      </div>
+    </div>
+
+    <div class="info-box">
+      <strong style="color:var(--silver);">Timeframe for all pairs:</strong> Always attach the EA on an <strong style="color:var(--silver-hi)">M1 chart</strong> of the target symbol.
+      The execution timeframe is always M1 regardless of the pair. The 7-TF engine adapts automatically.
+      For non-gold pairs, recalibrate <code style="color:var(--silver)">Inp_ATRMinPips</code>, <code style="color:var(--silver)">Inp_MaxSpreadPts</code>,
+      and <code style="color:var(--silver)">Inp_SLBuffer</code> to match that instrument's typical volatility and pip value.
+    </div>
+  </div>
+</section>
+
+<hr class="divider"/>
+
+<!-- ENTRY MODELS -->
+<section id="models">
+  <div class="reveal">
+    <div class="section-label">04 — Entry Logic</div>
+    <h2 class="section-title">Entry <span>Models</span></h2>
+    <p style="color:var(--muted);font-size:14px;line-height:1.8;max-width:640px;margin-bottom:48px;font-weight:400;">
+      The EA runs a 9-pillar confluence score on every potential entry. Each pillar awards points independently.
+      A trade fires only when the total score meets the minimum threshold. Click any model below to expand details.
+    </p>
+
+    <!-- CONFLUENCE METER -->
+    <div class="score-bar-wrap">
+      <div class="score-bar-label">Confluence Score Meter — 0 to 10 points</div>
+      <div class="score-levels">
+        <div class="score-seg active-low"></div>
+        <div class="score-seg active-low"></div>
+        <div class="score-seg active-low"></div>
+        <div class="score-seg active-mid"></div>
+        <div class="score-seg active-mid"></div>
+        <div class="score-seg active-high"></div>
+        <div class="score-seg active-high"></div>
+        <div class="score-seg active-top"></div>
+        <div class="score-seg active-top"></div>
+        <div class="score-seg active-top"></div>
+      </div>
+      <div class="score-labels">
+        <span>0 — Blocked</span>
+        <span>4 — Min Entry</span>
+        <span>7 — A+ Setup</span>
+        <span>10 — Max</span>
+      </div>
+      <div style="margin-top:20px;display:flex;flex-wrap:wrap;gap:8px;">
+        <span class="tag tag-red">0–3 No Trade</span>
+        <span class="tag tag-silver">4–6 Standard Entry (0.75% risk)</span>
+        <span class="tag tag-gold">7–10 A+ Entry (1.25% risk)</span>
+      </div>
+    </div>
+
+    <!-- MODEL 1: Liquidity Sweep + CHoCH -->
+    <div class="model-block">
+      <div class="model-header">
+        <div class="model-tag">MODEL 1</div>
+        <div>
+          <div class="model-title">Liquidity Sweep + M1 Change of Character (CHoCH)</div>
+          <div class="model-subtitle">Core ICT/SMC model · Highest-scoring entry type · Awards +4 pts combined</div>
+        </div>
+      </div>
+      <div style="font-size:13px;color:var(--muted);line-height:1.8;margin-bottom:16px;">
+        The primary entry model. The EA continuously scans the M15 Liquidity Pool array (equal highs = BSL, equal lows = SSL) built from session swing highs/lows with a configurable tolerance.
+        When a M1 candle wicks through a pool and closes back inside, a sweep is registered. The sweep then starts a countdown timer (default 6 bars).
+        Within that window, price must form a CHoCH — break above the post-sweep high (for longs) or below the post-sweep low (for shorts) — to confirm the institutional reversal.
+        Only when both sweep AND CHoCH fire does the entry evaluation proceed.
+      </div>
+      <div class="model-conditions">
+        <div class="condition">
+          <div class="condition-num">Condition 01</div>
+          <div class="condition-title">Equal Highs or Lows Identified</div>
+          <div class="condition-desc">Two or more M15 swing highs within Inp_LiqTolerance (default 3 pips) of each other form a Buy-Side Liquidity pool. Equal lows form a Sell-Side pool. Minimum 2 touches required.</div>
+        </div>
+        <div class="condition">
+          <div class="condition-num">Condition 02</div>
+          <div class="condition-title">Sweep Candle Detected on M1</div>
+          <div class="condition-desc">A M1 bar wicks through the pool by Inp_LiqSweepMin (2 pips) to Inp_LiqSweepMax (18 pips). The candle must close back beyond the pool level — the wick is rejection evidence.</div>
+        </div>
+        <div class="condition">
+          <div class="condition-num">Condition 03</div>
+          <div class="condition-title">CHoCH Confirmation Within Timeout</div>
+          <div class="condition-desc">Post-sweep, price must break the post-sweep swing high (long) or low (short) by at least 1 pip on M1 within Inp_CHoCHTimeout (6) bars. Failure resets the sweep state.</div>
+        </div>
+        <div class="condition">
+          <div class="condition-num">Condition 04</div>
+          <div class="condition-title">HTF Bias Alignment</div>
+          <div class="condition-desc">The sweep direction must not contradict the combined HTF bias. A bull sweep requires combinedBias ≥ 0. A bear sweep requires combinedBias ≤ 0. Counter-trend sweeps are blocked.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODEL 2: Order Block -->
+    <div class="model-block">
+      <div class="model-header">
+        <div class="model-tag">MODEL 2</div>
+        <div>
+          <div class="model-title">Order Block (OB) Entry</div>
+          <div class="model-subtitle">SMC institutional zone model · Multi-TF scanning · Awards up to +3 pts by strength</div>
+        </div>
+      </div>
+      <div style="font-size:13px;color:var(--muted);line-height:1.8;margin-bottom:16px;">
+        Order Blocks are scanned on five timeframes: H4, H1, M30, M15, and M5. A Bullish OB is the last bearish candle before an impulsive move higher where the next candle's body is ≥ 1.6× the OB candle's body. A Bearish OB is the last bullish candle before an impulse lower.
+        OBs on H4 and H1 carry a 1.5× strength multiplier, making them worth more confluence points. Once price trades into an OB zone (between its high and low), the zone awards points proportional to its strength score.
+        Mitigated OBs (price has closed through them) are automatically removed from the array.
+      </div>
+      <div class="model-conditions">
+        <div class="condition">
+          <div class="condition-num">Condition 01</div>
+          <div class="condition-title">Impulse Candle Required</div>
+          <div class="condition-desc">The candle immediately after the OB candle must have a body ≥ Inp_OBImpulseMult (1.6×) times the OB candle's body. This confirms institutional displacement — not noise.</div>
+        </div>
+        <div class="condition">
+          <div class="condition-num">Condition 02</div>
+          <div class="condition-title">Unmitgated Zone Only</div>
+          <div class="condition-desc">The OB must not have been closed through by any candle between its formation and the current bar. Once price closes beyond the OB high (bear) or low (bull), it's marked mitigated and removed.</div>
+        </div>
+        <div class="condition">
+          <div class="condition-num">Condition 03</div>
+          <div class="condition-title">Price Inside the OB Zone</div>
+          <div class="condition-desc">Current Ask (for longs) or Bid (for shorts) must be between the OB's low and high at entry time. The closest OB by midpoint distance is selected when multiple zones overlap.</div>
+        </div>
+        <div class="condition">
+          <div class="condition-num">Condition 04</div>
+          <div class="condition-title">Directional Alignment</div>
+          <div class="condition-desc">Bullish OBs only count for long setups. Bearish OBs only count for short setups. OBs on opposing TFs are ignored regardless of their strength.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODEL 3: FVG -->
+    <div class="model-block">
+      <div class="model-header">
+        <div class="model-tag">MODEL 3</div>
+        <div>
+          <div class="model-title">Fair Value Gap (FVG / Imbalance)</div>
+          <div class="model-subtitle">ICT imbalance model · 3-candle gap detection · Awards +2 pts</div>
+        </div>
+      </div>
+      <div style="font-size:13px;color:var(--muted);line-height:1.8;margin-bottom:16px;">
+        FVGs are scanned across H1, M30, M15, and M5. A Bullish FVG exists when candle[i-1].low is above candle[i+1].high — a gap the middle candle's body skipped through. A Bearish FVG is the mirror. Minimum gap size is Inp_FVGMinPips (3.0 pips) to filter noise.
+        FVGs act as high-probability magnets. When price retraces into an FVG mid-point and there is OB/sweep confluence, the probability of continuation rises significantly. The FVG SL is placed just below the FVG low (bull) or above the FVG high (bear).
+      </div>
+      <div class="model-conditions">
+        <div class="condition">
+          <div class="condition-num">Condition 01</div>
+          <div class="condition-title">3-Candle Gap Formation</div>
+          <div class="condition-desc">Candle[i-1].low > Candle[i+1].high (bullish) or Candle[i+1].low > Candle[i-1].high (bearish). The gap between the first and third candle must be ≥ Inp_FVGMinPips in size.</div>
+        </div>
+        <div class="condition">
+          <div class="condition-num">Condition 02</div>
+          <div class="condition-title">Unmitigated Gap</div>
+          <div class="condition-desc">The gap must not have been filled. Bullish FVGs are mitigated when bid falls below the FVG low. Bearish FVGs are mitigated when ask rises above the FVG high. Mitigated zones are purged.</div>
+        </div>
+        <div class="condition">
+          <div class="condition-num">Condition 03</div>
+          <div class="condition-title">Price Within 25 Pips</div>
+          <div class="condition-desc">The FVG mid-point must be within 25 pips of the current price to be counted. Distant unmitigated FVGs are logged but do not score points unless price returns to their vicinity.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODEL 4: CRT -->
+    <div class="model-block">
+      <div class="model-header">
+        <div class="model-tag">MODEL 4</div>
+        <div>
+          <div class="model-title">CRT — Candle Range Theory Setup</div>
+          <div class="model-subtitle">Derived from APEX HFT source · M15 range extension model · Awards +3 pts</div>
+        </div>
+      </div>
+      <div style="font-size:13px;color:var(--muted);line-height:1.8;margin-bottom:16px;">
+        CRT identifies when price extends beyond a defined range (typically the Asian session or prior consolidation) and then returns inside. The extension wicking outside and closing back in signals a liquidity grab and institutional reversal.
+        The EA scans the last Inp_CRT_Lookback (5) M15 bars to establish the range high/low. If the most recent bar extended below the range low by Inp_CRT_ExtMin (3 pips) to Inp_CRT_ExtMax (22 pips) and closed back inside, a Bullish CRT is flagged. The SL is placed at the extension wick low.
+        CRT setups carry the highest single-model score (+3 pts) because they combine a sweep AND a range return in one signal.
+      </div>
+      <div class="model-conditions">
+        <div class="condition">
+          <div class="condition-num">Condition 01</div>
+          <div class="condition-title">Prior Range Formation</div>
+          <div class="condition-desc">Last Inp_CRT_Lookback (5) M15 bars define the reference range high and low. This typically captures the Asian session consolidation window.</div>
+        </div>
+        <div class="condition">
+          <div class="condition-num">Condition 02</div>
+          <div class="condition-title">Extension Within Limits</div>
+          <div class="condition-desc">The most recent completed M15 bar must have extended beyond the range by exactly 3–22 pips. Too small = noise. Too large = breakout, not CRT setup.</div>
+        </div>
+        <div class="condition">
+          <div class="condition-num">Condition 03</div>
+          <div class="condition-title">Close Back Inside Range</div>
+          <div class="condition-desc">After the extension, BOTH the prior bar's close AND the current bar's open must be back inside the original range. The wick represents the trap; the return confirms the rejection.</div>
+        </div>
+        <div class="condition">
+          <div class="condition-num">Condition 04</div>
+          <div class="condition-title">Active Within 10 Bars</div>
+          <div class="condition-desc">A CRT setup expires after 10 M15 bars (150 minutes) if no trade has fired. Stale CRT signals are automatically cleared to prevent outdated entries.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODEL 5: HTF Bias + BOS -->
+    <div class="model-block">
+      <div class="model-header">
+        <div class="model-tag">MODEL 5</div>
+        <div>
+          <div class="model-title">HTF Weighted Bias + Break of Structure (BOS)</div>
+          <div class="model-subtitle">7-TF directional engine · Macro narrative alignment · Awards up to +7 pts</div>
+        </div>
+      </div>
+      <div style="font-size:13px;color:var(--muted);line-height:1.8;margin-bottom:16px;">
+        The weighted HTF bias system combines four timeframes into a directional vote. W1 contributes 3 points (highest macro weight), D1 contributes 2 points, H4 contributes 1 point, and H1 contributes 1 point. A total score of ≥ +3 activates the bull bias; ≤ -3 activates the bear bias. Anything between is neutral — and neutral bias blocks all entries.
+        BOS detection uses swing-based structure: a rolling lookback identifies the most recent swing high and low on each timeframe. When price closes above the swing high (with the low formed more recently), a Bullish BOS is registered. H1 BOS awards +2 pts; H4 and M15 award +1 pt each.
+      </div>
+      <div class="model-conditions">
+        <div class="condition">
+          <div class="condition-num">Bias Weights</div>
+          <div class="condition-title">W1 = 3 · D1 = 2 · H4 = 1 · H1 = 1</div>
+          <div class="condition-desc">Total vote ≥ +3 = Bull bias confirmed. ≤ -3 = Bear bias confirmed. -2 to +2 = Neutral, no trades taken. The bias combines all four timeframes into a single directional conviction score.</div>
+        </div>
+        <div class="condition">
+          <div class="condition-num">BOS Logic</div>
+          <div class="condition-title">Swing-Point Based Confirmation</div>
+          <div class="condition-desc">Uses a 5-bar pivot lookback to identify true swing highs and lows. A close above the prior swing high (after the low was formed more recently) constitutes a BOS, not just a single candle close above any level.</div>
+        </div>
+        <div class="condition">
+          <div class="condition-num">H1 CHoCH</div>
+          <div class="condition-title">Change of Character on H1</div>
+          <div class="condition-desc">Detected when price closes above a 3-bar H1 high while H4 bias is bearish (flip signal), or closes below a 3-bar H1 low while H4 bias is bullish. Awards +2 pts — signals that a HTF trend shift is beginning.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODEL 6: Premium/Discount + Displacement + PA -->
+    <div class="model-block">
+      <div class="model-header">
+        <div class="model-tag">MODEL 6</div>
+        <div>
+          <div class="model-title">Premium / Discount + Displacement + Price Action</div>
+          <div class="model-subtitle">Supporting confluence pillars · Awards +1 pt each · Maximum +3 pts combined</div>
+        </div>
+      </div>
+      <div style="font-size:13px;color:var(--muted);line-height:1.8;margin-bottom:16px;">
+        Three additional confluence pillars each contribute +1 point. The Premium/Discount check compares current price to the midpoint of the D1 session range — longs should be below the 50% level (discount), shorts above (premium). Displacement checks whether the last M15 candle's body is ≥ 1.6× the prior candle's body in the correct direction. Price Action scans M5 for Pin Bars (lower/upper wick ≥ 2× the body), Engulfing patterns (full body overlap), and 3-Bar Reversals (two candles in prior direction, third reverses past the midpoint of bar 1).
+      </div>
+      <div class="model-conditions">
+        <div class="condition">
+          <div class="condition-num">P/D Array</div>
+          <div class="condition-title">Discount for Buys · Premium for Sells</div>
+          <div class="condition-desc">D1 session range midpoint divides price into Premium (above) and Discount (below). Buying in premium or selling in discount reduces confluence score — those trades need higher overall scores to fire.</div>
+        </div>
+        <div class="condition">
+          <div class="condition-num">Displacement</div>
+          <div class="condition-title">Impulsive Move Confirmation</div>
+          <div class="condition-desc">Last M15 candle body must be ≥ 1.6× the previous candle's body in the trade direction. Confirms institutional momentum behind the potential entry. Avoids entries in choppy conditions.</div>
+        </div>
+        <div class="condition">
+          <div class="condition-num">Price Action</div>
+          <div class="condition-title">M5 Reversal Pattern Required</div>
+          <div class="condition-desc">Pin Bar: lower wick ≥ 2× body (bull) or upper wick ≥ 2× body (bear). Engulfing: current body engulfs prior body. 3-Bar Reversal: two bars in the prior direction, third closes past their midpoint.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider"/>
+
+<!-- TRADE FLOW -->
+<section id="flow">
+  <div class="reveal">
+    <div class="section-label">05 — Execution Sequence</div>
+    <h2 class="section-title">Trade <span>Flow</span></h2>
+    <p style="color:var(--muted);font-size:14px;line-height:1.8;max-width:640px;margin-bottom:52px;font-weight:400;">
+      Every trade passes through this exact sequence on every tick. Click each step to expand the internal logic.
+    </p>
+
+    <div class="flow">
+
+      <div class="flow-step" onclick="toggleStep(this)">
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <h3>Bar Detection + Multi-TF Rescan</h3>
+          <p>New bars detected on W1, D1, H4, H1, M30, M15, M5. Each triggers its own rescan function — bias updates, BOS scans, OB/FVG scans, CRT updates — only on the bar that changed.</p>
+          <div class="hint">↓ Click to expand details</div>
+          <div class="step-detail">
+            <strong>DetectNewBars():</strong> Compares iTime() for each of 7 TFs to stored timestamps. Sets g_newBar[i]=true only when the bar has changed. Prevents redundant re-execution of heavy scanning functions on every tick.<br/><br/>
+            <strong>Rescan priority:</strong> W1→macro bias | D1→daily structure + HTF levels | H4→H4 BOS + OBs | H1→H1 BOS + CHoCH + OBs + FVGs | M30→OBs + FVGs | M15→M15 BOS + OBs + FVGs + liq pools + CRT | M5→M5 OBs + FVGs + ATR + phase detection.
+          </div>
+        </div>
+      </div>
+
+      <div class="flow-step" onclick="toggleStep(this)">
+        <div class="step-num">2</div>
+        <div class="step-content">
+          <h3>Pre-Entry Gate Check (Every Tick)</h3>
+          <p>Six hard gates must all pass before sweep detection is even attempted. Any failed gate aborts the tick immediately and updates the dashboard.</p>
+          <div class="hint">↓ Click to expand details</div>
+          <div class="step-detail">
+            <strong>Gate 1 — Halt check:</strong> If g_halted=true and TimeCurrent() &lt; g_pauseUntil, exit immediately.<br/>
+            <strong>Gate 2 — Risk limits:</strong> CheckRiskLimits() — weekly loss count, daily loss count, daily trade count, daily DD%, weekly DD%.<br/>
+            <strong>Gate 3 — Session:</strong> IsKillzone() — must be in London, Overlap, or NY window (configurable).<br/>
+            <strong>Gate 4 — News:</strong> IsNewsBlackout() — within ±15 min of any configured news event.<br/>
+            <strong>Gate 5 — Spread:</strong> Current spread must be ≤ Inp_MaxSpreadPts (35 points).<br/>
+            <strong>Gate 6 — ATR:</strong> M5 ATR must be between Inp_ATRMinPips (6) and Inp_ATRMaxPips (90) to confirm active but not extreme conditions.<br/>
+            <strong>Gate 7 — Bias:</strong> g_combinedBias must be non-zero (bull or bear confirmed).
+          </div>
+        </div>
+      </div>
+
+      <div class="flow-step" onclick="toggleStep(this)">
+        <div class="step-num">3</div>
+        <div class="step-content">
+          <h3>Liquidity Sweep Detection (Every Tick)</h3>
+          <p>Scans the M15 liquidity pool array against every incoming M1 candle. If a wick hits and closes through a pool level within the configured distance, a sweep is flagged and the CHoCH timer starts.</p>
+          <div class="hint">↓ Click to expand details</div>
+          <div class="step-detail">
+            <strong>Bull sweep:</strong> M1 candle wicks below SSL price by 2–18 pips AND closes above SSL. Sweep direction must align with g_combinedBias ≥ 0.<br/>
+            <strong>Bear sweep:</strong> M1 candle wicks above BSL price by 2–18 pips AND closes below BSL. Bias must be ≤ 0.<br/>
+            <strong>Post-sweep:</strong> g_sweepWick stores the wick extreme. g_sweepRef tracks the highest high (bull) or lowest low (bear) formed after the sweep — this is the CHoCH target level.<br/>
+            <strong>Timer:</strong> g_sweepBars increments each M5 bar. If CHoCH not confirmed within Inp_CHoCHTimeout (6) M5 bars, sweep resets.
+          </div>
+        </div>
+      </div>
+
+      <div class="flow-step" onclick="toggleStep(this)">
+        <div class="step-num">4</div>
+        <div class="step-content">
+          <h3>CHoCH Confirmation (Every Tick, Post-Sweep)</h3>
+          <p>Once a sweep is registered, every subsequent M1 close is tested against the post-sweep reference level. A confirmed CHoCH triggers the entry evaluation pipeline.</p>
+          <div class="hint">↓ Click to expand details</div>
+          <div class="step-detail">
+            <strong>Bull CHoCH:</strong> M1 close > g_sweepRef + 1 pip. Confirms institutional absorption of sell-side liquidity and structural shift to upside.<br/>
+            <strong>Bear CHoCH:</strong> M1 close &lt; g_sweepRef - 1 pip. Confirms absorption of buy-side liquidity and structural shift to downside.<br/>
+            <strong>Alert triggered:</strong> If Inp_EnableAlerts=true, an MT5 alert fires on CHoCH confirmation — useful for manual review before the EA auto-executes.
+          </div>
+        </div>
+      </div>
+
+      <div class="flow-step" onclick="toggleStep(this)">
+        <div class="step-num">5</div>
+        <div class="step-content">
+          <h3>Confluence Score Calculation</h3>
+          <p>BuildSetup() runs the full 9-pillar scoring model. Points awarded from all active signals, OB/FVG proximity, CRT, bias, BOS, P/D array, displacement, and PA. Score must reach Inp_MinConfluence to proceed.</p>
+          <div class="hint">↓ Click to expand details</div>
+          <div class="step-detail">
+            <strong>Scoring breakdown (max uncapped, capped to 10):</strong><br/>
+            W1 bias: +3 | D1 bias: +2 | H4/H1 bias: +1 each | H1 BOS: +2 | H4 BOS: +1 | M15 BOS: +1 | H1 CHoCH: +2 | M1 CHoCH: +2 | Sweep: +2 | OB (by strength): +1 to +3 | FVG: +2 | P/D: +1 | Displacement: +1 | CRT: +3 | PA: +1<br/><br/>
+            <strong>SL derivation priority:</strong> CRT extLow/extHigh → OB boundary → FVG boundary → sweep wick → M5 swing low/high. All SLs have an Inp_SLBuffer (5 pt) buffer added beyond the structure level.
+          </div>
+        </div>
+      </div>
+
+      <div class="flow-step" onclick="toggleStep(this)">
+        <div class="step-num">6</div>
+        <div class="step-content">
+          <h3>Lot Sizing + Order Execution (3 Positions)</h3>
+          <p>Lot size calculated from balance × risk% ÷ SL distance using tick value. Three sub-orders fire simultaneously: T1 (40% at TP1), T2 (35% at TP2), T3 (25% at TP3).</p>
+          <div class="hint">↓ Click to expand details</div>
+          <div class="step-detail">
+            <strong>Lot formula:</strong> riskAmount = Capital × riskPct% | valuePerPoint = (tickValue / tickSize) × point | lots = riskAmount / (SL_points × valuePerPoint)<br/><br/>
+            <strong>Risk scaling:</strong> A+ setups (score ≥ 7) use Inp_APlusRisk (1.25%). Standard setups use Inp_RiskPercent (0.75%). After Inp_ReduceAfter (2) consecutive losses, risk drops to 75% of the relevant rate. In recovery mode, risk is capped at 50% of base.<br/><br/>
+            <strong>Execution:</strong> trade.SetAsyncMode(true) + ORDER_FILLING_IOC for minimum latency. Three Buy/Sell calls with different TP levels. All three share the same SL. Comment string includes model name and A+/standard classification.
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<hr class="divider"/>
+
+<!-- EXIT LOGIC -->
+<section id="exit">
+  <div class="reveal">
+    <div class="section-label">06 — Trade Management</div>
+    <h2 class="section-title">Exit <span>Logic</span></h2>
+    <p style="color:var(--muted);font-size:14px;line-height:1.8;max-width:640px;margin-bottom:48px;font-weight:400;">
+      Once open, the trade is managed every tick through a layered exit hierarchy. The system prioritises capital protection first, then profit maximisation.
+    </p>
+
+    <div class="cards-plain" style="margin-bottom:32px;">
+      <div class="card-plain">
+        <div style="font-family:'Space Mono',monospace;font-size:10px;color:var(--silver);letter-spacing:0.12em;text-transform:uppercase;margin-bottom:12px;">Stage 1 — TP1 (1R)</div>
+        <h3>Breakeven Move</h3>
+        <p>When bid (longs) or ask (shorts) reaches exactly 1R from entry, the T1 position is closed by the broker's TP order. If Inp_MoveToBreakeven=true, all remaining SLs are moved to entry price + 1 pip. The trade is now risk-free — a stop-out on the remaining positions costs zero.</p>
+      </div>
+      <div class="card-plain">
+        <div style="font-family:'Space Mono',monospace;font-size:10px;color:var(--silver);letter-spacing:0.12em;text-transform:uppercase;margin-bottom:12px;">Stage 2 — TP2 (2R)</div>
+        <h3>Trailing Stop Activation</h3>
+        <p>When price reaches 2R, T2 closes by TP order. The trailing stop activates on the remaining T3 runner. The trail uses M5 structural swing lows/highs — not a fixed pip trail — giving the runner room to breathe while locking in profit beyond the current swing.</p>
+      </div>
+      <div class="card-plain">
+        <div style="font-family:'Space Mono',monospace;font-size:10px;color:var(--amber);letter-spacing:0.12em;text-transform:uppercase;margin-bottom:12px;">Stage 3 — TP3 (3.5R)</div>
+        <h3>Runner to Opposing Liquidity</h3>
+        <p>The 25% runner targets either the next opposing liquidity pool (BSL for longs, SSL for shorts) if one is within range, or 3.5R by default. The structural trailing stop follows M5 swing points with Inp_TrailPips (10) pip cushion, exiting only when structure breaks.</p>
+      </div>
+    </div>
+
+    <div class="risk-grid">
+      <div class="risk-item" style="border-top:2px solid var(--red);">
+        <div class="risk-item-label">Time Exit</div>
+        <div class="risk-item-val">60 min</div>
+        <div class="risk-item-desc">If TP1 has not been hit within Inp_MaxTradeMins (60 minutes), the entire trade is closed at market. Prevents positions from being held through session transitions without confirmation.</div>
+      </div>
+      <div class="risk-item" style="border-top:2px solid var(--red);">
+        <div class="risk-item-label">Counter-Structure Exit</div>
+        <div class="risk-item-val">M5 BOS</div>
+        <div class="risk-item-desc">If a M5 swing low (longs) or swing high (shorts) forms and price closes beyond it, the trade is immediately closed. Counter-structure invalidates the original entry thesis — staying in is gambling.</div>
+      </div>
+      <div class="risk-item" style="border-top:2px solid var(--red);">
+        <div class="risk-item-label">Pool Re-Entry Exit</div>
+        <div class="risk-item-val">Sweep Wick</div>
+        <div class="risk-item-desc">If price re-enters the original sweep wick level (trades back through g_sweepWick), the trade is immediately closed. The pool was not truly swept — institutional activity did not confirm. Thesis invalidated.</div>
+      </div>
+      <div class="risk-item" style="border-top:2px solid var(--red);">
+        <div class="risk-item-label">Crisis Spread Exit</div>
+        <div class="risk-item-val">45 pips</div>
+        <div class="risk-item-desc">If spread exceeds Inp_CrisisSpread (45 pips) at any tick while a trade is open, ALL positions are force-closed immediately. Protects against news spike slippage and requote events.</div>
+      </div>
+      <div class="risk-item" style="border-top:2px solid var(--green);">
+        <div class="risk-item-label">Breakeven Trigger</div>
+        <div class="risk-item-val">After 1R</div>
+        <div class="risk-item-desc">SL moves to entry + 1 pip immediately when TP1 price is touched. The trade becomes guaranteed zero-loss. This fires before the T1 broker TP order resolves.</div>
+      </div>
+      <div class="risk-item" style="border-top:2px solid var(--green);">
+        <div class="risk-item-label">Trail Activation</div>
+        <div class="risk-item-val">After 2R</div>
+        <div class="risk-item-desc">Structural trailing stop activates after TP2 is reached. Follows M5 swing lows/highs with Inp_TrailPips (10) pip buffer. Minimum profit of 2R is locked in before trail begins.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider"/>
+
+<!-- RISK ENGINE -->
+<section id="risk">
+  <div class="reveal">
+    <div class="section-label">07 — Risk Control Engine</div>
+    <h2 class="section-title">Institutional <span>Risk Rules</span></h2>
+    <p style="color:var(--muted);font-size:14px;line-height:1.8;max-width:640px;margin-bottom:48px;font-weight:400;">
+      The risk engine runs on every tick and is checked before every trade. It implements full prop-firm-compatible loss control with automatic pauses, recovery mode, and weekly reset logic.
+    </p>
+
+    <div class="risk-grid">
+      <div class="risk-item" style="border-top:3px solid var(--silver);">
+        <div class="risk-item-label">★ Max Weekly Losses</div>
+        <div class="risk-item-val">4 Trades</div>
+        <div class="risk-item-desc">The critical rule. After 4 losing trades in a calendar week (Mon–Fri), the EA halts and g_pauseUntil is set to Friday 23:59. Trading resumes automatically on the following Monday. An alert fires immediately.</div>
+      </div>
+      <div class="risk-item" style="border-top:2px solid var(--red);">
+        <div class="risk-item-label">Max Daily Losses</div>
+        <div class="risk-item-val">2 Trades</div>
+        <div class="risk-item-desc">After 2 losing trades on the same calendar day, no further entries are taken until midnight server time. The daily counter resets automatically at the start of each new day bar.</div>
+      </div>
+      <div class="risk-item" style="border-top:2px solid var(--red);">
+        <div class="risk-item-label">Daily Drawdown Halt</div>
+        <div class="risk-item-val">3%</div>
+        <div class="risk-item-desc">If equity drops 3% from the day-open balance at any point during the trading day, the EA halts immediately for the remainder of that day. Resets when a new day counter fires.</div>
+      </div>
+      <div class="risk-item" style="border-top:2px solid var(--red);">
+        <div class="risk-item-label">Weekly Drawdown Halt</div>
+        <div class="risk-item-val">6%</div>
+        <div class="risk-item-desc">If equity drops 6% from the week-open balance at any time, the EA halts until Friday 23:59 regardless of trade count. Prevents catastrophic drawdown in hostile market conditions.</div>
+      </div>
+      <div class="risk-item">
+        <div class="risk-item-label">3 Consecutive Losses</div>
+        <div class="risk-item-val">4H Pause</div>
+        <div class="risk-item-desc">After 3 consecutive losing trades, the EA pauses for 4 hours (one session). This prevents fighting the market when conditions are clearly unfavourable for the current setup logic.</div>
+      </div>
+      <div class="risk-item">
+        <div class="risk-item-label">4 Consecutive Losses</div>
+        <div class="risk-item-val">Day Pause</div>
+        <div class="risk-item-desc">Four consecutive losses triggers an end-of-day pause. The EA resumes at midnight server time. A very strong signal that market conditions have shifted — review settings before next session.</div>
+      </div>
+      <div class="risk-item">
+        <div class="risk-item-label">5 Consecutive Losses</div>
+        <div class="risk-item-val">24H Lock</div>
+        <div class="risk-item-desc">Five consecutive losing trades locks the EA for a full 24 hours with an immediate alert. This is an extreme event requiring manual review of market conditions and EA parameters before re-enabling.</div>
+      </div>
+      <div class="risk-item">
+        <div class="risk-item-label">Recovery Mode</div>
+        <div class="risk-item-val">10% DD</div>
+        <div class="risk-item-desc">If the drawdown from the all-time equity peak exceeds 10%, recovery mode activates. Risk per trade is capped at 50% of the configured base rate until equity recovers above the threshold.</div>
+      </div>
+      <div class="risk-item">
+        <div class="risk-item-label">Lot Reduction</div>
+        <div class="risk-item-val">After 2 L</div>
+        <div class="risk-item-desc">After Inp_ReduceAfter (2) consecutive losses, lot size is automatically reduced to 75% of the calculated size for subsequent trades, even if the weekly and daily limits haven't been reached.</div>
+      </div>
+      <div class="risk-item">
+        <div class="risk-item-label">Max Daily Trades</div>
+        <div class="risk-item-val">8</div>
+        <div class="risk-item-desc">Hard cap of 8 trades per day regardless of win/loss. Prevents over-trading during trending or choppy conditions. Resets at midnight. Configurable via Inp_MaxDailyTrades.</div>
+      </div>
+      <div class="risk-item">
+        <div class="risk-item-label">Crisis Spread</div>
+        <div class="risk-item-val">45 pips</div>
+        <div class="risk-item-desc">If spread exceeds 45 pips at any tick (open position or not), ALL positions close immediately. Blocks new entries until spread normalises. Protects against news spikes and broker disconnects.</div>
+      </div>
+      <div class="risk-item">
+        <div class="risk-item-label">Blended R:R</div>
+        <div class="risk-item-val">~2.1R</div>
+        <div class="risk-item-desc">40% at 1R + 35% at 2R + 25% runner at avg 3.5R = weighted average of 2.1R on full wins. With a 50% win rate this system is mathematically profitable. A+ setups can exceed 3R blended.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider"/>
+
+<!-- PARAMETERS -->
+<section id="params">
+  <div class="reveal">
+    <div class="section-label">08 — Configuration</div>
+    <h2 class="section-title">Input <span>Parameters</span></h2>
+
+    <table class="params-table" style="margin-bottom:40px;">
+      <thead>
+        <tr><th>Parameter</th><th>Default</th><th>Description</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Inp_RiskPercent</td><td>0.75</td><td>Base risk % per trade. Lot size auto-calculated as Balance × risk% ÷ SL distance in account currency.</td></tr>
+        <tr><td>Inp_APlusRisk</td><td>1.25</td><td>Risk % applied to A+ setups (score ≥ 7). Higher probability = higher allocation. Capped by recovery mode.</td></tr>
+        <tr><td>Inp_AccountCapital</td><td>0</td><td>Manual capital override. Set to 0 to use the live account balance automatically for lot calculations.</td></tr>
+        <tr><td>Inp_MinConfluence</td><td>4</td><td>Minimum confluence score (0–10) required to open any trade. Raise to 5–6 for more selective filtering.</td></tr>
+        <tr><td>Inp_APlusScore</td><td>7</td><td>Score threshold for A+ classification. A+ trades use higher risk and are given priority in the session.</td></tr>
+        <tr><td>Inp_MaxDailyTrades</td><td>8</td><td>Hard daily trade ceiling. Resets at midnight server time. Lower to 4–5 for prop firm accounts.</td></tr>
+        <tr><td>Inp_MaxWeeklyLoss</td><td>4</td><td>★ Critical: max losing trades per week before full halt. Default 4 matches most prop firm rules.</td></tr>
+        <tr><td>Inp_MaxDailyLoss</td><td>2</td><td>Max losing trades per day. After 2 losses in a day, trading halts until midnight.</td></tr>
+        <tr><td>Inp_MaxDailyDD</td><td>3.0</td><td>Max daily drawdown % from day-open balance. Triggers immediate trading halt for the day.</td></tr>
+        <tr><td>Inp_MaxWeeklyDD</td><td>6.0</td><td>Max weekly drawdown % from week-open balance. Triggers halt until Monday.</td></tr>
+        <tr><td>Inp_RecoveryDD</td><td>10.0</td><td>Drawdown from equity peak (%) that activates recovery mode — risk halved automatically.</td></tr>
+        <tr><td>Inp_TP1_RR</td><td>1.0</td><td>TP1 reward:risk ratio (40% of position). Breakeven moves after this hits.</td></tr>
+        <tr><td>Inp_TP2_RR</td><td>2.0</td><td>TP2 reward:risk ratio (35% of position). Trail activates after this hits.</td></tr>
+        <tr><td>Inp_TP3_RR</td><td>3.5</td><td>TP3 runner target (25% of position). Overridden by opposing liquidity pool if closer.</td></tr>
+        <tr><td>Inp_TP1_ClosePct</td><td>40.0</td><td>% of total lot to close at TP1. Remaining 60% split between TP2 and TP3.</td></tr>
+        <tr><td>Inp_TP2_ClosePct</td><td>35.0</td><td>% of total lot to close at TP2. Remaining 25% runs as the structural runner.</td></tr>
+        <tr><td>Inp_MinSLPips</td><td>7.0</td><td>Minimum SL in pips. Setups with tighter structure are rejected — avoids noise entries on XAUUSD.</td></tr>
+        <tr><td>Inp_MaxSLPips</td><td>35.0</td><td>Maximum SL in pips. Wider SLs rejected — controls maximum dollar exposure per trade.</td></tr>
+        <tr><td>Inp_SLBuffer</td><td>5.0</td><td>Extra buffer in points beyond the OB/wick/swing for SL placement. Absorbs minor post-entry wicks.</td></tr>
+        <tr><td>Inp_MaxSpreadPts</td><td>35</td><td>Maximum spread in MT5 points for entry. London open can spike — tune to your broker's average.</td></tr>
+        <tr><td>Inp_CrisisSpread</td><td>45.0</td><td>Crisis level in pips. Above this, all positions close immediately regardless of state.</td></tr>
+        <tr><td>Inp_ATRMinPips</td><td>6.0</td><td>Minimum M5 ATR in pips. Blocks entries when the market is dead or not moving.</td></tr>
+        <tr><td>Inp_ATRMaxPips</td><td>90.0</td><td>Maximum M5 ATR in pips. Blocks entries during extreme volatility or news events.</td></tr>
+        <tr><td>Inp_ATRPeriod</td><td>14</td><td>ATR lookback period for M5 and H1 handles. Standard ICT volatility measurement window.</td></tr>
+        <tr><td>Inp_MaxTradeMins</td><td>60</td><td>Maximum trade duration in minutes before time-based closure if TP1 not hit.</td></tr>
+        <tr><td>Inp_LiqSweepMin</td><td>2.0</td><td>Minimum sweep wick distance in pips below/above the pool level. Filters micro-wicks.</td></tr>
+        <tr><td>Inp_LiqSweepMax</td><td>18.0</td><td>Maximum sweep distance in pips. Larger wicks may signal breakout not rejection.</td></tr>
+        <tr><td>Inp_LiqTolerance</td><td>3.0</td><td>Tolerance in pips for grouping equal highs/lows into a single liquidity pool cluster.</td></tr>
+        <tr><td>Inp_CHoCHTimeout</td><td>6</td><td>M5 bars after a sweep within which CHoCH must form. After this, the sweep state resets.</td></tr>
+        <tr><td>Inp_UseCRT</td><td>true</td><td>Enable/disable CRT (Candle Range Theory) setups. Disable for pure ICT/SMC-only mode.</td></tr>
+        <tr><td>Inp_OBLookback</td><td>20</td><td>Bars to scan for Order Block formations on each timeframe. Higher = catches older OBs.</td></tr>
+        <tr><td>Inp_OBImpulseMult</td><td>1.6</td><td>Body size multiplier for OB impulse candle validation. Higher = only the strongest OBs qualify.</td></tr>
+        <tr><td>Inp_FVGMinPips</td><td>3.0</td><td>Minimum FVG gap size in pips. Eliminates noise gaps that aren't true imbalances.</td></tr>
+        <tr><td>Inp_TrailPips</td><td>10.0</td><td>Trailing stop distance in pips from current price for the TP3 runner.</td></tr>
+        <tr><td>Inp_TrailActivatePts</td><td>12</td><td>Profit in MT5 points required before trailing activates (in addition to TP2 being hit).</td></tr>
+        <tr><td>Inp_GMTOffset</td><td>0</td><td>Your broker's server clock offset from GMT. Critical for killzone accuracy. Check broker terminal clock.</td></tr>
+        <tr><td>Inp_MoveToBreakeven</td><td>true</td><td>Move SL to entry+1pip when TP1 is hit. Disable only if you want the full position to run freely.</td></tr>
+        <tr><td>Inp_UseTrail</td><td>true</td><td>Enable structural trailing stop on the runner after TP2. Disable for fixed TP3 level only.</td></tr>
+        <tr><td>Inp_NewsBufferMins</td><td>15</td><td>Minutes before and after a configured news event during which no new entries are taken.</td></tr>
+      </tbody>
+    </table>
+
+    <div class="cards-plain">
+      <div class="card-plain">
+        <div style="font-family:'Space Mono',monospace;font-size:10px;color:var(--silver);letter-spacing:0.12em;text-transform:uppercase;margin-bottom:12px;">★ Gold HFT Default</div>
+        <h3>XAUUSDm — Standard Config</h3>
+        <p>MinConfluence: 4 · APlusScore: 7 · RiskPct: 0.75 · APlusRisk: 1.25 · MaxWeeklyLoss: 4 · SLBuffer: 5 · MaxSpread: 35 · ATRMin: 6 · ATRMax: 90 · MaxTradeMins: 60 · TrailPips: 10 · Sessions: London + Overlap + NY · This is the recommended live configuration for XAUUSDm M1.</p>
+      </div>
+      <div class="card-plain">
+        <div style="font-family:'Space Mono',monospace;font-size:10px;color:var(--silver);letter-spacing:0.12em;text-transform:uppercase;margin-bottom:12px;">🏦 Prop Firm Safe</div>
+        <h3>Conservative Mode</h3>
+        <p>MinConfluence: 6 · RiskPct: 0.5 · APlusRisk: 0.75 · MaxDailyTrades: 4 · MaxWeeklyLoss: 3 · MaxDailyDD: 2.0 · MaxWeeklyDD: 4.0 · RecoveryDD: 7.0 · ReduceAfter: 1 · Optimised for strict prop firm daily/weekly loss rules. Fewer but higher-quality entries.</p>
+      </div>
+      <div class="card-plain">
+        <div style="font-family:'Space Mono',monospace;font-size:10px;color:var(--amber);letter-spacing:0.12em;text-transform:uppercase;margin-bottom:12px;">📊 Forex Intraday</div>
+        <h3>EURUSD / GBPUSD</h3>
+        <p>MinConfluence: 5 · MaxSpread: 20 · ATRMin: 3 · ATRMax: 50 · SLBuffer: 3 · LiqSweepMax: 10 · LiqTolerance: 2 · FVGMinPips: 1.5 · OBImpulseMult: 1.4 · MaxTradeMins: 90 · TrailPips: 7 · Adjust pip calibration: verify g_pip is correct for your broker's forex quote decimals.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider"/>
+
+<!-- SESSIONS -->
+<section>
+  <div class="reveal">
+    <div class="section-label">09 — Session Filter</div>
+    <h2 class="section-title">Trading <span>Killzones</span></h2>
+    <p style="color:var(--muted);font-size:14px;line-height:1.8;max-width:640px;margin-bottom:40px;font-weight:400;">
+      The EA only enters trades during active institutional killzones. All times are GMT.
+      Set <strong style="color:var(--silver)">Inp_GMTOffset</strong> to the difference between your broker's server clock and GMT.
+      For example, if your broker is UTC+2, set GMTOffset = 2.
+    </p>
+
+    <div class="risk-grid">
+      <div class="risk-item" style="border-top:2px solid var(--silver);">
+        <div class="risk-item-label">London Kill Zone</div>
+        <div class="risk-item-val">07:00–10:00</div>
+        <div class="risk-item-desc">GMT. Highest-volume session for gold. Asian liquidity pools from the overnight range are swept first thing. CRT setups from the Asian consolidation fire here. Best for sweep+CHoCH models.</div>
+      </div>
+      <div class="risk-item" style="border-top:2px solid var(--silver);">
+        <div class="risk-item-label">London–NY Overlap</div>
+        <div class="risk-item-val">12:00–15:00</div>
+        <div class="risk-item-desc">GMT. Peak global trading volume. Both European and US institutions active simultaneously. Strongest momentum moves, cleanest OB reactions, most reliable BOS events of the day. Best session overall.</div>
+      </div>
+      <div class="risk-item" style="border-top:2px solid var(--silver-dim);">
+        <div class="risk-item-label">NY Power Hour</div>
+        <div class="risk-item-val">14:00–17:00</div>
+        <div class="risk-item-desc">GMT. Second major push after US open. Good for continuation entries when London set the direction. Overlaps with the Overlap window — the 14:00–15:00 window is triple active during both sessions.</div>
+      </div>
+      <div class="risk-item" style="border-top:2px solid var(--muted);">
+        <div class="risk-item-label">Asia Session</div>
+        <div class="risk-item-val">00:00–03:00</div>
+        <div class="risk-item-desc">GMT. Disabled by default. Gold is ranging and building the liquidity pools during Asia — the EA is designed to consume those pools at London open, not trade inside them. Enable for JPY pairs only.</div>
+      </div>
+    </div>
+
+    <div class="info-box" style="margin-top:24px;">
+      <strong style="color:var(--silver);">Deployment Checklist:</strong><br/>
+      1. Compile in MetaEditor (F7) — should produce 0 errors, 0 warnings<br/>
+      2. Drag onto <strong style="color:var(--silver-hi)">XAUUSDm M1 chart</strong> only<br/>
+      3. Set <code style="color:var(--silver)">Inp_GMTOffset</code> to match broker server time vs GMT<br/>
+      4. Verify <code style="color:var(--silver)">Inp_MaxWeeklyLoss = 4</code> (or your prop firm's rule)<br/>
+      5. Run on <strong style="color:var(--silver-hi)">demo account for 4–8 weeks</strong> before live deployment<br/>
+      6. Check the on-chart dashboard — if STATUS shows <span style="color:var(--green);">ACTIVE</span>, the EA is live and trading<br/>
+      7. Review the <code style="color:var(--silver);">WK LOSS</code> counter on the dashboard — turns orange at N-1 losses, red at limit
+    </div>
+  </div>
+</section>
+
+<hr class="divider"/>
+
+<!-- DISCLAIMER -->
+<section style="padding:60px 28px;">
+  <div class="reveal" style="background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:32px;max-width:820px;margin:0 auto;">
+    <div class="section-label" style="margin-bottom:14px;">⚠ Important Disclaimer</div>
+    <p style="font-size:13px;color:var(--muted);line-height:1.9;font-weight:400;">
+      This Expert Advisor is provided for research and educational purposes. Automated trading carries significant financial risk and past performance
+      does not guarantee future results. Always run on a demo account for a minimum of 4–8 weeks before deploying with live capital.
+      Forex, CFD, and precious metals trading involves leverage — losses can exceed your initial deposit. Only risk capital you can afford to lose entirely.
+      Adjust all risk parameters to match your account size and personal risk tolerance before going live.
+      The AURUM HFT ELITE EA was assembled from multiple source systems and represents a research synthesis — not a guaranteed trading strategy.
+      The creator assumes no responsibility for any financial losses incurred through the use of this software.
+    </p>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-logo">AURUM HFT ELITE</div>
+  MetaTrader 5 · MQL5 Expert Advisor · Version 1.0
+  <br/><br/>
+  SMC · ICT · CRT · Price Action · 7-Timeframe Confluence Engine
+  <br/><br/>
+  Primary Instrument: XAUUSDm · Execution Timeframe: M1 · Magic Number: 20250420
+  <br/><br/>
+  Derived from: APEX_HFT_ELITE · ILPS_XAUUSD · Cosmo_ICT · SMC-YASH · concepts.mq5 · SMC_ICT_ELITE
+</footer>
+
+<script>
+  // Scroll reveal
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if(e.isIntersecting){ e.target.classList.add('visible'); obs.unobserve(e.target); }
+    });
+  }, { threshold: 0.08 });
+  document.querySelectorAll('.reveal').forEach(r => obs.observe(r));
+
+  // Flow step toggle
+  function toggleStep(el) {
+    const detail = el.querySelector('.step-detail');
+    const hint   = el.querySelector('.hint');
+    if(!detail) return;
+    detail.classList.toggle('open');
+    if(hint) hint.textContent = detail.classList.contains('open') ? '↑ Click to collapse' : '↓ Click to expand details';
+  }
+
+  // Nav active highlight on scroll
+  const sections = document.querySelectorAll('section[id]');
+  const navLinks = document.querySelectorAll('.nav-links a');
+  window.addEventListener('scroll', () => {
+    let cur = '';
+    sections.forEach(s => { if(window.scrollY >= s.offsetTop - 140) cur = s.id; });
+    navLinks.forEach(a => {
+      a.style.color = a.getAttribute('href') === '#' + cur ? 'var(--silver)' : '';
+    });
+  }, { passive: true });
+
+  // Handle navigation to index.html
+  document.querySelectorAll('a[href="../index.html"]').forEach(link => {
+    link.addEventListener('click', function(e) {
+      e.preventDefault();
+      sessionStorage.setItem('nukrax_from_ea', 'true');
+      window.location.href = '../index.html';
+    });
+  });
+</script>
+
+<script type="module" src="../assets/ai/widget.js"></script>
+</body>
+</html>

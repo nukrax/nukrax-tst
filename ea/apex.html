@@ -1,0 +1,1710 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>APEX HFT ELITE v1.0 — Strategy Overview</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Outfit:wght@200;300;400;500;600&display=swap" rel="stylesheet"/>
+<link rel="icon" href="assets/logo.png" type="image/png"/>
+<style>
+
+/* Wordmark display face — matches main NUKRAX site */
+@font-face{
+  font-family:'NKX Display';
+  src:url('../assets/fonts/nukrax-display.woff2') format('woff2'),
+      url('../assets/fonts/nukrax-display.otf') format('opentype');
+  font-weight:400;
+  font-style:normal;
+  font-display:swap;
+}
+
+  :root {
+    --bg:         #030507;
+    --surface:    #0A0F13;
+    --surface2:   #0A0F13;
+    --border:     #1B2328;
+    --border2:    #2A353C;
+    --silver:     #8FB8C4;
+    --silver-dim: #46626B;
+    --silver-hi:  #F2F5F5;
+    --green:      #4ade80;
+    --red:        #f87171;
+    --amber:      #fbbf24;
+    --card:       #0A0F13;
+    --text:       #D3DBDD;
+    --muted:      #8A9BA3;
+    --premium:    #46626B;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Outfit', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* subtle dot grid */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: radial-gradient(circle, rgba(160,160,160,0.07) 1px, transparent 1px);
+    background-size: 32px 32px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* top accent line */
+  body::after {
+    content: '';
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--silver), transparent);
+    z-index: 200;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 52px;
+    background: rgba(10,10,10,0.9);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .nav-logo-container {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  
+  .nav-logo-img {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    overflow: hidden;
+    background: var(--surface);
+    border: 1px solid var(--border2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+  }
+  
+  .nav-logo-img:hover {
+    border-color: var(--silver-dim);
+    box-shadow: 0 0 16px rgba(160,160,160,0.1);
+  }
+  
+  .nav-logo-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .nav-logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    color: var(--silver-hi);
+    text-transform: uppercase;
+    text-decoration: none;
+    cursor: pointer;
+  }
+
+  .nav-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--silver);
+    animation: pulse 2s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%,100% { opacity: 1; } 50% { opacity: 0.3; }
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 36px;
+    list-style: none;
+  }
+
+  .nav-links a {
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    transition: color .2s;
+    font-family: 'Space Mono', monospace;
+  }
+
+  .nav-links a:hover { color: var(--silver-hi); }
+
+  /* ── HERO ── */
+  .hero {
+    position: relative;
+    z-index: 1;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 140px 24px 100px;
+  }
+
+  .hero-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    color: var(--silver);
+    text-transform: uppercase;
+    border: 1px solid var(--border2);
+    padding: 7px 18px;
+    border-radius: 2px;
+    margin-bottom: 40px;
+    animation: fadeUp .6s ease both;
+    background: var(--surface);
+  }
+
+  .hero-tag::before {
+    content: '';
+    width: 5px; height: 5px;
+    border-radius: 50%;
+    background: var(--green);
+    flex-shrink: 0;
+  }
+
+  .hero h1 {
+    font-size: clamp(48px, 8vw, 96px);
+    font-weight: 800;
+    line-height: 0.95;
+    letter-spacing: -0.03em;
+    margin-bottom: 12px;
+    animation: fadeUp .7s ease both;
+    color: var(--silver-hi);
+  }
+
+  .hero h1 .accent { color: var(--silver); opacity: 0.4; }
+  .hero h1 .sub-title {
+    display: block;
+    font-size: clamp(18px, 3vw, 32px);
+    font-weight: 400;
+    color: var(--muted);
+    letter-spacing: 0.04em;
+    margin-top: 16px;
+    font-family: 'Space Mono', monospace;
+  }
+
+  .hero-desc {
+    font-size: clamp(14px, 1.8vw, 17px);
+    color: var(--muted);
+    max-width: 580px;
+    line-height: 1.8;
+    margin: 36px 0 64px;
+    animation: fadeUp .8s ease both;
+    font-weight: 400;
+  }
+
+  .hero-stats {
+    display: flex;
+    gap: 0;
+    animation: fadeUp .9s ease both;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+    background: var(--surface);
+  }
+
+  .stat {
+    text-align: center;
+    padding: 24px 40px;
+    border-right: 1px solid var(--border);
+  }
+  .stat:last-child { border-right: none; }
+
+  .stat-val {
+    font-size: 28px;
+    font-weight: 800;
+    color: var(--silver-hi);
+    line-height: 1;
+    letter-spacing: -0.02em;
+  }
+
+  .stat-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    margin-top: 8px;
+  }
+
+  .scroll-hint {
+    position: absolute;
+    bottom: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    animation: fadeUp 1.2s ease both, scrollBounce 2s ease-in-out 1.5s infinite;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+  }
+
+  @keyframes scrollBounce {
+    0%,100% { transform: translateX(-50%) translateY(0); }
+    50%      { transform: translateX(-50%) translateY(6px); }
+  }
+
+  .scroll-arrow {
+    width: 18px; height: 18px;
+    border-right: 1px solid var(--muted);
+    border-bottom: 1px solid var(--muted);
+    transform: rotate(45deg);
+    margin-top: -4px;
+  }
+
+  /* ── SECTIONS ── */
+  section {
+    position: relative;
+    z-index: 1;
+    max-width: 1120px;
+    margin: 0 auto;
+    padding: 110px 28px;
+  }
+
+  .section-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    color: var(--silver-dim);
+    text-transform: uppercase;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+    max-width: 80px;
+  }
+
+  .section-title {
+    font-size: clamp(30px, 4.5vw, 52px);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    line-height: 1.05;
+    margin-bottom: 52px;
+    color: var(--silver-hi);
+  }
+
+  .section-title span { color: var(--silver); opacity: 0.5; }
+
+  /* ── CARDS ── */
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .card {
+    background: var(--card);
+    padding: 32px 28px;
+    transition: background .2s;
+    cursor: default;
+  }
+
+  .card:hover { background: var(--surface2); }
+
+  .card-icon {
+    font-size: 22px;
+    margin-bottom: 18px;
+    opacity: 0.8;
+  }
+
+  .card h3 {
+    font-size: 15px;
+    font-weight: 700;
+    margin-bottom: 10px;
+    letter-spacing: -0.01em;
+    color: var(--silver-hi);
+  }
+
+  .card p {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.8;
+    font-weight: 400;
+  }
+
+  /* ── CARDS PLAIN (no grid gap style) ── */
+  .cards-plain {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 16px;
+  }
+
+  .card-plain {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 28px;
+    transition: border-color .2s, transform .2s;
+  }
+
+  .card-plain:hover {
+    border-color: var(--border2);
+    transform: translateY(-2px);
+  }
+
+  .card-plain h3 {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--silver-hi);
+    margin-bottom: 10px;
+  }
+
+  .card-plain p {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.8;
+  }
+
+  /* ── TIMEFRAME TABLE ── */
+  .tf-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 0;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 48px;
+  }
+
+  .tf-item {
+    background: var(--card);
+    padding: 24px 20px;
+    border-right: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    text-align: center;
+    position: relative;
+  }
+
+  .tf-item:hover { background: var(--surface2); }
+
+  .tf-item.primary {
+    background: var(--surface2);
+    border-top: 2px solid var(--silver);
+  }
+
+  .tf-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 22px;
+    font-weight: 500;
+    color: var(--silver-hi);
+    margin-bottom: 8px;
+    letter-spacing: -0.01em;
+  }
+
+  .tf-role {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    margin-bottom: 6px;
+  }
+
+  .tf-desc {
+    font-size: 12px;
+    color: var(--silver-dim);
+    line-height: 1.5;
+  }
+
+  .tf-badge {
+    position: absolute;
+    top: 8px; right: 8px;
+    font-family: 'Space Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.1em;
+    padding: 2px 7px;
+    border-radius: 2px;
+    text-transform: uppercase;
+  }
+
+  .badge-exec { background: rgba(74,222,128,.12); color: var(--green); border: 1px solid rgba(74,222,128,.25); }
+  .badge-entry { background: rgba(160,160,160,.1); color: var(--silver); border: 1px solid var(--border2); }
+  .badge-bias { background: rgba(251,191,36,.1); color: var(--amber); border: 1px solid rgba(251,191,36,.25); }
+
+  /* ── FLOW STEPS ── */
+  .flow {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .flow-step {
+    display: grid;
+    grid-template-columns: 60px 1fr;
+    gap: 28px;
+    position: relative;
+    padding-bottom: 44px;
+    cursor: pointer;
+  }
+
+  .flow-step:last-child { padding-bottom: 0; }
+
+  .flow-step::before {
+    content: '';
+    position: absolute;
+    left: 29px;
+    top: 60px;
+    bottom: 0;
+    width: 2px;
+    background: linear-gradient(to bottom, var(--border2), transparent);
+  }
+
+  .flow-step:last-child::before { display: none; }
+
+  .step-num {
+    width: 60px; height: 60px;
+    border-radius: 50%;
+    border: 1px solid var(--border2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    font-weight: 800;
+    color: var(--silver);
+    flex-shrink: 0;
+    background: var(--card);
+    transition: background .25s, border-color .25s, color .25s;
+    font-family: 'Space Mono', monospace;
+  }
+
+  .flow-step:hover .step-num {
+    background: var(--silver-hi);
+    color: var(--bg);
+    border-color: var(--silver-hi);
+  }
+
+  .step-content { padding-top: 12px; }
+
+  .step-content h3 {
+    font-size: 17px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: var(--silver-hi);
+    letter-spacing: -0.01em;
+  }
+
+  .step-content p {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.75;
+  }
+
+  .step-detail {
+    display: none;
+    margin-top: 16px;
+    padding: 20px 24px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 2px solid var(--silver-dim);
+    border-radius: 0 4px 4px 0;
+    font-size: 13px;
+    color: var(--text);
+    line-height: 1.8;
+    font-family: 'Space Mono', monospace;
+    font-weight: 400;
+  }
+
+  .step-detail.open { display: block; animation: slideDown .25s ease; }
+
+  .hint {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    color: var(--silver-dim);
+    letter-spacing: 0.08em;
+    margin-top: 6px;
+  }
+
+  /* ── TAGS ── */
+  .tag {
+    display: inline-block;
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    padding: 3px 10px;
+    border-radius: 2px;
+    margin: 3px 2px;
+    letter-spacing: 0.06em;
+  }
+
+  .tag-green  { background: rgba(74,222,128,.1);  color: var(--green); border: 1px solid rgba(74,222,128,.25); }
+  .tag-red    { background: rgba(248,113,113,.1); color: var(--red);   border: 1px solid rgba(248,113,113,.25); }
+  .tag-silver { background: rgba(160,160,160,.1); color: var(--silver);border: 1px solid var(--border2); }
+  .tag-amber  { background: rgba(251,191,36,.1);  color: var(--amber); border: 1px solid rgba(251,191,36,.25); }
+
+  /* ── RISK GRID ── */
+  .risk-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 0;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .risk-item {
+    background: var(--card);
+    border-right: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    padding: 28px 24px;
+  }
+
+  .risk-item:hover { background: var(--surface2); }
+
+  .risk-item-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+
+  .risk-item-val {
+    font-size: 24px;
+    font-weight: 800;
+    color: var(--silver-hi);
+    letter-spacing: -0.02em;
+    margin-bottom: 8px;
+  }
+
+  .risk-item-desc {
+    font-size: 12px;
+    color: var(--silver-dim);
+    line-height: 1.6;
+    font-weight: 400;
+  }
+
+  /* ── PAIRS TABLE ── */
+  .pairs-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 40px;
+  }
+
+  .pair-item {
+    background: var(--card);
+    padding: 24px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    transition: background .2s;
+  }
+
+  .pair-item:hover { background: var(--surface2); }
+
+  .pair-item.top {
+    border-top: 2px solid var(--silver-hi);
+  }
+
+  .pair-name {
+    font-family: 'Space Mono', monospace;
+    font-size: 18px;
+    font-weight: 500;
+    color: var(--silver-hi);
+    letter-spacing: 0.04em;
+  }
+
+  .pair-rating {
+    display: flex;
+    gap: 4px;
+    margin: 4px 0;
+  }
+
+  .pair-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--border2);
+  }
+
+  .pair-dot.filled { background: var(--silver); }
+
+  .pair-desc {
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+
+  /* ── ENTRY MODELS SECTION ── */
+  .model-block {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 32px;
+    margin-bottom: 20px;
+    transition: border-color .2s;
+  }
+
+  .model-block:hover { border-color: var(--border2); }
+
+  .model-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 20px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .model-tag {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    padding: 4px 12px;
+    border-radius: 2px;
+    border: 1px solid var(--border2);
+    color: var(--silver);
+    background: var(--surface);
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .model-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--silver-hi);
+    letter-spacing: -0.01em;
+  }
+
+  .model-subtitle {
+    font-size: 13px;
+    color: var(--muted);
+    font-weight: 400;
+    margin-top: 2px;
+  }
+
+  .model-conditions {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 16px;
+    margin-top: 16px;
+  }
+
+  .condition {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 16px;
+  }
+
+  .condition-num {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.12em;
+    margin-bottom: 6px;
+    text-transform: uppercase;
+  }
+
+  .condition-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--silver-hi);
+    margin-bottom: 6px;
+  }
+
+  .condition-desc {
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  /* ── CHART DEMO ── */
+  .chart-demo {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 28px;
+    margin-top: 48px;
+  }
+
+  .chart-demo h3 {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--muted);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    margin-bottom: 24px;
+    font-family: 'Space Mono', monospace;
+  }
+
+  svg.chart { width: 100%; height: 240px; display: block; }
+
+  /* ── PARAMS TABLE ── */
+  .params-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .params-table th {
+    text-align: left;
+    padding: 12px 16px;
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    font-weight: 500;
+  }
+
+  .params-table td {
+    padding: 13px 16px;
+    border-bottom: 1px solid var(--border);
+    font-weight: 400;
+    vertical-align: top;
+    background: var(--card);
+  }
+
+  .params-table tr:last-child td { border-bottom: none; }
+  .params-table tr:hover td { background: var(--surface2); }
+
+  .params-table td:first-child {
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+    color: var(--silver-hi);
+    white-space: nowrap;
+  }
+
+  .params-table td:nth-child(2) {
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+    color: var(--silver);
+    white-space: nowrap;
+  }
+
+  .params-table td:nth-child(3) {
+    color: var(--muted);
+    font-size: 12px;
+    line-height: 1.6;
+  }
+
+  /* ── CONFLUENCE METER ── */
+  .score-bar-wrap {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 28px;
+    margin-bottom: 40px;
+  }
+
+  .score-bar-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+
+  .score-levels {
+    display: flex;
+    gap: 0;
+    border-radius: 3px;
+    overflow: hidden;
+    height: 10px;
+    margin-bottom: 12px;
+  }
+
+  .score-seg {
+    flex: 1;
+    background: var(--border);
+    border-right: 1px solid var(--bg);
+    transition: background .3s;
+  }
+
+  .score-seg.active-low    { background: var(--red); }
+  .score-seg.active-mid    { background: var(--silver-dim); }
+  .score-seg.active-high   { background: var(--silver); }
+  .score-seg.active-top    { background: var(--silver-hi); }
+
+  .score-labels {
+    display: flex;
+    justify-content: space-between;
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.08em;
+  }
+
+  /* ── DIVIDER ── */
+  .divider {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 0;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    padding: 56px 24px;
+    border-top: 1px solid var(--border);
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    background: var(--surface);
+  }
+
+  footer .footer-logo {
+    font-size: 18px;
+    font-weight: 800;
+    color: var(--silver-hi);
+    letter-spacing: -0.02em;
+    font-family: 'Outfit', sans-serif;
+    margin-bottom: 12px;
+  }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(28px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes slideDown {
+    from { opacity: 0; transform: translateY(-8px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .reveal {
+    opacity: 0;
+    transform: translateY(28px);
+    transition: opacity .65s ease, transform .65s ease;
+  }
+
+  .reveal.visible { opacity: 1; transform: none; }
+
+  /* ── SCROLLBAR ── */
+  ::-webkit-scrollbar { width: 5px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
+
+  @media(max-width:640px) {
+    nav { padding: 16px 20px; }
+    .nav-links { display: none; }
+    .hero-stats { flex-direction: column; gap: 0; }
+    .stat { border-right: none; border-bottom: 1px solid var(--border); }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo-container">
+    <a href="../index.html" class="nav-logo-img">
+      <img src="../assets/logo.png" alt="NUKRAX Logo">
+    </a>
+    <a href="../index.html" class="nav-logo">
+      <div class="nav-dot"></div>
+      APEX HFT Elite
+    </a>
+  </div>
+  <ul class="nav-links">
+    <li><a href="#overview">Overview</a></li>
+    <li><a href="#timeframes">Timeframes</a></li>
+    <li><a href="#pairs">Pairs</a></li>
+    <li><a href="#models">Entry Models</a></li>
+    <li><a href="#exit">Exit Logic</a></li>
+    <li><a href="#risk">Risk</a></li>
+    <li><a href="#params">Parameters</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-tag">MetaTrader 5 · MQL5 Expert Advisor · v1.0</div>
+  <h1>
+    APEX HFT<br/>
+    <span class="accent">——</span> ELITE
+    <span class="sub-title">CRT · TBS · ICT · SMC · Price Action</span>
+  </h1>
+  <p class="hero-desc">
+    An ultra-advanced institutional-grade HFT Expert Advisor that combines five entry model disciplines
+    across six timeframes — engineered for precision execution on XAUUSD and all major pairs.
+  </p>
+  <div class="hero-stats">
+    <div class="stat">
+      <div class="stat-val">6</div>
+      <div class="stat-label">Timeframes</div>
+    </div>
+    <div class="stat">
+      <div class="stat-val">5</div>
+      <div class="stat-label">Max Trades/Day</div>
+    </div>
+    <div class="stat">
+      <div class="stat-val">4</div>
+      <div class="stat-label">Max Loss/Week</div>
+    </div>
+    <div class="stat">
+      <div class="stat-val">3.5R</div>
+      <div class="stat-label">A+ Target</div>
+    </div>
+    <div class="stat">
+      <div class="stat-val">10</div>
+      <div class="stat-label">Confluence Score</div>
+    </div>
+  </div>
+  <div class="scroll-hint">
+    Scroll to explore
+    <div class="scroll-arrow"></div>
+  </div>
+</div>
+
+<hr class="divider"/>
+
+<!-- OVERVIEW -->
+<section id="overview">
+  <div class="reveal">
+    <div class="section-label">01 — Foundation</div>
+    <h2 class="section-title">The <span>Architecture</span></h2>
+    <div class="cards">
+      <div class="card">
+        <div class="card-icon">🏛️</div>
+        <h3>Five-Model Confluence Engine</h3>
+        <p>Every trade must score a minimum of 5/10 on the internal confluence meter. Points are awarded from HTF bias, BOS, liquidity sweeps, OBs, FVGs, CRT setups, TBS setups, Price Action patterns, and Premium/Discount arrays — all simultaneously.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">⏱️</div>
+        <h3>Six-Timeframe Top-Down Analysis</h3>
+        <p>Weekly macro bias → Daily structure → H4 POI → H1 confirmation → M15 trigger → M5 precision. Each timeframe has a specific role. Execution happens on M1 for the sharpest possible entry with minimum slippage.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🎯</div>
+        <h3>Tiered Exit System</h3>
+        <p>Three take-profit levels: 40% closed at 1R, 35% at 2R, 25% runs as a free runner to 3.5R with a structural trailing stop. A+ setups target 3.5R. Standard setups target 2.5R. Every trade is risk-free after TP1.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🔒</div>
+        <h3>Institutional Risk Controls</h3>
+        <p>Hard limits: 5 max daily trades, 4 max weekly loss trades, daily & weekly drawdown halts, consecutive loss streak management, recovery mode at 10% drawdown, and automatic position sizing on every trade.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider"/>
+
+<!-- TIMEFRAMES -->
+<section id="timeframes">
+  <div class="reveal">
+    <div class="section-label">02 — Timeframe Stack</div>
+    <h2 class="section-title">6-Timeframe <span>Analysis</span></h2>
+    <p style="color:var(--muted);font-size:14px;line-height:1.8;max-width:640px;margin-bottom:48px;font-weight:400;">
+      The EA runs a complete top-down analysis on every new bar across all six timeframes. Each layer has a specific function — no timeframe is decorative.
+      Place the EA on a <strong style="color:var(--silver-hi)">M1 chart</strong> for correct execution.
+    </p>
+
+    <div class="tf-grid">
+      <div class="tf-item">
+        <div class="tf-badge badge-bias">Macro Bias</div>
+        <div class="tf-label">W1</div>
+        <div class="tf-role">Weekly</div>
+        <div class="tf-desc">Highest weight (3 pts). Determines the dominant macro directional bias. Only trades with the weekly narrative.</div>
+      </div>
+      <div class="tf-item">
+        <div class="tf-badge badge-bias">Structure</div>
+        <div class="tf-label">D1</div>
+        <div class="tf-role">Daily</div>
+        <div class="tf-desc">2 pts weight. Daily BOS defines the structural trend. Premium/Discount arrays sourced from D1 range.</div>
+      </div>
+      <div class="tf-item">
+        <div class="tf-badge badge-bias">POI Zones</div>
+        <div class="tf-label">H4</div>
+        <div class="tf-role">4-Hour</div>
+        <div class="tf-desc">1 pt weight. H4 Order Blocks and FVGs carry the highest zone strength multiplier (1.5×). H4 bias confirms direction.</div>
+      </div>
+      <div class="tf-item">
+        <div class="tf-badge badge-entry">Confirm</div>
+        <div class="tf-label">H1</div>
+        <div class="tf-role">1-Hour</div>
+        <div class="tf-desc">BOS and CHoCH on H1 triggers the entry arm state. H1 OBs and FVGs scanned for confluence points.</div>
+      </div>
+      <div class="tf-item primary">
+        <div class="tf-badge badge-entry">Trigger</div>
+        <div class="tf-label">M15</div>
+        <div class="tf-role">15-Minute</div>
+        <div class="tf-desc">CRT range formation. Asian/ODR TBS ranges. Liquidity pool scanning. M15 BOS confirmation. Primary trigger timeframe.</div>
+      </div>
+      <div class="tf-item primary">
+        <div class="tf-badge badge-entry">Precision</div>
+        <div class="tf-label">M5</div>
+        <div class="tf-role">5-Minute</div>
+        <div class="tf-desc">Price Action patterns (Pin Bars, Engulfing, 3-Bar). Finest OBs and FVGs. ATR calculation. Market phase detection.</div>
+      </div>
+      <div class="tf-item" style="border-top:2px solid var(--green);">
+        <div class="tf-badge badge-exec">Execute</div>
+        <div class="tf-label">M1</div>
+        <div class="tf-role">1-Minute</div>
+        <div class="tf-desc">CHoCH detection post-sweep. Trade execution with IOC filling. Sweep candle tracking. TP/SL management every tick.</div>
+      </div>
+    </div>
+
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:24px;margin-top:0;">
+      <div class="section-label" style="margin-bottom:12px;">Chart Setup Instruction</div>
+      <p style="font-size:13px;color:var(--muted);line-height:1.8;">
+        Open a <strong style="color:var(--silver-hi)">XAUUSD M1 chart</strong> in MetaTrader 5.
+        Attach the EA to that chart. The EA internally reads all 6 timeframes (W1→M1) automatically — you do not need separate chart windows.
+        The M1 chart is only the execution canvas. All higher timeframe analysis happens in the background on every new bar.
+      </p>
+    </div>
+  </div>
+</section>
+
+<hr class="divider"/>
+
+<!-- PAIRS -->
+<section id="pairs">
+  <div class="reveal">
+    <div class="section-label">03 — Instrument Selection</div>
+    <h2 class="section-title">Best <span>Pairs</span></h2>
+    <p style="color:var(--muted);font-size:14px;line-height:1.8;max-width:640px;margin-bottom:40px;font-weight:400;">
+      The EA is universal but performs best on instruments with strong institutional activity, clear liquidity pools, and defined Asian session ranges.
+    </p>
+
+    <div class="pairs-grid">
+      <div class="pair-item top">
+        <div class="pair-name">XAUUSD</div>
+        <div class="pair-rating">
+          <div class="pair-dot filled"></div><div class="pair-dot filled"></div>
+          <div class="pair-dot filled"></div><div class="pair-dot filled"></div><div class="pair-dot filled"></div>
+        </div>
+        <div style="font-family:'Space Mono',monospace;font-size:10px;color:var(--green);letter-spacing:0.1em;margin-bottom:6px;">PRIMARY — BEST PAIR</div>
+        <div class="pair-desc">Gold is the ideal instrument. Massive liquidity sweeps, clean Asian session ranges for CRT/TBS, strong ICT OBs on H4/H1, and explosive displacement moves. All five entry models fire most cleanly on gold.</div>
+      </div>
+      <div class="pair-item">
+        <div class="pair-name">GBPUSD</div>
+        <div class="pair-rating">
+          <div class="pair-dot filled"></div><div class="pair-dot filled"></div>
+          <div class="pair-dot filled"></div><div class="pair-dot filled"></div><div class="pair-dot"></div>
+        </div>
+        <div class="pair-desc">High volatility, strong London session moves. Excellent for ICT killzone entries and liquidity sweep models. SMC OBs are well-defined on H1/M15.</div>
+      </div>
+      <div class="pair-item">
+        <div class="pair-name">EURUSD</div>
+        <div class="pair-rating">
+          <div class="pair-dot filled"></div><div class="pair-dot filled"></div>
+          <div class="pair-dot filled"></div><div class="pair-dot filled"></div><div class="pair-dot"></div>
+        </div>
+        <div class="pair-desc">Tightest spreads of any pair. Clean structure. London-NY overlap provides strong volume for CRT/TBS breakouts. Recommended for beginners with the EA.</div>
+      </div>
+      <div class="pair-item">
+        <div class="pair-name">GBPJPY</div>
+        <div class="pair-rating">
+          <div class="pair-dot filled"></div><div class="pair-dot filled"></div>
+          <div class="pair-dot filled"></div><div class="pair-dot"></div><div class="pair-dot"></div>
+        </div>
+        <div class="pair-desc">Volatile cross. Very large ATR makes all entry models more active. Increase SL buffer to 15–20 points and widen MaxSpread. Best on London open only.</div>
+      </div>
+      <div class="pair-item">
+        <div class="pair-name">NAS100</div>
+        <div class="pair-rating">
+          <div class="pair-dot filled"></div><div class="pair-dot filled"></div>
+          <div class="pair-dot filled"></div><div class="pair-dot"></div><div class="pair-dot"></div>
+        </div>
+        <div class="pair-desc">Strong ICT and SMC models apply well to US indices. Use NY session killzone only. Asian range provides clean TBS setups for NY open breakouts.</div>
+      </div>
+      <div class="pair-item">
+        <div class="pair-name">USDJPY</div>
+        <div class="pair-rating">
+          <div class="pair-dot filled"></div><div class="pair-dot filled"></div>
+          <div class="pair-dot filled"></div><div class="pair-dot"></div><div class="pair-dot"></div>
+        </div>
+        <div class="pair-desc">Good for Asian session + London open. Clean equal highs/lows form frequently. BOS and CHoCH signals are reliable. Tight spread during Tokyo hours.</div>
+      </div>
+    </div>
+
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:24px;">
+      <div class="section-label" style="margin-bottom:12px;">⚡ Recommended Settings per Pair</div>
+      <table class="params-table">
+        <thead>
+          <tr><th>Pair</th><th>MaxSpread</th><th>SL Buffer</th><th>ATR Min</th><th>Session</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>XAUUSD</td><td>40 pts</td><td>8 pts</td><td>7 pips</td><td>London + NY</td></tr>
+          <tr><td>GBPUSD</td><td>25 pts</td><td>10 pts</td><td>5 pips</td><td>London + NY overlap</td></tr>
+          <tr><td>EURUSD</td><td>20 pts</td><td>8 pts</td><td>4 pips</td><td>London + NY overlap</td></tr>
+          <tr><td>GBPJPY</td><td>45 pts</td><td>18 pts</td><td>10 pips</td><td>London open only</td></tr>
+          <tr><td>NAS100</td><td>50 pts</td><td>15 pts</td><td>12 pips</td><td>NY session only</td></tr>
+          <tr><td>USDJPY</td><td>20 pts</td><td>8 pts</td><td>4 pips</td><td>Asia + London open</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<hr class="divider"/>
+
+<!-- ENTRY MODELS -->
+<section id="models">
+  <div class="reveal">
+    <div class="section-label">04 — Entry System</div>
+    <h2 class="section-title">Five Entry <span>Models</span></h2>
+    <p style="color:var(--muted);font-size:14px;line-height:1.8;max-width:640px;margin-bottom:16px;font-weight:400;">
+      All five models feed into a single confluence score (0–10). The EA picks the highest-scoring valid setup each cycle.
+      A score of 5+ triggers a standard trade. A score of 8+ triggers an A+ trade with higher risk and extended targets.
+    </p>
+
+    <!-- Score Bar -->
+    <div class="score-bar-wrap">
+      <div class="score-bar-label">Confluence Score Thresholds</div>
+      <div class="score-levels">
+        <div class="score-seg active-low"></div>
+        <div class="score-seg active-low"></div>
+        <div class="score-seg active-low"></div>
+        <div class="score-seg active-low"></div>
+        <div class="score-seg active-mid"></div>
+        <div class="score-seg active-mid"></div>
+        <div class="score-seg active-mid"></div>
+        <div class="score-seg active-high"></div>
+        <div class="score-seg active-top"></div>
+        <div class="score-seg active-top"></div>
+      </div>
+      <div class="score-labels">
+        <span>0 — No Trade</span>
+        <span>5 — Standard Entry (1% risk, 2.5R)</span>
+        <span>8+ — A+ Entry (1.5% risk, 3.5R)</span>
+        <span>10</span>
+      </div>
+    </div>
+
+    <!-- Flow Steps -->
+    <div class="flow">
+
+      <div class="flow-step" onclick="toggleStep(this)">
+        <div class="step-num">01</div>
+        <div class="step-content">
+          <h3>CRT — Candle Range Theory</h3>
+          <p>Range raid and return model. +3 points when active. Highest single-model point contribution.</p>
+          <p class="hint">↓ Click to expand details</p>
+          <div class="step-detail">
+            <strong>Phase 1 — Range Formation:</strong> The EA identifies a consolidation range over the last N M15 bars (default 5). The range must be at least 5 pips wide to be meaningful.<br/><br/>
+            <strong>Phase 2 — Extension (Raid):</strong> Price extends beyond the range boundary by 3–20 pips (configurable). This is the stop hunt — retail stops placed outside the range are triggered.<br/><br/>
+            <strong>Phase 3 — Return (Entry):</strong> Price closes back inside the range boundary and is below the 50% retracement level. This signals the raid is complete and a reversal is forming.<br/><br/>
+            <strong>SL Placement:</strong> Stop loss is placed beyond the extension wick extreme + buffer. This is the tightest SL of any model.<br/><br/>
+            <span class="tag tag-silver">BULL CRT: Wick below rangeLow → close above rangeLow</span>
+            <span class="tag tag-silver">BEAR CRT: Wick above rangeHigh → close below rangeHigh</span><br/>
+            <span class="tag tag-green">Timeout: 8 M1 bars. Setup expires if entry not triggered.</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="flow-step" onclick="toggleStep(this)">
+        <div class="step-num">02</div>
+        <div class="step-content">
+          <h3>TBS — Time-Based Setups</h3>
+          <p>Asian range, Opening Drive Range (ODR), and session breakout models. +2 points when active.</p>
+          <p class="hint">↓ Click to expand details</p>
+          <div class="step-detail">
+            <strong>Asian Range (00:00–07:00 GMT):</strong> The high and low of the Asian session are identified each day. These levels act as key liquidity pools — price typically revisits and breaks one of them during London or NY open.<br/><br/>
+            <strong>Bullish TBS:</strong> Price breaks above Asian session high with bullish combined bias. Entry on the breakout with SL below the Asian range low.<br/><br/>
+            <strong>Bearish TBS:</strong> Price breaks below Asian session low with bearish combined bias. Entry on the breakdown with SL above the Asian range high.<br/><br/>
+            <strong>ODR (Opening Drive Range):</strong> The first M15 candle of London open (07:00 GMT) or NY open (12:00 GMT) defines the ODR. Breakout of this range in the bias direction is a TBS entry signal.<br/><br/>
+            <span class="tag tag-silver">Min range size: 10 pips to qualify</span>
+            <span class="tag tag-green">Best performance: London open (07:00 GMT)</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="flow-step" onclick="toggleStep(this)">
+        <div class="step-num">03</div>
+        <div class="step-content">
+          <h3>ICT — Inner Circle Trader Models</h3>
+          <p>Order Blocks, FVGs, BOS, MSS, Liquidity Sweeps, Premium/Discount Arrays. Up to +6 points combined.</p>
+          <p class="hint">↓ Click to expand details</p>
+          <div class="step-detail">
+            <strong>Order Blocks (OB):</strong> The last opposing candle before a strong displacement impulse. Scanned on H4, H1, M15, M5. H4/H1 OBs carry a 1.5× strength multiplier. Price must be inside the OB zone at entry.<br/><br/>
+            <strong>Fair Value Gaps (FVG):</strong> 3-candle imbalance where candle 1's high is below candle 3's low (bull) or vice versa (bear). FVGs within 20 pips of the entry price add +2 points.<br/><br/>
+            <strong>Break of Structure (BOS):</strong> Confirmed close above/below a prior swing high/low on H1 or M15. H1 BOS = +2 pts, M15 BOS = +1 pt.<br/><br/>
+            <strong>Liquidity Sweep + CHoCH:</strong> Price sweeps an equal high/low by 2–20 pips with a wick, closes back inside, then a CHoCH is confirmed on M1 (close above/below post-sweep swing). +4 points total.<br/><br/>
+            <strong>Premium / Discount Array:</strong> Entries in Discount (below D1 midpoint) for longs, Premium for shorts. +1 pt filter.<br/><br/>
+            <span class="tag tag-silver">OB Mitigation Check: OB invalidated if price fully closed through it</span>
+            <span class="tag tag-amber">Displacement: Candle body must be 1.8× the prior candle</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="flow-step" onclick="toggleStep(this)">
+        <div class="step-num">04</div>
+        <div class="step-content">
+          <h3>SMC — Smart Money Concepts</h3>
+          <p>CHoCH, Inducement Liquidity, Institutional OBs, Supply/Demand zones. Overlaps and extends ICT models.</p>
+          <p class="hint">↓ Click to expand details</p>
+          <div class="step-detail">
+            <strong>Change of Character (CHoCH):</strong> Distinct from BOS. A CHoCH is a short-term structural flip within an opposing HTF bias — signalling a potential reversal of the current swing. H1 CHoCH adds +2 pts. M1 CHoCH post-sweep adds +2 pts.<br/><br/>
+            <strong>Inducement Liquidity:</strong> The M15 liquidity pool scan identifies equal highs and equal lows (minimum 2 touches within 3 pip tolerance) in the Asian session. These are the inducement pools that get swept before the real move.<br/><br/>
+            <strong>Institutional OB Strength:</strong> OBs are graded by the displacement ratio of the candle that formed after them. Stronger displacement = higher OB strength = more confluence points.<br/><br/>
+            <strong>Supply & Demand Zones:</strong> Combined with H4 structure scan to identify supply zones (for shorts) and demand zones (for longs) that align with the macro bias.<br/><br/>
+            <span class="tag tag-silver">CHoCH: Price closes above/below post-sweep reference + 1 pip</span>
+            <span class="tag tag-green">Liq Pool: 2+ swing touches within 3 pip tolerance = confirmed pool</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="flow-step" onclick="toggleStep(this)">
+        <div class="step-num">05</div>
+        <div class="step-content">
+          <h3>Price Action — PA Models</h3>
+          <p>Pin Bars, Engulfing, Inside Bar, Morning/Evening Star, 3-Bar Reversal, Wick Rejection. Checked on M5, M15, H1.</p>
+          <p class="hint">↓ Click to expand details</p>
+          <div class="step-detail">
+            <strong>Pin Bar / Hammer:</strong> Lower wick ≥ 2.5× body (bull) or upper wick ≥ 2.5× body (bear). Strength = wick/total range. Strongest confirmation at POI zones.<br/><br/>
+            <strong>Engulfing Candle:</strong> Current candle body covers ≥ 60% of prior candle body in the reversal direction. Strength proportional to body ratio.<br/><br/>
+            <strong>3-Bar Reversal:</strong> Two consecutive candles in one direction followed by a strong counter candle that closes above/below the midpoint of the first candle. Strength = 0.8.<br/><br/>
+            <strong>Inside Bar Breakout:</strong> A candle fully contained within the prior candle's range. Breakout of the inside bar high/low in the bias direction triggers entry.<br/><br/>
+            <strong>Morning / Evening Star:</strong> Three-candle pattern — large opposing candle, small-body indecision candle, strong reversal candle. Checks midpoint penetration of candle 1.<br/><br/>
+            <strong>Wick Rejection:</strong> Single candle wick of 8+ pips with wick ≥ 1.5× the body. Weakest PA signal at 0.6 strength but adds confluence at key zones.<br/><br/>
+            <span class="tag tag-silver">PA checked on M5 + M15 + H1 simultaneously</span>
+            <span class="tag tag-amber">H1 PA requires strength ≥ 0.6 to count</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- SVG Chart Demo: Full ICT Trade Flow -->
+    <div class="chart-demo reveal">
+      <h3>// Visual: A+ Setup — Sweep → CHoCH → OB Entry</h3>
+      <svg class="chart" viewBox="0 0 960 240" xmlns="http://www.w3.org/2000/svg">
+        <!-- Grid -->
+        <line x1="0" y1="50"  x2="960" y2="50"  stroke="#222" stroke-width="1"/>
+        <line x1="0" y1="100" x2="960" y2="100" stroke="#222" stroke-width="1"/>
+        <line x1="0" y1="150" x2="960" y2="150" stroke="#222" stroke-width="1"/>
+        <line x1="0" y1="200" x2="960" y2="200" stroke="#222" stroke-width="1"/>
+
+        <!-- Asian Range band -->
+        <rect x="0" y="100" width="200" height="80" fill="#a0a0a0" opacity=".04"/>
+        <line x1="0" y1="100" x2="200" y2="100" stroke="#555" stroke-width="1" stroke-dasharray="4,4"/>
+        <line x1="0" y1="180" x2="200" y2="180" stroke="#555" stroke-width="1" stroke-dasharray="4,4"/>
+        <text x="8" y="92" fill="#555" font-family="Space Mono,monospace" font-size="10">Asian Range High (SSL pool)</text>
+        <text x="8" y="197" fill="#555" font-family="Space Mono,monospace" font-size="10">Asian Range Low (BSL pool)</text>
+
+        <!-- Ranging candles inside Asian range -->
+        <rect x="20"  y="120" width="14" height="35" fill="#a0a0a0" opacity=".4"/>
+        <rect x="42"  y="130" width="14" height="30" fill="#606060" opacity=".4"/>
+        <rect x="64"  y="115" width="14" height="40" fill="#a0a0a0" opacity=".4"/>
+        <rect x="86"  y="125" width="14" height="32" fill="#606060" opacity=".4"/>
+        <rect x="108" y="118" width="14" height="36" fill="#a0a0a0" opacity=".4"/>
+        <rect x="130" y="122" width="14" height="33" fill="#606060" opacity=".4"/>
+        <rect x="152" y="116" width="14" height="38" fill="#a0a0a0" opacity=".4"/>
+
+        <!-- London open marker -->
+        <line x1="200" y1="0" x2="200" y2="240" stroke="#333" stroke-width="1" stroke-dasharray="3,3"/>
+        <text x="202" y="14" fill="#555" font-family="Space Mono,monospace" font-size="10">London Open →</text>
+
+        <!-- HTF BOS level -->
+        <line x1="0" y1="80" x2="700" y2="80" stroke="#888" stroke-width="1" stroke-dasharray="6,4"/>
+        <text x="704" y="84" fill="#888" font-family="Space Mono,monospace" font-size="10">H1 BOS</text>
+
+        <!-- Sweep candle: wick below Asian range low, closes above -->
+        <rect x="210" y="148" width="16" height="25" fill="#f87171" opacity=".7"/>
+        <line x1="218" y1="148" x2="218" y2="130" stroke="#f87171" stroke-width="2"/>
+        <line x1="218" y1="173" x2="218" y2="200" stroke="#f87171" stroke-width="2.5"/>
+        <text x="198" y="218" fill="#f87171" font-family="Space Mono,monospace" font-size="10">① Sweep</text>
+
+        <!-- Post-sweep reference high -->
+        <line x1="226" y1="130" x2="340" y2="130" stroke="#444" stroke-width="1" stroke-dasharray="3,3"/>
+        <text x="342" y="134" fill="#444" font-family="Space Mono,monospace" font-size="9">Post-sweep ref</text>
+
+        <!-- CHoCH candles building up -->
+        <rect x="230" y="155" width="14" height="28" fill="#a0a0a0" opacity=".5"/>
+        <rect x="250" y="140" width="14" height="30" fill="#a0a0a0" opacity=".6"/>
+
+        <!-- CHoCH break candle -->
+        <rect x="270" y="108" width="16" height="38" fill="#e0e0e0" opacity=".9"/>
+        <line x1="278" y1="100" x2="278" y2="108" stroke="#e0e0e0" stroke-width="2"/>
+        <line x1="278" y1="146" x2="278" y2="152" stroke="#e0e0e0" stroke-width="2"/>
+        <text x="260" y="218" fill="#d0d0d0" font-family="Space Mono,monospace" font-size="10">② CHoCH</text>
+
+        <!-- Pullback into OB -->
+        <rect x="292" y="125" width="14" height="28" fill="#f87171" opacity=".5"/>
+        <rect x="312" y="132" width="14" height="22" fill="#f87171" opacity=".5"/>
+
+        <!-- OB zone highlight -->
+        <rect x="306" y="120" width="52" height="40" fill="#a0a0a0" opacity=".06" rx="2"/>
+        <rect x="306" y="120" width="52" height="40" fill="none" stroke="#888" stroke-width="1.5" stroke-dasharray="4,3" rx="2"/>
+        <text x="298" y="218" fill="#888" font-family="Space Mono,monospace" font-size="10">③ OB Retest</text>
+
+        <!-- FVG zone -->
+        <rect x="330" y="100" width="28" height="22" fill="#fbbf24" opacity=".06" rx="2"/>
+        <rect x="330" y="100" width="28" height="22" fill="none" stroke="#fbbf24" stroke-width="1" stroke-dasharray="3,2" rx="2"/>
+        <text x="332" y="96" fill="#fbbf24" font-family="Space Mono,monospace" font-size="9">FVG</text>
+
+        <!-- Entry arrow -->
+        <line x1="360" y1="140" x2="400" y2="140" stroke="#4ade80" stroke-width="2.5"/>
+        <polygon points="398,134 412,140 398,146" fill="#4ade80"/>
+        <text x="416" y="144" fill="#4ade80" font-family="Space Mono,monospace" font-size="11">④ ENTRY</text>
+
+        <!-- SL line -->
+        <line x1="210" y1="200" x2="900" y2="200" stroke="#f87171" stroke-width="1" stroke-dasharray="5,3"/>
+        <text x="904" y="204" fill="#f87171" font-family="Space Mono,monospace" font-size="10">SL</text>
+
+        <!-- TP lines -->
+        <line x1="460" y1="100" x2="900" y2="100" stroke="#4ade80" stroke-width="1" stroke-dasharray="5,3"/>
+        <line x1="580" y1="60"  x2="900" y2="60"  stroke="#4ade80" stroke-width="1" stroke-dasharray="5,3" opacity=".6"/>
+        <line x1="720" y1="30"  x2="900" y2="30"  stroke="#4ade80" stroke-width="1" stroke-dasharray="5,3" opacity=".4"/>
+        <text x="904" y="104" fill="#4ade80" font-family="Space Mono,monospace" font-size="10">TP1 1R</text>
+        <text x="904" y="64"  fill="#4ade80" font-family="Space Mono,monospace" font-size="10">TP2 2R</text>
+        <text x="904" y="34"  fill="#4ade80" font-family="Space Mono,monospace" font-size="10">TP3 3.5R</text>
+
+        <!-- TP1 partial close marker -->
+        <circle cx="460" cy="100" r="5" fill="#d0d0d0" opacity=".8"/>
+        <text x="432" y="90" fill="#d0d0d0" font-family="Space Mono,monospace" font-size="9">40% close</text>
+
+        <!-- TP2 marker -->
+        <circle cx="580" cy="60" r="5" fill="#a0a0a0" opacity=".8"/>
+        <text x="552" y="50" fill="#a0a0a0" font-family="Space Mono,monospace" font-size="9">35% close</text>
+
+        <!-- Rising candles -->
+        <rect x="415" y="120" width="14" height="28" fill="#4ade80" opacity=".7"/>
+        <rect x="435" y="102" width="14" height="30" fill="#4ade80" opacity=".8"/>
+        <rect x="455" y="85"  width="14" height="28" fill="#4ade80" opacity=".85"/>
+        <rect x="475" y="70"  width="14" height="26" fill="#4ade80" opacity=".85"/>
+        <rect x="495" y="56"  width="14" height="26" fill="#4ade80" opacity=".9"/>
+        <rect x="515" y="44"  width="14" height="24" fill="#4ade80" opacity=".9"/>
+        <rect x="535" y="32"  width="14" height="24" fill="#4ade80" opacity=".95"/>
+
+        <!-- Step labels top -->
+        <text x="210" y="14" fill="#555" font-family="Space Mono,monospace" font-size="10">① Liq Sweep</text>
+        <text x="268" y="14" fill="#555" font-family="Space Mono,monospace" font-size="10">② CHoCH Break</text>
+        <text x="380" y="14" fill="#555" font-family="Space Mono,monospace" font-size="10">③ OB+FVG Retest → Entry</text>
+      </svg>
+    </div>
+
+  </div>
+</section>
+
+<hr class="divider"/>
+
+<!-- EXIT LOGIC -->
+<section id="exit">
+  <div class="reveal">
+    <div class="section-label">05 — Exit System</div>
+    <h2 class="section-title">Trade <span>Management</span></h2>
+
+    <div class="cards" style="margin-bottom:40px;">
+      <div class="card">
+        <div class="card-icon">📍</div>
+        <h3>Stop Loss — Structural + Buffer</h3>
+        <p>SL is placed beyond the OB low/high, CRT extension wick, TBS range boundary, or recent swing low/high depending on the active entry model. A configurable 8-point buffer is added. SL must be 7–35 pips from entry — tighter or wider is auto-rejected.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">💰</div>
+        <h3>TP1 — 40% Close at 1R</h3>
+        <p>When price moves 1× the initial risk distance in profit, 40% of the total position is closed. Stop loss is simultaneously moved to entry price + 1 pip. The trade is now risk-free for the remaining 60%.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">📈</div>
+        <h3>TP2 — 35% Close at 2R</h3>
+        <p>At 2× risk in profit, another 35% of the original position is closed. The trailing stop is activated for the runner. At this point, 75% of the original size has been closed — only the runner remains.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🏃</div>
+        <h3>TP3 Runner — Trail to Opposing Liq</h3>
+        <p>The remaining 25% trails via structural trailing stop (recent M5 swing low/high). TP3 defaults to 3.5R but will snap to the nearest opposing liquidity pool if one exists within range. Trail distance: 10 pips from price.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">⏱️</div>
+        <h3>Time Exit — 60 Minutes</h3>
+        <p>If TP1 has not been hit within 60 minutes of entry, the entire trade is closed at market. This prevents holding through session transitions or news events without any profit confirmation.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🚫</div>
+        <h3>Invalidation Exits</h3>
+        <p>Three invalidation conditions close the trade immediately: (1) Counter-structure BOS forms on M5 against the trade, (2) Price re-enters the swept liquidity pool wick, (3) Spread exceeds the crisis threshold (50 pips default).</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider"/>
+
+<!-- RISK -->
+<section id="risk">
+  <div class="reveal">
+    <div class="section-label">06 — Risk Management</div>
+    <h2 class="section-title">Capital <span>Protection</span></h2>
+
+    <div class="risk-grid" style="margin-bottom:40px;">
+      <div class="risk-item">
+        <div class="risk-item-label">Base Risk/Trade</div>
+        <div class="risk-item-val">1.0%</div>
+        <div class="risk-item-desc">Auto lot-sized each trade. A+ setups use 1.5% risk. Recovery mode caps at 0.5%.</div>
+      </div>
+      <div class="risk-item">
+        <div class="risk-item-label">A+ Risk/Trade</div>
+        <div class="risk-item-val">1.5%</div>
+        <div class="risk-item-desc">Applied when confluence score ≥ 8/10. Higher risk justified by higher probability setup quality.</div>
+      </div>
+      <div class="risk-item">
+        <div class="risk-item-label">Max Daily Trades</div>
+        <div class="risk-item-val">5</div>
+        <div class="risk-item-desc">Hard cap. Once 5 trades are opened in a calendar day, the EA sits out until next day's reset.</div>
+      </div>
+      <div class="risk-item">
+        <div class="risk-item-label">Max Weekly Losses</div>
+        <div class="risk-item-val">4</div>
+        <div class="risk-item-desc">After 4 losing trades in a week, the EA halts until Monday's weekly reset. Prevents drawdown spirals.</div>
+      </div>
+      <div class="risk-item">
+        <div class="risk-item-label">Daily DD Halt</div>
+        <div class="risk-item-val">4%</div>
+        <div class="risk-item-desc">If equity drops 4% from day open balance, trading halts immediately for the remainder of the day.</div>
+      </div>
+      <div class="risk-item">
+        <div class="risk-item-label">Weekly DD Halt</div>
+        <div class="risk-item-val">8%</div>
+        <div class="risk-item-desc">If equity drops 8% from week open balance, the EA halts until the following Monday.</div>
+      </div>
+      <div class="risk-item">
+        <div class="risk-item-label">3 Consecutive Losses</div>
+        <div class="risk-item-val">4H Pause</div>
+        <div class="risk-item-desc">EA pauses for approximately one trading session (4 hours) before resuming.</div>
+      </div>
+      <div class="risk-item">
+        <div class="risk-item-label">4 Consecutive Losses</div>
+        <div class="risk-item-val">Day Pause</div>
+        <div class="risk-item-desc">EA pauses until end of trading day (23:59). Prevents fighting the market on bad days.</div>
+      </div>
+      <div class="risk-item">
+        <div class="risk-item-label">5 Consecutive Losses</div>
+        <div class="risk-item-val">24H Pause</div>
+        <div class="risk-item-desc">EA locks for a full 24 hours. An alert is triggered. Strongly suggests reviewing market conditions.</div>
+      </div>
+      <div class="risk-item">
+        <div class="risk-item-label">Recovery Mode</div>
+        <div class="risk-item-val">10% DD</div>
+        <div class="risk-item-desc">If drawdown from equity peak exceeds 10%, risk is halved automatically until recovery.</div>
+      </div>
+      <div class="risk-item">
+        <div class="risk-item-label">Crisis Spread</div>
+        <div class="risk-item-val">50 pips</div>
+        <div class="risk-item-desc">If spread exceeds 50 pips at any time, ALL open positions are closed immediately — including news spikes.</div>
+      </div>
+      <div class="risk-item">
+        <div class="risk-item-label">Blended R:R</div>
+        <div class="risk-item-val">~2.1R</div>
+        <div class="risk-item-desc">40% at 1R + 35% at 2R + 25% runner averaging ≥ 3R = ~2.1R blended on full winners.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider"/>
+
+<!-- PARAMETERS -->
+<section id="params">
+  <div class="reveal">
+    <div class="section-label">07 — Configuration</div>
+    <h2 class="section-title">Key Input <span>Parameters</span></h2>
+
+    <table class="params-table" style="margin-bottom:40px;">
+      <thead>
+        <tr><th>Parameter</th><th>Default</th><th>Description</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>InpRiskPercent</td><td>1.0</td><td>Base risk % per trade. Lot size auto-calculated from balance × risk% ÷ SL distance.</td></tr>
+        <tr><td>InpAPlusRisk</td><td>1.5</td><td>Risk % applied on A+ setups (score ≥ 8). Higher probability = higher stake.</td></tr>
+        <tr><td>InpMinConfluence</td><td>5</td><td>Minimum score (0–10) required to open a trade. Raise to 6–7 for more selective filtering.</td></tr>
+        <tr><td>InpAPlusMinScore</td><td>8</td><td>Minimum score for A+ classification. A+ trades use higher risk and extended targets.</td></tr>
+        <tr><td>InpMaxDailyTrades</td><td>5</td><td>Hard daily trade cap. Resets at midnight server time.</td></tr>
+        <tr><td>InpMaxWeeklyLossTrades</td><td>4</td><td>Max losing trades allowed per week before halt. Core prop-firm safety rule.</td></tr>
+        <tr><td>InpRR_Target</td><td>2.5</td><td>Standard R:R target (used for TP calculations on base setups).</td></tr>
+        <tr><td>InpRR_APlus</td><td>3.5</td><td>A+ R:R target. Runner (TP3) aims for this level unless opposing liq pool is closer.</td></tr>
+        <tr><td>InpMaxSpreadPts</td><td>40</td><td>Maximum spread in points. Entries are blocked above this level.</td></tr>
+        <tr><td>InpSLBuffer</td><td>8.0</td><td>Extra buffer in points added to SL beyond the OB/wick/swing. Absorbs minor wicks.</td></tr>
+        <tr><td>InpMinSLPips</td><td>7.0</td><td>Minimum SL distance in pips. Setups with tighter SLs are rejected (avoids noise entries).</td></tr>
+        <tr><td>InpMaxSLPips</td><td>35.0</td><td>Maximum SL distance in pips. Setups with wider SLs are rejected (controls max exposure).</td></tr>
+        <tr><td>InpATRMinPips</td><td>7.0</td><td>Minimum M5 ATR in pips. Blocks entries in dead/low-volatility markets.</td></tr>
+        <tr><td>InpATRMaxPips</td><td>80.0</td><td>Maximum M5 ATR in pips. Blocks entries during extreme volatility / news spikes.</td></tr>
+        <tr><td>InpMaxTradeMins</td><td>60</td><td>Max trade duration in minutes before time-based exit if TP1 not hit.</td></tr>
+        <tr><td>InpGMTOffset</td><td>0</td><td>Your broker's server time offset from GMT. Critical for killzone accuracy. Check broker clock.</td></tr>
+        <tr><td>InpUseCRT</td><td>true</td><td>Enable/disable CRT model. Disable if you want only ICT/SMC entries.</td></tr>
+        <tr><td>InpUseTBS</td><td>true</td><td>Enable/disable TBS (Asian range / ODR) model.</td></tr>
+        <tr><td>InpUsePA</td><td>true</td><td>Enable/disable Price Action pattern recognition.</td></tr>
+        <tr><td>InpTrailPips</td><td>10.0</td><td>Trailing stop distance in pips for the TP3 runner. Smaller = tighter but risks early exit.</td></tr>
+      </tbody>
+    </table>
+
+    <div class="cards-plain">
+      <div class="card-plain">
+        <div style="font-family:'Space Mono',monospace;font-size:10px;color:var(--green);letter-spacing:0.12em;text-transform:uppercase;margin-bottom:12px;">⚡ XAUUSD Scalping</div>
+        <h3>Gold HFT Config</h3>
+        <p>MinConfluence: 5 · APlusMin: 8 · SLBuffer: 8 · MaxSpread: 40 · ATRMin: 7 · MaxTradeMins: 60 · TrailPips: 10 · Sessions: London + NY · This is the default config and works best on XAUUSD M1.</p>
+      </div>
+      <div class="card-plain">
+        <div style="font-family:'Space Mono',monospace;font-size:10px;color:var(--silver);letter-spacing:0.12em;text-transform:uppercase;margin-bottom:12px;">📊 Forex Intraday</div>
+        <h3>EURUSD / GBPUSD</h3>
+        <p>MinConfluence: 6 · APlusMin: 8 · SLBuffer: 10 · MaxSpread: 25 · ATRMin: 4 · MaxTradeMins: 90 · TrailPips: 8 · Sessions: London + NY · Raise confluence threshold for cleaner signals.</p>
+      </div>
+      <div class="card-plain">
+        <div style="font-family:'Space Mono',monospace;font-size:10px;color:var(--amber);letter-spacing:0.12em;text-transform:uppercase;margin-bottom:12px;">🏔️ Conservative Mode</div>
+        <h3>Prop Firm Safe</h3>
+        <p>MinConfluence: 7 · RiskPercent: 0.5 · APlusRisk: 1.0 · MaxDailyTrades: 3 · MaxWeeklyLoss: 3 · MaxDailyDD: 2.5 · MaxWeeklyDD: 5 · Optimised for prop firm daily/weekly loss rules.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider"/>
+
+<!-- SESSIONS -->
+<section>
+  <div class="reveal">
+    <div class="section-label">08 — Session Filter</div>
+    <h2 class="section-title">Trading <span>Killzones</span></h2>
+    <p style="color:var(--muted);font-size:14px;line-height:1.8;max-width:640px;margin-bottom:40px;font-weight:400;">
+      The EA only enters trades during active killzones. All times are GMT — set <strong style="color:var(--silver-hi)">InpGMTOffset</strong> to match your broker's server time.
+    </p>
+
+    <div class="risk-grid">
+      <div class="risk-item" style="border-top:2px solid var(--green);">
+        <div class="risk-item-label">London Killzone</div>
+        <div class="risk-item-val">07:00–10:00</div>
+        <div class="risk-item-desc">GMT. Highest volume session. Best for CRT, TBS ODR, and ICT OB entries. Gold moves most decisively here.</div>
+      </div>
+      <div class="risk-item" style="border-top:2px solid var(--green);">
+        <div class="risk-item-label">London–NY Overlap</div>
+        <div class="risk-item-val">12:00–15:00</div>
+        <div class="risk-item-desc">GMT. Peak global volume. Best for SMC liquidity sweeps and CHoCH setups. Strongest momentum moves occur here.</div>
+      </div>
+      <div class="risk-item" style="border-top:2px solid var(--silver);">
+        <div class="risk-item-label">NY Power Hour</div>
+        <div class="risk-item-val">14:00–17:00</div>
+        <div class="risk-item-desc">GMT. Second push after NY open. Good for continuation entries after London-NY overlap setups. Especially strong for NAS100.</div>
+      </div>
+      <div class="risk-item" style="border-top:2px solid var(--muted);">
+        <div class="risk-item-label">Asia Killzone</div>
+        <div class="risk-item-val">00:00–03:00</div>
+        <div class="risk-item-desc">GMT. Disabled by default. Use for USDJPY and Asian indices only. Gold is typically ranging during this window — no action recommended.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider"/>
+
+<!-- DISCLAIMER -->
+<section style="padding:60px 28px;">
+  <div class="reveal" style="background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:32px;max-width:820px;margin:0 auto;">
+    <div class="section-label" style="margin-bottom:14px;">⚠️ Important Disclaimer</div>
+    <p style="font-size:13px;color:var(--muted);line-height:1.9;font-weight:400;">
+      This Expert Advisor is provided for research and educational purposes. Automated trading carries significant financial risk and past performance
+      does not guarantee future results. Always run on a demo account for a minimum of 4–8 weeks before deploying with live capital.
+      Forex, CFD, and precious metals trading involves leverage — losses can exceed your initial deposit. Only risk capital you can afford to lose entirely.
+      Adjust all risk parameters to match your account size and personal risk tolerance before going live. The creator assumes no responsibility
+      for any financial losses incurred through the use of this software.
+    </p>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-logo">APEX HFT ELITE</div>
+  MetaTrader 5 · MQL5 Expert Advisor · Version 1.0
+  <br/><br/>
+  CRT · TBS · ICT · SMC · Price Action · 6-Timeframe Confluence Engine
+  <br/><br/>
+  Primary Instrument: XAUUSD · All Major Pairs Compatible
+</footer>
+
+<script>
+  // Scroll reveal
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if(e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); }
+    });
+  }, { threshold: 0.08 });
+  document.querySelectorAll('.reveal').forEach(r => obs.observe(r));
+
+  // Flow step toggle
+  function toggleStep(el) {
+    const detail = el.querySelector('.step-detail');
+    const hint   = el.querySelector('.hint');
+    if(!detail) return;
+    detail.classList.toggle('open');
+    if(hint) hint.textContent = detail.classList.contains('open') ? '↑ Click to collapse' : '↓ Click to expand details';
+  }
+
+  // Nav active highlight
+  const sections = document.querySelectorAll('section[id]');
+  const navLinks = document.querySelectorAll('.nav-links a');
+  window.addEventListener('scroll', () => {
+    let cur = '';
+    sections.forEach(s => { if(window.scrollY >= s.offsetTop - 140) cur = s.id; });
+    navLinks.forEach(a => { a.style.color = a.getAttribute('href') === '#' + cur ? 'var(--silver-hi)' : ''; });
+  });
+
+  // Handle navigation to index.html
+  document.querySelectorAll('a[href="../index.html"]').forEach(link => {
+    link.addEventListener('click', function(e) {
+      e.preventDefault();
+      sessionStorage.setItem('nukrax_from_ea', 'true');
+      window.location.href = '../index.html';
+    });
+  });
+</script>
+
+<script type="module" src="../assets/ai/widget.js"></script>
+</body>
+</html>
