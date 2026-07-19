@@ -1,0 +1,1851 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PHASE-404 — Strategy Overview</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="icon" href="assets/logo.png" type="image/png"/>
+<style>
+  :root {
+    --bg: #080b10;
+    --bg2: #0d1117;
+    --bg3: #111820;
+    --border: #1e2d3d;
+    --border2: #243040;
+    --gold: #f0b429;
+    --gold2: #e8a21a;
+    --green: #0dff8c;
+    --red: #ff3d5a;
+    --blue: #3d9eff;
+    --white: #e8edf2;
+    --muted: #5a7080;
+    --text: #b0c4d4;
+    --accent: #ff6b35;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    font-size: 15px;
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  /* GRID BACKGROUND */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(61,158,255,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(61,158,255,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* GLOW ORBS */
+  .orb {
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(120px);
+    opacity: 0.12;
+    pointer-events: none;
+    z-index: 0;
+  }
+  .orb1 { width: 600px; height: 600px; background: var(--gold); top: -200px; left: -200px; }
+  .orb2 { width: 500px; height: 500px; background: var(--blue); bottom: -100px; right: -100px; }
+  .orb3 { width: 300px; height: 300px; background: var(--green); top: 50%; left: 50%; }
+
+  /* WRAPPER */
+  .wrap { position: relative; z-index: 1; max-width: 1300px; margin: 0 auto; padding: 0 32px; }
+
+  /* ── HEADER ── */
+  header {
+    position: relative;
+    padding: 80px 0 60px;
+    border-bottom: 1px solid var(--border);
+    overflow: hidden;
+  }
+  .header-tag {
+    display: inline-block;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 3px;
+    color: var(--gold);
+    border: 1px solid var(--gold);
+    padding: 4px 12px;
+    margin-bottom: 24px;
+    text-transform: uppercase;
+    animation: fadeDown 0.8s ease both;
+  }
+  .header-title {
+    font-size: clamp(48px, 7vw, 96px);
+    font-weight: 800;
+    line-height: 0.95;
+    color: var(--white);
+    letter-spacing: -3px;
+    animation: fadeDown 0.8s 0.1s ease both;
+  }
+  .header-title span { color: var(--gold); }
+  .header-sub {
+    margin-top: 20px;
+    font-size: 17px;
+    color: var(--muted);
+    max-width: 600px;
+    animation: fadeDown 0.8s 0.2s ease both;
+    font-family: 'DM Mono', monospace;
+  }
+  .header-badges {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-top: 32px;
+    animation: fadeDown 0.8s 0.3s ease both;
+  }
+  .badge {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    padding: 6px 14px;
+    border-radius: 2px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    font-weight: 500;
+  }
+  .badge-gold { background: rgba(240,180,41,0.12); color: var(--gold); border: 1px solid rgba(240,180,41,0.3); }
+  .badge-green { background: rgba(13,255,140,0.08); color: var(--green); border: 1px solid rgba(13,255,140,0.25); }
+  .badge-blue { background: rgba(61,158,255,0.08); color: var(--blue); border: 1px solid rgba(61,158,255,0.25); }
+  .badge-red { background: rgba(255,61,90,0.08); color: var(--red); border: 1px solid rgba(255,61,90,0.25); }
+
+  /* ── NAV ── */
+  nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(8,11,16,0.92);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+    padding: 0;
+  }
+  .nav-logo-container {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-logo-img {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    overflow: hidden;
+    background: var(--bg2);
+    border: 1px solid var(--border2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+  }
+  .nav-logo-img:hover {
+    border-color: var(--muted);
+    box-shadow: 0 0 16px rgba(160,160,160,0.1);
+  }
+  .nav-logo-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .nav-logo-text {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 2px;
+    color: var(--gold);
+    text-transform: uppercase;
+  }
+  .nav-inner {
+    display: flex;
+    gap: 0;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .nav-inner::-webkit-scrollbar { display: none; }
+  .nav-link {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--muted);
+    padding: 16px 20px;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: color 0.2s, border-color 0.2s;
+    border-bottom: 2px solid transparent;
+  }
+  .nav-link:hover { color: var(--gold); border-bottom-color: var(--gold); }
+
+  /* ── SECTIONS ── */
+  section { padding: 80px 0; border-bottom: 1px solid var(--border); }
+  .section-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 4px;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+  .section-title {
+    font-size: clamp(28px, 4vw, 44px);
+    font-weight: 800;
+    color: var(--white);
+    letter-spacing: -1.5px;
+    line-height: 1.05;
+    margin-bottom: 16px;
+  }
+  .section-desc {
+    color: var(--muted);
+    max-width: 700px;
+    font-size: 15px;
+    margin-bottom: 48px;
+    font-family: 'DM Mono', monospace;
+    line-height: 1.7;
+  }
+
+  /* ── AMD FLOW ── */
+  .amd-flow {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2px;
+    margin-bottom: 48px;
+  }
+  .amd-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    padding: 32px 28px;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.3s;
+  }
+  .amd-card:hover { border-color: var(--gold); }
+  .amd-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+  }
+  .amd-card.accum::before { background: var(--blue); }
+  .amd-card.manip::before { background: var(--gold); }
+  .amd-card.distrib::before { background: var(--green); }
+  .amd-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 2px;
+    margin-bottom: 8px;
+  }
+  .amd-card.accum .amd-num { color: var(--blue); }
+  .amd-card.manip .amd-num { color: var(--gold); }
+  .amd-card.distrib .amd-num { color: var(--green); }
+  .amd-name {
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--white);
+    margin-bottom: 16px;
+    letter-spacing: -0.5px;
+  }
+  .amd-desc { font-size: 13px; color: var(--text); line-height: 1.7; }
+  .amd-traits {
+    margin-top: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .amd-trait {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    padding-left: 14px;
+    position: relative;
+  }
+  .amd-trait::before {
+    content: '›';
+    position: absolute;
+    left: 0;
+    color: var(--gold);
+  }
+
+  /* ── STATE MACHINE ── */
+  .state-flow {
+    display: flex;
+    gap: 0;
+    overflow-x: auto;
+    padding-bottom: 8px;
+    margin-bottom: 40px;
+  }
+  .state-step {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+  }
+  .state-box {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    padding: 18px 20px;
+    min-width: 160px;
+    transition: all 0.3s;
+    cursor: default;
+  }
+  .state-box:hover { border-color: var(--gold); background: var(--bg3); }
+  .state-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--gold);
+    letter-spacing: 2px;
+    margin-bottom: 6px;
+  }
+  .state-name {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--white);
+    margin-bottom: 4px;
+  }
+  .state-cond {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+  .state-arrow {
+    width: 30px;
+    flex-shrink: 0;
+    text-align: center;
+    color: var(--gold);
+    font-size: 18px;
+  }
+
+  /* ── FVG GRID ── */
+  .fvg-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 2px;
+  }
+  .fvg-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    padding: 24px;
+    transition: border-color 0.3s, background 0.3s;
+    position: relative;
+  }
+  .fvg-card:hover { border-color: var(--border2); background: var(--bg3); }
+  .fvg-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    padding: 3px 8px;
+    border-radius: 2px;
+    margin-bottom: 12px;
+    display: inline-block;
+  }
+  .fvg-tag.bull { background: rgba(13,255,140,0.1); color: var(--green); }
+  .fvg-tag.bear { background: rgba(255,61,90,0.1); color: var(--red); }
+  .fvg-tag.neutral { background: rgba(61,158,255,0.1); color: var(--blue); }
+  .fvg-name {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--white);
+    margin-bottom: 8px;
+    letter-spacing: -0.3px;
+  }
+  .fvg-abbr {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--gold);
+    margin-bottom: 10px;
+  }
+  .fvg-desc { font-size: 12px; color: var(--text); line-height: 1.7; }
+  .fvg-logic {
+    margin-top: 12px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    padding: 10px 12px;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--gold);
+    line-height: 1.6;
+  }
+
+  /* ── SESSION MODELS ── */
+  .session-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 2px;
+  }
+  .session-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    padding: 28px;
+    position: relative;
+    overflow: hidden;
+  }
+  .session-card::after {
+    content: attr(data-model);
+    position: absolute;
+    right: 20px;
+    top: 20px;
+    font-family: 'DM Mono', monospace;
+    font-size: 42px;
+    font-weight: 700;
+    color: rgba(240,180,41,0.06);
+    line-height: 1;
+  }
+  .session-model-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--gold);
+    letter-spacing: 3px;
+    margin-bottom: 8px;
+  }
+  .session-name {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--white);
+    margin-bottom: 16px;
+    letter-spacing: -0.3px;
+  }
+  .session-rules { display: flex; flex-direction: column; gap: 8px; }
+  .session-rule {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+  }
+  .rule-icon {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    margin-top: 2px;
+  }
+  .rule-icon.london { color: var(--blue); }
+  .rule-icon.ny { color: var(--green); }
+  .rule-icon.warn { color: var(--red); }
+  .rule-text {
+    font-size: 12px;
+    color: var(--text);
+    line-height: 1.6;
+    font-family: 'DM Mono', monospace;
+  }
+  .session-bias {
+    margin-top: 16px;
+    padding: 10px 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border-top: 1px solid var(--border);
+  }
+  .bias-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 1px;
+  }
+  .bias-val {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+  }
+  .bias-bull { color: var(--green); }
+  .bias-bear { color: var(--red); }
+  .bias-neutral { color: var(--muted); }
+
+  /* ── KILL ZONES ── */
+  .kz-timeline {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    padding: 32px;
+    margin-bottom: 32px;
+    position: relative;
+    overflow: hidden;
+  }
+  .kz-timeline-title {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 2px;
+    margin-bottom: 24px;
+    text-transform: uppercase;
+  }
+  .timeline-bar {
+    position: relative;
+    height: 50px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    margin-bottom: 12px;
+    overflow: hidden;
+  }
+  .tl-segment {
+    position: absolute;
+    top: 0; bottom: 0;
+    display: flex;
+    align-items: center;
+    padding: 0 12px;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 1px;
+  }
+  .tl-seg-asia { background: rgba(61,158,255,0.08); color: var(--blue); border-right: 1px solid rgba(61,158,255,0.2); }
+  .tl-seg-london { background: rgba(240,180,41,0.08); color: var(--gold); border-right: 1px solid rgba(240,180,41,0.2); }
+  .tl-seg-ny { background: rgba(13,255,140,0.08); color: var(--green); border-right: 1px solid rgba(13,255,140,0.2); }
+  .tl-seg-dead { background: rgba(255,61,90,0.04); color: var(--red); }
+  .tl-label {
+    position: absolute;
+    bottom: -24px;
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    color: var(--muted);
+    transform: translateX(-50%);
+  }
+  .timeline-labels {
+    position: relative;
+    height: 28px;
+    margin-bottom: 32px;
+  }
+  .kz-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 2px;
+  }
+  .kz-card {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    padding: 20px;
+  }
+  .kz-session {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    margin-bottom: 6px;
+    text-transform: uppercase;
+  }
+  .kz-time {
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--white);
+    letter-spacing: -1px;
+    margin-bottom: 4px;
+  }
+  .kz-broker {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+  }
+
+  /* ── CONFIRMATIONS ── */
+  .confirm-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 2px;
+  }
+  .confirm-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    padding: 28px;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.3s;
+  }
+  .confirm-card:hover { border-color: var(--gold); }
+  .confirm-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 48px;
+    font-weight: 700;
+    color: rgba(240,180,41,0.07);
+    position: absolute;
+    right: 16px;
+    top: 8px;
+    line-height: 1;
+  }
+  .confirm-name {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--white);
+    margin-bottom: 8px;
+    letter-spacing: -0.3px;
+  }
+  .confirm-full {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--gold);
+    letter-spacing: 1px;
+    margin-bottom: 12px;
+  }
+  .confirm-desc { font-size: 12px; color: var(--text); line-height: 1.7; margin-bottom: 14px; }
+  .confirm-rule {
+    background: var(--bg);
+    border-left: 2px solid var(--gold);
+    padding: 8px 12px;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    line-height: 1.7;
+  }
+
+  /* ── LIQUIDITY ── */
+  .liq-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2px;
+    margin-bottom: 32px;
+  }
+  .liq-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    padding: 28px;
+  }
+  .liq-type {
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    letter-spacing: -0.3px;
+  }
+  .liq-type.buy { color: var(--green); }
+  .liq-type.sell { color: var(--red); }
+  .liq-locations { margin-top: 16px; display: flex; flex-direction: column; gap: 8px; }
+  .liq-loc {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    font-size: 12px;
+    color: var(--text);
+    font-family: 'DM Mono', monospace;
+    line-height: 1.5;
+  }
+  .liq-loc::before { content: '—'; color: var(--gold); flex-shrink: 0; }
+
+  /* ── RISK TABLE ── */
+  .risk-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  .risk-table th {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: var(--gold);
+    text-align: left;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border);
+    text-transform: uppercase;
+  }
+  .risk-table td {
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+    color: var(--text);
+    vertical-align: top;
+  }
+  .risk-table tr:last-child td { border-bottom: none; }
+  .risk-table tr:hover td { background: var(--bg3); }
+  .risk-table td:first-child {
+    font-family: 'DM Mono', monospace;
+    color: var(--white);
+    font-size: 12px;
+    white-space: nowrap;
+    width: 220px;
+  }
+  .risk-table td:nth-child(2) {
+    font-family: 'DM Mono', monospace;
+    color: var(--gold);
+    font-weight: 700;
+    white-space: nowrap;
+    width: 160px;
+  }
+  .val-green { color: var(--green) !important; }
+  .val-red { color: var(--red) !important; }
+
+  /* ── PSYCHOLOGY ── */
+  .psych-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 2px;
+  }
+  .psych-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    padding: 24px;
+    position: relative;
+    overflow: hidden;
+  }
+  .psych-icon {
+    font-size: 32px;
+    margin-bottom: 12px;
+    display: block;
+  }
+  .psych-issue {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--white);
+    margin-bottom: 6px;
+  }
+  .psych-cause {
+    font-size: 11px;
+    color: var(--red);
+    font-family: 'DM Mono', monospace;
+    margin-bottom: 12px;
+    letter-spacing: 0.5px;
+  }
+  .psych-solution {
+    font-size: 12px;
+    color: var(--text);
+    line-height: 1.7;
+    margin-bottom: 14px;
+  }
+  .psych-algo {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    padding: 10px 12px;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--green);
+    line-height: 1.7;
+  }
+  .psych-algo-label {
+    font-size: 9px;
+    color: var(--muted);
+    letter-spacing: 2px;
+    margin-bottom: 4px;
+    text-transform: uppercase;
+  }
+
+  /* ── EA PARAMS TABLE ── */
+  .params-wrap {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    overflow: hidden;
+  }
+  .params-group {
+    padding: 10px 16px;
+    background: var(--bg3);
+    border-bottom: 1px solid var(--border);
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--gold);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+  .param-row {
+    display: grid;
+    grid-template-columns: 260px 130px 1fr;
+    border-bottom: 1px solid var(--border);
+    transition: background 0.2s;
+  }
+  .param-row:hover { background: var(--bg3); }
+  .param-row:last-child { border-bottom: none; }
+  .param-name, .param-val, .param-note {
+    padding: 12px 16px;
+    font-size: 12px;
+  }
+  .param-name { font-family: 'DM Mono', monospace; color: var(--white); }
+  .param-val { font-family: 'DM Mono', monospace; color: var(--gold); font-weight: 700; border-left: 1px solid var(--border); border-right: 1px solid var(--border); }
+  .param-note { color: var(--muted); font-size: 11px; }
+
+  /* ── CHECKLIST ── */
+  .checklist {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2px;
+  }
+  .check-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 16px 20px;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+  }
+  .check-icon {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    margin-top: 1px;
+  }
+  .check-icon.pass { background: rgba(13,255,140,0.15); color: var(--green); }
+  .check-icon.fail { background: rgba(255,61,90,0.15); color: var(--red); }
+  .check-text { font-size: 12px; color: var(--text); line-height: 1.6; font-family: 'DM Mono', monospace; }
+
+  /* ── PAIRS ── */
+  .pairs-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 2px;
+  }
+  .pair-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    padding: 20px;
+    transition: border-color 0.3s;
+    text-align: center;
+  }
+  .pair-card:hover { border-color: var(--gold); }
+  .pair-sym { font-size: 22px; font-weight: 800; color: var(--white); letter-spacing: -0.5px; margin-bottom: 4px; }
+  .pair-tier { font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 2px; margin-bottom: 10px; text-transform: uppercase; }
+  .tier-1 { color: var(--gold); }
+  .tier-2 { color: var(--blue); }
+  .tier-3 { color: var(--muted); }
+  .pair-note { font-size: 11px; color: var(--text); line-height: 1.5; font-family: 'DM Mono', monospace; }
+  .pair-score {
+    display: flex;
+    justify-content: center;
+    gap: 3px;
+    margin-top: 12px;
+  }
+  .dot { width: 6px; height: 6px; border-radius: 50%; }
+  .dot.on { background: var(--gold); }
+  .dot.off { background: var(--border); }
+
+  /* ── FOOTER ── */
+  footer {
+    padding: 48px 0;
+    text-align: center;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 1px;
+  }
+  footer span { color: var(--gold); }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeDown {
+    from { opacity: 0; transform: translateY(-20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 900px) {
+    .amd-flow { grid-template-columns: 1fr; }
+    .liq-grid { grid-template-columns: 1fr; }
+    .checklist { grid-template-columns: 1fr; }
+    .param-row { grid-template-columns: 1fr 1fr; }
+    .param-note { display: none; }
+    .state-flow { gap: 0; }
+  }
+  @media (max-width: 600px) {
+    .wrap { padding: 0 16px; }
+    .header-title { letter-spacing: -2px; }
+    .kz-cards { grid-template-columns: 1fr 1fr; }
+  }
+
+  /* scrollbar */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--gold); }
+</style>
+</head>
+<body>
+
+<div class="orb orb1"></div>
+<div class="orb orb2"></div>
+<div class="orb orb3"></div>
+
+<!-- ══════════════════════ HEADER ══════════════════════ -->
+<header>
+  <div class="wrap">
+    <div class="header-tag">ICT · SMC · Institutional Flow</div>
+    <h1 class="header-title">PHASE<span>‑404</span><br>Strategy</h1>
+    <p class="header-sub">// complete system overview — eurusd ea v2.0<br>// accumulation · manipulation · distribution</p>
+    <div class="header-badges">
+      <span class="badge badge-gold">EURUSD Primary</span>
+      <span class="badge badge-green">Kill Zone Only</span>
+      <span class="badge badge-blue">FVG + MSS Entry</span>
+      <span class="badge badge-red">2% Daily Risk Cap</span>
+      <span class="badge badge-gold">5 Session Models</span>
+      <span class="badge badge-blue">M15 Bias · M5 Entry</span>
+    </div>
+  </div>
+</header>
+
+<!-- ══════════════════════ NAV ══════════════════════ -->
+<nav>
+  <div class="wrap">
+    <div class="nav-logo-container">
+      <a href="../index.html" class="nav-logo-img">
+        <img src="../assets/logo.png" alt="NUKRAX Logo">
+      </a>
+      <span class="nav-logo-text">NUKRAX — PHASE-404</span>
+    </div>
+    <div class="nav-inner">
+      <a class="nav-link" href="#amd">AMD Framework</a>
+      <a class="nav-link" href="#states">State Machine</a>
+      <a class="nav-link" href="#fvg">FVG Types</a>
+      <a class="nav-link" href="#sessions">Session Models</a>
+      <a class="nav-link" href="#killzones">Kill Zones</a>
+      <a class="nav-link" href="#liquidity">Liquidity</a>
+      <a class="nav-link" href="#confirmations">Confirmations</a>
+      <a class="nav-link" href="#risk">Risk Management</a>
+      <a class="nav-link" href="#psychology">Psychology</a>
+      <a class="nav-link" href="#params">EA Parameters</a>
+      <a class="nav-link" href="#pairs">Best Pairs</a>
+      <a class="nav-link" href="#checklist">Trade Checklist</a>
+    </div>
+  </div>
+</nav>
+
+<!-- ══════════════════════ AMD ══════════════════════ -->
+<section id="amd">
+  <div class="wrap">
+    <div class="section-label">Core Framework</div>
+    <h2 class="section-title">AMD — The Market's<br>Operating System</h2>
+    <p class="section-desc">// Every move in the market follows Wyckoff's three-phase cycle. PHASE-404 is built entirely around identifying where in this cycle price currently sits — and only trading during the Distribution phase after Manipulation has occurred.</p>
+    <div class="amd-flow">
+      <div class="amd-card accum">
+        <div class="amd-num">PHASE 01 ·· ACCUMULATION</div>
+        <div class="amd-name">Accumulation</div>
+        <div class="amd-desc">Institutions silently build positions inside a range without causing significant directional movement. This is the Asia session — consolidation, tight range, low volatility.</div>
+        <div class="amd-traits">
+          <div class="amd-trait">Sideways, range-bound structure</div>
+          <div class="amd-trait">High volume around lows (smart money buying)</div>
+          <div class="amd-trait">Long wicks and wick rejections</div>
+          <div class="amd-trait">False breakouts to trap retail sellers</div>
+          <div class="amd-trait">Objective: accumulate longs, induce retail shorts</div>
+        </div>
+      </div>
+      <div class="amd-card manip">
+        <div class="amd-num">PHASE 02 ·· MANIPULATION</div>
+        <div class="amd-name">Manipulation</div>
+        <div class="amd-desc">Sharp, unpredictable moves engineered to hunt liquidity. Stop hunts above/below key levels. This is where the liquidity sweep occurs — the EA's primary trigger.</div>
+        <div class="amd-traits">
+          <div class="amd-trait">Stop hunts: targeting BSL or SSL</div>
+          <div class="amd-trait">Wick through key level, close back inside</div>
+          <div class="amd-trait">Fake breakouts inducing premature entries</div>
+          <div class="amd-trait">High volatility spike to confuse retail</div>
+          <div class="amd-trait">Objective: capture liquidity before real move</div>
+        </div>
+      </div>
+      <div class="amd-card distrib">
+        <div class="amd-num">PHASE 03 ·· DISTRIBUTION</div>
+        <div class="amd-name">Distribution</div>
+        <div class="amd-desc">After the sweep, institutions distribute (offload) positions by selling into the rise or buying into the fall. The EA enters here — at the FVG/OB POI after MSS confirmation.</div>
+        <div class="amd-traits">
+          <div class="amd-trait">Formation of market structure shift (MSS)</div>
+          <div class="amd-trait">Fair Value Gap (FVG) left behind by displacement</div>
+          <div class="amd-trait">Price retraces into FVG — EA entry zone</div>
+          <div class="amd-trait">Strong directional candles in new direction</div>
+          <div class="amd-trait">Objective: exit profitable positions efficiently</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════ STATE MACHINE ══════════════════════ -->
+<section id="states">
+  <div class="wrap">
+    <div class="section-label">EA Architecture</div>
+    <h2 class="section-title">7-Stage State Machine</h2>
+    <p class="section-desc">// The EA enforces every condition sequentially. No stage can be skipped. Each condition must be fully satisfied before progressing — this is what prevents false entries.</p>
+    <div class="state-flow">
+      <div class="state-step">
+        <div class="state-box">
+          <div class="state-num">00 · IDLE</div>
+          <div class="state-name">Wait Setup</div>
+          <div class="state-cond">Tracking Asia range · Updating BSL/SSL on M15</div>
+        </div>
+      </div>
+      <div class="state-arrow">→</div>
+      <div class="state-step">
+        <div class="state-box">
+          <div class="state-num">01 · SESSION</div>
+          <div class="state-name">KZ Active</div>
+          <div class="state-cond">Kill zone open · Valid model detected · Bias set</div>
+        </div>
+      </div>
+      <div class="state-arrow">→</div>
+      <div class="state-step">
+        <div class="state-box">
+          <div class="state-num">02 · HUNTED</div>
+          <div class="state-name">Liq Swept</div>
+          <div class="state-cond">BSL or SSL swept · Close back inside confirmed</div>
+        </div>
+      </div>
+      <div class="state-arrow">→</div>
+      <div class="state-step">
+        <div class="state-box">
+          <div class="state-num">03 · POI</div>
+          <div class="state-name">FVG Found</div>
+          <div class="state-cond">BISI or SIBI detected on M5 · Min 2 pips size</div>
+        </div>
+      </div>
+      <div class="state-arrow">→</div>
+      <div class="state-step">
+        <div class="state-box">
+          <div class="state-num">04 · MSS</div>
+          <div class="state-name">Confirmed</div>
+          <div class="state-cond">Structure shift on M5 · Swing H/L broken</div>
+        </div>
+      </div>
+      <div class="state-arrow">→</div>
+      <div class="state-step">
+        <div class="state-box" style="border-color:var(--gold)">
+          <div class="state-num">05 · ARMED</div>
+          <div class="state-name">Entry Ready</div>
+          <div class="state-cond">Price in POI · Kill zone active · Spread OK</div>
+        </div>
+      </div>
+      <div class="state-arrow">→</div>
+      <div class="state-step">
+        <div class="state-box" style="border-color:var(--green)">
+          <div class="state-num">06 · TRADE</div>
+          <div class="state-name">In Trade</div>
+          <div class="state-cond">Partial TP at 1.5R · BE · Trailing on candle</div>
+        </div>
+      </div>
+    </div>
+    <div style="background:var(--bg2);border:1px solid var(--border);padding:20px 24px;margin-top:2px;">
+      <span style="font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);">⚠ STATE TTL — </span>
+      <span style="font-family:'DM Mono',monospace;font-size:11px;color:var(--text);">If no trade fires within 40 bars, all state resets automatically. Stale setups are discarded. The EA never holds onto a dead setup.</span>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════ FVG TYPES ══════════════════════ -->
+<section id="fvg">
+  <div class="wrap">
+    <div class="section-label">POI Types</div>
+    <h2 class="section-title">Fair Value Gap<br>Classification</h2>
+    <p class="section-desc">// PHASE-404 recognises 8 gap types. The EA primarily trades BISI and SIBI as entry POIs. All others are tracked as context levels or filtered out.</p>
+    <div class="fvg-grid">
+
+      <div class="fvg-card" style="border-color:rgba(13,255,140,0.3)">
+        <span class="fvg-tag bull">PRIMARY · ENTRY POI</span>
+        <div class="fvg-name">BISI</div>
+        <div class="fvg-abbr">Buy Side Imbalance · Sell Side Inefficiency</div>
+        <div class="fvg-desc">Bullish FVG. Price moves up so aggressively that clean sell-side execution fails. Gap forms below price with strong buying pressure. EA uses this as bullish entry zone after SSL sweep.</div>
+        <div class="fvg-logic">Detection:<br>C[2].high &lt; C[0].low<br>C[1] = bullish displacement candle<br>Gap size ≥ 2 pips minimum</div>
+      </div>
+
+      <div class="fvg-card" style="border-color:rgba(255,61,90,0.3)">
+        <span class="fvg-tag bear">PRIMARY · ENTRY POI</span>
+        <div class="fvg-name">SIBI</div>
+        <div class="fvg-abbr">Sell Side Imbalance · Buy Side Inefficiency</div>
+        <div class="fvg-desc">Bearish FVG. Price drops aggressively leaving a gap with no buy-side activity. Strong selling pressure and absent buying. EA uses this as bearish entry zone after BSL sweep.</div>
+        <div class="fvg-logic">Detection:<br>C[2].low &gt; C[0].high<br>C[1] = bearish displacement candle<br>Gap size ≥ 2 pips minimum</div>
+      </div>
+
+      <div class="fvg-card">
+        <span class="fvg-tag neutral">CONTEXT LEVEL</span>
+        <div class="fvg-name">Inverse FVG</div>
+        <div class="fvg-abbr">Inverse Fair Value Gap — IFVG</div>
+        <div class="fvg-desc">When a prior upward gap gets filled by a downward move (or vice versa). The intersection candle forms a critical zone. Liquidity from both sides has been swept — strong reaction level. Used as confirmation signal.</div>
+        <div class="fvg-logic">Two opposite FVGs overlapping<br>Intersection = key reaction zone<br>Acts as hidden S/R level</div>
+      </div>
+
+      <div class="fvg-card">
+        <span class="fvg-tag neutral">WEEKLY LEVEL</span>
+        <div class="fvg-name">NWOG</div>
+        <div class="fvg-abbr">New Week Opening Gap</div>
+        <div class="fvg-desc">Gap between Friday's close and Sunday's open. Reveals weekend market sentiment. Acts as early liquidity target or springboard. Price either fills the gap or uses it as continuation support/resistance.</div>
+        <div class="fvg-logic">Friday close → Sunday open<br>Early-week liquidity magnet<br>Watch for fill or continuation</div>
+      </div>
+
+      <div class="fvg-card">
+        <span class="fvg-tag neutral">DAILY LEVEL</span>
+        <div class="fvg-name">NDOG</div>
+        <div class="fvg-abbr">New Day Opening Gap</div>
+        <div class="fvg-desc">Gap between previous day's close and new session's open (5PM EST daily reset). Tracked by EA at 17:00 EST each day. Key intraday level — price frequently returns to this zone.</div>
+        <div class="fvg-logic">17:00 EST close price<br>Tracked as g_NDOG_Level<br>Intraday magnet / reaction</div>
+      </div>
+
+      <div class="fvg-card">
+        <span class="fvg-tag bull">TREND SIGNAL</span>
+        <div class="fvg-name">Breakaway Gap</div>
+        <div class="fvg-abbr">Breakaway / Exhaustion Gap</div>
+        <div class="fvg-desc">Forms at the start of a strong move — price explodes out of consolidation. Signals a new market phase and shift in structure. Rarely gets filled. Marks beginning of institutional trend.</div>
+        <div class="fvg-logic">Price exits range explosively<br>Often unfilled long-term<br>Confirms trend initiation</div>
+      </div>
+
+      <div class="fvg-card">
+        <span class="fvg-tag neutral">TREND CONTEXT</span>
+        <div class="fvg-name">Measuring Gap</div>
+        <div class="fvg-abbr">Continuation / Midpoint Gap</div>
+        <div class="fvg-desc">Forms during strong trends at approximately the midpoint of a move. Used to estimate final target via measured projection. Less about imbalance, more about momentum. Usually stays unfilled until move completes.</div>
+        <div class="fvg-logic">Mid-move formation<br>Target = gap + equal leg<br>Momentum confirmation</div>
+      </div>
+
+      <div class="fvg-card">
+        <span class="fvg-tag neutral">VOLUME CONTEXT</span>
+        <div class="fvg-name">Volume Gap</div>
+        <div class="fvg-abbr">Volume Imbalance Zone</div>
+        <div class="fvg-desc">Sudden shift in trading activity — volume spikes or drops significantly between candles. Signals aggressive entry or exit by large players, leaving thin liquidity zones that act as price magnets for later rebalancing.</div>
+        <div class="fvg-logic">Volume spike/drop between bars<br>Thin liquidity zone remains<br>Magnet for future rebalancing</div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════ SESSION MODELS ══════════════════════ -->
+<section id="sessions">
+  <div class="wrap">
+    <div class="section-label">Session Theory</div>
+    <h2 class="section-title">5 Repeating<br>Session Models</h2>
+    <p class="section-desc">// Based on 10 years of backtesting (2015–2025). The EA identifies which model is forming by analyzing London's first 90 minutes (02:00–03:30 EST) against the Asia range. Each model produces a specific directional bias.</p>
+    <div class="session-grid">
+
+      <div class="session-card" data-model="1">
+        <div class="session-model-num">MODEL 01 ·· BEARISH</div>
+        <div class="session-name">Downtrend Formation</div>
+        <div class="session-rules">
+          <div class="session-rule">
+            <div class="rule-icon london">L</div>
+            <div class="rule-text">London fails to break Asia High in first 90 min → no bullish momentum</div>
+          </div>
+          <div class="session-rule">
+            <div class="rule-icon london">L</div>
+            <div class="rule-text">London breaks AND closes below Asia Low → bearish confirmation</div>
+          </div>
+          <div class="session-rule">
+            <div class="rule-icon ny">N</div>
+            <div class="rule-text">NY fails to break above London High in first 90 min</div>
+          </div>
+          <div class="session-rule">
+            <div class="rule-icon ny">N</div>
+            <div class="rule-text">NY breaks below London Low → full bearish trend day confirmed</div>
+          </div>
+        </div>
+        <div class="session-bias">
+          <span class="bias-label">EA BIAS →</span>
+          <span class="bias-val bias-bear">BEARISH · SHORT ONLY</span>
+        </div>
+      </div>
+
+      <div class="session-card" data-model="2">
+        <div class="session-model-num">MODEL 02 ·· BULLISH</div>
+        <div class="session-name">Bullish Trend Formation</div>
+        <div class="session-rules">
+          <div class="session-rule">
+            <div class="rule-icon london">L</div>
+            <div class="rule-text">London breaks and closes above Asia High AND Frankfurt High</div>
+          </div>
+          <div class="session-rule">
+            <div class="rule-icon london">L</div>
+            <div class="rule-text">London fails to break Asia Low in first 90 min → forms higher low</div>
+          </div>
+          <div class="session-rule">
+            <div class="rule-icon ny">N</div>
+            <div class="rule-text">NY fails to break below London Low in first 90 min</div>
+          </div>
+          <div class="session-rule">
+            <div class="rule-icon ny">N</div>
+            <div class="rule-text">NY breaks above London High → full bullish trend day confirmed</div>
+          </div>
+        </div>
+        <div class="session-bias">
+          <span class="bias-label">EA BIAS →</span>
+          <span class="bias-val bias-bull">BULLISH · LONG ONLY</span>
+        </div>
+      </div>
+
+      <div class="session-card" data-model="3">
+        <div class="session-model-num">MODEL 03 ·· AMD REVERSAL</div>
+        <div class="session-name">AMD Setup</div>
+        <div class="session-rules">
+          <div class="session-rule">
+            <div class="rule-icon london">L</div>
+            <div class="rule-text">London takes the Asia Low in first 90 min (SSL swept)</div>
+          </div>
+          <div class="session-rule">
+            <div class="rule-icon london">L</div>
+            <div class="rule-text">London reverses higher → forms new higher low (bullish MSS)</div>
+          </div>
+          <div class="session-rule">
+            <div class="rule-icon london">L</div>
+            <div class="rule-text">Market then takes Asia High and/or PDH</div>
+          </div>
+          <div class="session-rule">
+            <div class="rule-icon ny">N</div>
+            <div class="rule-text">NY must NOT close below London Low (invalidates if it does)</div>
+          </div>
+          <div class="session-rule">
+            <div class="rule-icon ny">N</div>
+            <div class="rule-text">NY forms higher low in first 90 min → breaks above London High</div>
+          </div>
+        </div>
+        <div class="session-bias">
+          <span class="bias-label">EA BIAS →</span>
+          <span class="bias-val bias-bull">BULLISH · REVERSAL LONG</span>
+        </div>
+      </div>
+
+      <div class="session-card" data-model="4">
+        <div class="session-model-num">MODEL 04 ·· AVOID</div>
+        <div class="session-name">Seek & Destroy Day</div>
+        <div class="session-rules">
+          <div class="session-rule">
+            <div class="rule-icon warn">!</div>
+            <div class="rule-text">London sweeps BOTH Asia High AND Asia Low within first 90 min</div>
+          </div>
+          <div class="session-rule">
+            <div class="rule-icon warn">!</div>
+            <div class="rule-text">Indicates a ranging day — no directional conviction</div>
+          </div>
+          <div class="session-rule">
+            <div class="rule-icon ny">N</div>
+            <div class="rule-text">NY near London Low/High → will sweep that level then reverse</div>
+          </div>
+          <div class="session-rule">
+            <div class="rule-icon warn">!</div>
+            <div class="rule-text">EA blocks all entries — no tradeable directional bias exists</div>
+          </div>
+        </div>
+        <div class="session-bias" style="background:rgba(255,61,90,0.05)">
+          <span class="bias-label">EA BIAS →</span>
+          <span class="bias-val bias-neutral">NO TRADE · BLOCKED</span>
+        </div>
+      </div>
+
+      <div class="session-card" data-model="5">
+        <div class="session-model-num">MODEL 05 ·· COMPRESSION</div>
+        <div class="session-name">London Compression</div>
+        <div class="session-rules">
+          <div class="session-rule">
+            <div class="rule-icon london">L</div>
+            <div class="rule-text">London forms tight consolidation INSIDE Asia range (02:00–05:00 EST)</div>
+          </div>
+          <div class="session-rule">
+            <div class="rule-icon london">L</div>
+            <div class="rule-text">London High and Low stay inside Asia High and Low (no closes outside)</div>
+          </div>
+          <div class="session-rule">
+            <div class="rule-icon ny">N</div>
+            <div class="rule-text">NY typically sweeps London High or Low before rallying in true direction</div>
+          </div>
+          <div class="session-rule">
+            <div class="rule-icon ny">N</div>
+            <div class="rule-text">Alt: NY takes both London AND Asia extremes before reversing</div>
+          </div>
+        </div>
+        <div class="session-bias">
+          <span class="bias-label">EA BIAS →</span>
+          <span class="bias-val bias-neutral">WAIT FOR NY SWEEP</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════ KILL ZONES ══════════════════════ -->
+<section id="killzones">
+  <div class="wrap">
+    <div class="section-label">Time Theory</div>
+    <h2 class="section-title">Kill Zones &<br>Session Timing</h2>
+    <p class="section-desc">// The EA ONLY enters trades during kill zones. No entries outside these windows — this is the primary FOMO prevention filter from the psychology rules. Times shown in EST and Exness server (GMT+3).</p>
+
+    <div class="kz-timeline">
+      <div class="kz-timeline-title">// 24-hour EST timeline</div>
+      <div class="timeline-bar">
+        <div class="tl-segment tl-seg-asia"  style="left:0%;width:12.5%">ASIA</div>
+        <div class="tl-segment tl-seg-dead"  style="left:12.5%;width:4.2%"></div>
+        <div class="tl-segment tl-seg-london" style="left:16.7%;width:12.5%">LON KZ</div>
+        <div class="tl-segment" style="left:29.2%;width:12.5%;background:rgba(240,180,41,0.04);color:var(--muted);font-size:9px">London</div>
+        <div class="tl-segment tl-seg-ny" style="left:41.7%;width:12.5%">NY KZ</div>
+        <div class="tl-segment" style="left:54.2%;width:29.2%;background:rgba(13,255,140,0.04);color:var(--muted);font-size:9px">New York</div>
+        <div class="tl-segment tl-seg-dead" style="left:83.4%;width:16.6%">ROLLOVER</div>
+      </div>
+      <div class="timeline-labels">
+        <span class="tl-label" style="left:0%">00:00</span>
+        <span class="tl-label" style="left:12.5%">03:00</span>
+        <span class="tl-label" style="left:20.8%">05:00</span>
+        <span class="tl-label" style="left:33.3%">08:00</span>
+        <span class="tl-label" style="left:41.7%">10:00</span>
+        <span class="tl-label" style="left:50%">12:00</span>
+        <span class="tl-label" style="left:70.8%">17:00</span>
+        <span class="tl-label" style="left:100%">24:00</span>
+      </div>
+    </div>
+
+    <div class="kz-cards">
+      <div class="kz-card">
+        <div class="kz-session" style="color:var(--blue)">Asia Session</div>
+        <div class="kz-time">20:00–03:00</div>
+        <div class="kz-broker">EST · Server: 03:00–10:00</div>
+        <div style="margin-top:10px;font-size:11px;color:var(--muted);font-family:'DM Mono',monospace;line-height:1.7">
+          Accumulation phase.<br>EA tracks high/low.<br>No entries taken.
+        </div>
+      </div>
+      <div class="kz-card" style="border-color:rgba(240,180,41,0.3)">
+        <div class="kz-session" style="color:var(--gold)">🎯 London Kill Zone</div>
+        <div class="kz-time">02:00–05:00</div>
+        <div class="kz-broker">EST · Server: 09:00–12:00</div>
+        <div style="margin-top:10px;font-size:11px;color:var(--muted);font-family:'DM Mono',monospace;line-height:1.7">
+          Primary entry window.<br>Highest probability setups.<br>Breakouts from Asia range.
+        </div>
+      </div>
+      <div class="kz-card">
+        <div class="kz-session" style="color:var(--gold)">London Session</div>
+        <div class="kz-time">02:00–12:00</div>
+        <div class="kz-broker">EST · Server: 09:00–19:00</div>
+        <div style="margin-top:10px;font-size:11px;color:var(--muted);font-family:'DM Mono',monospace;line-height:1.7">
+          High liquidity, fast moves.<br>Sets daily high or low.<br>Grabs Asia H/L first.
+        </div>
+      </div>
+      <div class="kz-card" style="border-color:rgba(13,255,140,0.3)">
+        <div class="kz-session" style="color:var(--green)">🎯 NY Kill Zone</div>
+        <div class="kz-time">07:00–10:00</div>
+        <div class="kz-broker">EST · Server: 14:00–17:00</div>
+        <div style="margin-top:10px;font-size:11px;color:var(--muted);font-family:'DM Mono',monospace;line-height:1.7">
+          Secondary entry window.<br>Reversal of London possible.<br>Highest liquidity of day.
+        </div>
+      </div>
+      <div class="kz-card">
+        <div class="kz-session" style="color:var(--green)">NY Session</div>
+        <div class="kz-time">07:00–17:00</div>
+        <div class="kz-broker">EST · Server: 14:00–00:00</div>
+        <div style="margin-top:10px;font-size:11px;color:var(--muted);font-family:'DM Mono',monospace;line-height:1.7">
+          Deepest liquidity overall.<br>NY close = next day's draw.<br>Avoid 16:45–17:15 EST.
+        </div>
+      </div>
+      <div class="kz-card" style="border-color:rgba(255,61,90,0.3)">
+        <div class="kz-session" style="color:var(--red)">🚫 Rollover Block</div>
+        <div class="kz-time">16:45–17:15</div>
+        <div class="kz-broker">EST · Server: 23:45–00:15</div>
+        <div style="margin-top:10px;font-size:11px;color:var(--muted);font-family:'DM Mono',monospace;line-height:1.7">
+          Hard blocked. Daily close.<br>Spread spikes. No entries.<br>NDOG set at 17:00 EST.
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════ LIQUIDITY ══════════════════════ -->
+<section id="liquidity">
+  <div class="wrap">
+    <div class="section-label">Market Structure</div>
+    <h2 class="section-title">Liquidity Pools<br>BSL · SSL</h2>
+    <p class="section-desc">// The EA marks swing highs as Buy-Side Liquidity (BSL) and swing lows as Sell-Side Liquidity (SSL) on M15. These are the targets and triggers — not entry points themselves.</p>
+    <div class="liq-grid">
+      <div class="liq-card">
+        <div class="liq-type buy">Buy-Side Liquidity (BSL)</div>
+        <div style="font-size:12px;color:var(--text);margin-bottom:8px;font-family:'DM Mono',monospace">Exists ABOVE current price. Sweep = bearish signal.</div>
+        <div class="liq-locations">
+          <div class="liq-loc">Above major swing highs — stops of short sellers</div>
+          <div class="liq-loc">Above resistance zones — breakout buy-stop orders</div>
+          <div class="liq-loc">Above round numbers (e.g. 1.1000, 1.1050)</div>
+          <div class="liq-loc">At liquidity pools where SM sells into buying</div>
+          <div class="liq-loc">Asia session highs — key overnight reference</div>
+          <div class="liq-loc">Previous day high (PDH) — daily reference level</div>
+        </div>
+        <div style="margin-top:20px;background:var(--bg);border:1px solid var(--border);padding:14px;font-family:'DM Mono',monospace;font-size:11px;line-height:1.7">
+          <span style="color:var(--red)">Sweep Logic:</span><br>
+          <span style="color:var(--muted)">H[1] &gt; BSL AND Close[1] &lt; BSL<br>→ BSL_Swept = true<br>→ Bias = BEARISH (look for shorts)<br>→ Find SIBI FVG below sweep level</span>
+        </div>
+      </div>
+      <div class="liq-card">
+        <div class="liq-type sell">Sell-Side Liquidity (SSL)</div>
+        <div style="font-size:12px;color:var(--text);margin-bottom:8px;font-family:'DM Mono',monospace">Exists BELOW current price. Sweep = bullish signal.</div>
+        <div class="liq-locations">
+          <div class="liq-loc">Below major swing lows — stops of long traders</div>
+          <div class="liq-loc">Below support zones — sell-stop breakout orders</div>
+          <div class="liq-loc">Below round numbers (e.g. 1.0900, 1.0850)</div>
+          <div class="liq-loc">At liquidity pools where SM buys into selling</div>
+          <div class="liq-loc">Asia session lows — key overnight reference</div>
+          <div class="liq-loc">Previous day low (PDL) — daily reference level</div>
+        </div>
+        <div style="margin-top:20px;background:var(--bg);border:1px solid var(--border);padding:14px;font-family:'DM Mono',monospace;font-size:11px;line-height:1.7">
+          <span style="color:var(--green)">Sweep Logic:</span><br>
+          <span style="color:var(--muted)">L[1] &lt; SSL AND Close[1] &gt; SSL<br>→ SSL_Swept = true<br>→ Bias = BULLISH (look for longs)<br>→ Find BISI FVG above sweep level</span>
+        </div>
+      </div>
+    </div>
+    <div style="background:var(--bg2);border:1px solid var(--border);padding:24px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:24px">
+      <div>
+        <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--gold);letter-spacing:2px;margin-bottom:8px">DETECTION</div>
+        <div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--text);line-height:1.7">M15 timeframe<br>30-bar lookback<br>SwingStrength = 3 bars each side<br>Auto-updated each bar</div>
+      </div>
+      <div>
+        <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--gold);letter-spacing:2px;margin-bottom:8px">VALIDATION</div>
+        <div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--text);line-height:1.7">Wick must pierce level<br>Candle must close back inside<br>Not just a close beyond<br>Closes confirm intent</div>
+      </div>
+      <div>
+        <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--gold);letter-spacing:2px;margin-bottom:8px">KEY RULE</div>
+        <div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--text);line-height:1.7">Once BSL is swept →<br>do NOT trade longs until<br>price reaches SSL zone.<br>Counter-trades fail.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════ CONFIRMATIONS ══════════════════════ -->
+<section id="confirmations">
+  <div class="wrap">
+    <div class="section-label">Entry Models</div>
+    <h2 class="section-title">Confirmation<br>Methods</h2>
+    <p class="section-desc">// Confirmations are only valid AFTER a BSL or SSL has been swept. Never look for confirmation before liquidity has been hunted. The EA requires MSS as primary confirmation.</p>
+    <div class="confirm-grid">
+
+      <div class="confirm-card">
+        <div class="confirm-num">01</div>
+        <div class="confirm-name">MSS</div>
+        <div class="confirm-full">Market Structure Shift</div>
+        <div class="confirm-desc">The primary confirmation used by the EA. After a sweep, price must break and close above the last lower high (bullish MSS) or below the last higher low (bearish MSS) on the M5 timeframe. This signals institutional intent.</div>
+        <div class="confirm-rule">
+          Bullish: Close[1] &gt; last swing high on M5<br>
+          Bearish: Close[1] &lt; last swing low on M5<br>
+          Must occur AFTER liquidity sweep<br>
+          Required = true in EA settings
+        </div>
+      </div>
+
+      <div class="confirm-card">
+        <div class="confirm-num">02</div>
+        <div class="confirm-name">Breaker</div>
+        <div class="confirm-full">Breaker Block Confirmation</div>
+        <div class="confirm-desc">An invalidated order block that now acts as the opposite support/resistance. Price sweeps deeply into a liquidity zone, breaks the level with momentum, creating a new POI from the broken structure. The broken level flips from support to resistance or vice versa.</div>
+        <div class="confirm-rule">
+          Price breaks through OB with momentum<br>
+          Broken level becomes new POI<br>
+          Bullish Breaker: former bearish OB → support<br>
+          Bearish Breaker: former bullish OB → resistance
+        </div>
+      </div>
+
+      <div class="confirm-card">
+        <div class="confirm-num">03</div>
+        <div class="confirm-name">IFVG</div>
+        <div class="confirm-full">Inverse Fair Value Gap</div>
+        <div class="confirm-desc">When price fills an existing FVG but fails to close the imbalance fully. The unfilled portion becomes an Inverse FVG — a hidden liquidity zone with very strong reaction potential. Both sides of liquidity have been swept creating a double-validated level.</div>
+        <div class="confirm-rule">
+          Prior FVG partially filled<br>
+          Remaining portion = IFVG zone<br>
+          Two opposite imbalances overlap<br>
+          Often leads to sharp reversals
+        </div>
+      </div>
+
+      <div class="confirm-card">
+        <div class="confirm-num">04</div>
+        <div class="confirm-name">OTE</div>
+        <div class="confirm-full">Optimal Trade Entry (Fibonacci)</div>
+        <div class="confirm-desc">Fibonacci-based zone providing ideal entry within a retracement. The 61.8%–78.6% zone is the OTE zone. The 50% level is equilibrium. Price in OTE indicates it's in a discount (for longs) or premium (for shorts) — highest probability entry area.</div>
+        <div class="confirm-rule">
+          Swing identified from sweep to impulse<br>
+          Fib drawn on that swing<br>
+          OTE zone: 61.8% – 78.6%<br>
+          Equilibrium: 50% (minimum entry)
+        </div>
+      </div>
+
+      <div class="confirm-card">
+        <div class="confirm-num">05</div>
+        <div class="confirm-name">SMT</div>
+        <div class="confirm-full">SMT Divergence (Correlated Pairs)</div>
+        <div class="confirm-desc">When two correlated pairs (EURUSD + GBPUSD) show divergent behavior at key levels. One makes a new high while the other fails — signals smart money manipulation and high-probability reversal. The strongest confluence signal available.</div>
+        <div class="confirm-rule">
+          EURUSD makes higher high → GBPUSD fails<br>
+          = Bearish divergence (sell signal)<br>
+          EURUSD makes lower low → GBPUSD holds<br>
+          = Bullish divergence (buy signal)
+        </div>
+      </div>
+
+      <div class="confirm-card">
+        <div class="confirm-num">06</div>
+        <div class="confirm-name">OB</div>
+        <div class="confirm-full">Order Block (Fallback POI)</div>
+        <div class="confirm-desc">Last bearish candle before a strong bullish move (bullish OB) or last bullish candle before a strong bearish move (bearish OB). Used as fallback POI when no FVG is present. The EA requires the next candle to be 1.5× the OB body size to confirm it as a valid impulse.</div>
+        <div class="confirm-rule">
+          Bullish OB: down candle before bullish impulse<br>
+          Bearish OB: up candle before bearish impulse<br>
+          Impulse ≥ 1.5× OB body (ImpulseRatio)<br>
+          Secondary to FVG — used as fallback
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════ RISK MANAGEMENT ══════════════════════ -->
+<section id="risk">
+  <div class="wrap">
+    <div class="section-label">Risk Management</div>
+    <h2 class="section-title">Trade Sizing &<br>Position Management</h2>
+    <p class="section-desc">// Every risk parameter is enforced by the EA with no manual override. Quality over quantity — the strategy is designed to fire 1–3 times per week maximum on clean setups.</p>
+
+    <div style="overflow:auto;margin-bottom:32px">
+      <table class="risk-table">
+        <thead>
+          <tr>
+            <th>Parameter</th>
+            <th>Default Value</th>
+            <th>Logic / Purpose</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Risk Per Trade</td>
+            <td>1–2%</td>
+            <td>Percentage of account balance risked. Lot size auto-calculated. Never fixed lots.</td>
+          </tr>
+          <tr>
+            <td>Reward:Risk Ratio</td>
+            <td class="val-green">1:3</td>
+            <td>TP = Entry + (SL distance × 3). Minimum 3R required by strategy design.</td>
+          </tr>
+          <tr>
+            <td>Stop Loss Anchor</td>
+            <td>Sweep Low/High</td>
+            <td>SL placed just beyond the liquidity sweep candle extreme, not the POI edge.</td>
+          </tr>
+          <tr>
+            <td>ATR SL Buffer</td>
+            <td>ATR × 0.3</td>
+            <td>Small buffer beyond the sweep level to avoid premature SL hits from spread.</td>
+          </tr>
+          <tr>
+            <td>Minimum SL Size</td>
+            <td>50 points</td>
+            <td>Entries skipped if SL is too tight. Prevents micro-stop trades.</td>
+          </tr>
+          <tr>
+            <td>Partial TP</td>
+            <td>50% at 1.5R</td>
+            <td>Half position closed at 1.5× risk. Locks in profit, reduces psychological pressure.</td>
+          </tr>
+          <tr>
+            <td>Breakeven</td>
+            <td>After partial TP</td>
+            <td>SL moves to entry price immediately after partial close. Risk-free remainder.</td>
+          </tr>
+          <tr>
+            <td>Trailing Stop</td>
+            <td>Last candle H/L</td>
+            <td>Active after partial TP. Trails on M5 candle low (long) or high (short). Never trails down.</td>
+          </tr>
+          <tr>
+            <td>Max Trades/Day</td>
+            <td class="val-red">3</td>
+            <td>Psychology rule. After 3 trades regardless of result, EA stops for the day.</td>
+          </tr>
+          <tr>
+            <td>Daily Loss Limit</td>
+            <td class="val-red">2%</td>
+            <td>Hard stop. EA shuts down for the day if 2% of balance is lost. No overrides.</td>
+          </tr>
+          <tr>
+            <td>Consecutive Loss Limit</td>
+            <td class="val-red">2 losses</td>
+            <td>After 2 consecutive losses, EA enters 60-minute cooldown. Prevents revenge trading.</td>
+          </tr>
+          <tr>
+            <td>Max Spread</td>
+            <td>1.5 pips</td>
+            <td>Entry skipped if spread exceeds this. Protects against news spike entries.</td>
+          </tr>
+          <tr>
+            <td>State TTL</td>
+            <td>40 bars</td>
+            <td>Setup auto-invalidates after 40 bars. No stale setups carried forward.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:2px">
+      <div style="background:var(--bg2);border:1px solid var(--border);padding:24px">
+        <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--gold);letter-spacing:2px;margin-bottom:12px">SL FORMULA</div>
+        <div style="font-family:'DM Mono',monospace;font-size:12px;color:var(--text);line-height:1.8">
+          Long SL =<br>SweepLow − (ATR × 0.3)<br><br>
+          Short SL =<br>SweepHigh + (ATR × 0.3)<br><br>
+          <span style="color:var(--muted)">slPoints = |Entry − SL|</span>
+        </div>
+      </div>
+      <div style="background:var(--bg2);border:1px solid var(--border);padding:24px">
+        <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--gold);letter-spacing:2px;margin-bottom:12px">TP FORMULA</div>
+        <div style="font-family:'DM Mono',monospace;font-size:12px;color:var(--text);line-height:1.8">
+          Long TP =<br>Entry + (slPoints × 3)<br><br>
+          Short TP =<br>Entry − (slPoints × 3)<br><br>
+          <span style="color:var(--muted)">Target = opposite liq pool</span>
+        </div>
+      </div>
+      <div style="background:var(--bg2);border:1px solid var(--border);padding:24px">
+        <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--gold);letter-spacing:2px;margin-bottom:12px">LOT FORMULA</div>
+        <div style="font-family:'DM Mono',monospace;font-size:12px;color:var(--text);line-height:1.8">
+          riskAmt = Bal × Risk%<br><br>
+          pointVal = tickVal /<br>tickSize × _Point<br><br>
+          lots = riskAmt /<br>(slPoints × pointVal)
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════ PSYCHOLOGY ══════════════════════ -->
+<section id="psychology">
+  <div class="wrap">
+    <div class="section-label">Mental Capital</div>
+    <h2 class="section-title">Psychology Rules<br>→ Algorithmic Constraints</h2>
+    <p class="section-desc">// The PHASE-404 psychology module translates every discretionary discipline rule into a hard-coded constraint the EA enforces automatically. You cannot override these without editing the code.</p>
+    <div class="psych-grid">
+
+      <div class="psych-card">
+        <span class="psych-icon">📊</span>
+        <div class="psych-issue">Overtrading</div>
+        <div class="psych-cause">CAUSE: Addiction to market excitement, FOMO, desire for quick profits</div>
+        <div class="psych-solution">Without a clear plan, traders engage in random trades driven by excitement rather than analysis. Mental fatigue from continuous trading reduces judgment quality significantly.</div>
+        <div class="psych-algo">
+          <div class="psych-algo-label">EA ENFORCEMENT</div>
+          MaxTradesPerDay = 3<br>
+          Kill zone filter blocks 22h/day<br>
+          State machine requires 6 conditions<br>
+          TTL resets stale setups automatically
+        </div>
+      </div>
+
+      <div class="psych-card">
+        <span class="psych-icon">😤</span>
+        <div class="psych-issue">Revenge Trading</div>
+        <div class="psych-cause">CAUSE: Obsession with recovering losses, anger, frustration after a stop</div>
+        <div class="psych-solution">After a loss, emotional need to "get back at the market" leads to unplanned, uncalculated entries. Each revenge trade compounds the loss and erodes confidence further.</div>
+        <div class="psych-algo">
+          <div class="psych-algo-label">EA ENFORCEMENT</div>
+          ConsecLossLimit = 2<br>
+          CooldownMinutes = 60<br>
+          After 2 losses → EA pauses 60 min<br>
+          DailyLossLimit = 2% hard stop
+        </div>
+      </div>
+
+      <div class="psych-card">
+        <span class="psych-icon">😰</span>
+        <div class="psych-issue">FOMO</div>
+        <div class="psych-cause">CAUSE: Seeing others' profits, fear that opportunity is slipping away</div>
+        <div class="psych-solution">FOMO forces abandonment of planned strategy, rushing into trades without proper analysis. The three-step confirmation rule ensures every entry has rational justification, not emotional impulse.</div>
+        <div class="psych-algo">
+          <div class="psych-algo-label">EA ENFORCEMENT</div>
+          6-condition state machine required<br>
+          No entry outside kill zones<br>
+          Bias must align with session model<br>
+          Seek&Destroy days blocked entirely
+        </div>
+      </div>
+
+      <div class="psych-card">
+        <span class="psych-icon">💰</span>
+        <div class="psych-issue">Emotional Money Attachment</div>
+        <div class="psych-cause">CAUSE: Reliance on trading income, overemotional reaction to P&L</div>
+        <div class="psych-solution">When traders put too much emotional weight into each trade, anxiety during trades clouds objective judgment. Losses feel devastating, profits create overconfidence. Both states lead to poor decisions.</div>
+        <div class="psych-algo">
+          <div class="psych-algo-label">EA ENFORCEMENT</div>
+          Fixed risk % regardless of result<br>
+          Partial TP reduces position pressure<br>
+          Breakeven removes risk after 1.5R<br>
+          Daily limit prevents catastrophic loss
+        </div>
+      </div>
+
+      <div class="psych-card">
+        <span class="psych-icon">🧠</span>
+        <div class="psych-issue">Premature Entry</div>
+        <div class="psych-cause">CAUSE: Impatience, inability to wait for full confirmation sequence</div>
+        <div class="psych-solution">Traders often enter at the first sign of potential rather than waiting for full confluence. The PHASE-404 method requires liquidity to be swept first — without this, no confirmation models are even checked.</div>
+        <div class="psych-algo">
+          <div class="psych-algo-label">EA ENFORCEMENT</div>
+          No confirmation checked pre-sweep<br>
+          MSS required after FVG found<br>
+          Price must be in POI zone<br>
+          Spread must be under 1.5 pips
+        </div>
+      </div>
+
+      <div class="psych-card">
+        <span class="psych-icon">⏰</span>
+        <div class="psych-issue">Wrong Time Trading</div>
+        <div class="psych-cause">CAUSE: Trading during low-liquidity periods, Asia session, overnight</div>
+        <div class="psych-solution">Most retail losses occur during periods when institutional players are inactive. Low liquidity means erratic, unpredictable price action that invalidates all technical analysis approaches including SMC/ICT.</div>
+        <div class="psych-algo">
+          <div class="psych-algo-label">EA ENFORCEMENT</div>
+          London KZ: 02:00–05:00 EST only<br>
+          NY KZ: 07:00–10:00 EST only<br>
+          22+ hours/day = no entry possible<br>
+          Rollover 16:45–17:15 hard blocked
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════ EA PARAMETERS ══════════════════════ -->
+<section id="params">
+  <div class="wrap">
+    <div class="section-label">EA Configuration</div>
+    <h2 class="section-title">All Input Parameters<br>Explained</h2>
+    <p class="section-desc">// Every parameter in the EA inputs tab, what it does, and the recommended value. Starred (*) parameters are critical to set correctly before going live.</p>
+
+    <div class="params-wrap">
+      <div class="params-group">⏱ TIMEFRAMES</div>
+      <div class="param-row"><div class="param-name">Bias_TF</div><div class="param-val">M15</div><div class="param-note">Timeframe for BSL/SSL detection, Asia range, session model analysis. M15 is PHASE-404 recommended.</div></div>
+      <div class="param-row"><div class="param-name">Entry_TF</div><div class="param-val">M5</div><div class="param-note">Timeframe for FVG detection, MSS confirmation, and order execution. M5 for standard, M1 for aggressive.</div></div>
+
+      <div class="params-group">💰 RISK MANAGEMENT</div>
+      <div class="param-row"><div class="param-name">RiskPercent ★</div><div class="param-val">1.0–2.0%</div><div class="param-note">Risk per trade. 1% = conservative. 2% = standard. Never exceed 3%. Auto-calculates lot size.</div></div>
+      <div class="param-row"><div class="param-name">RR</div><div class="param-val">3.0</div><div class="param-note">Reward:Risk ratio. TP = SL × 3. Minimum 2.5 for strategy viability. Do not lower below 2.</div></div>
+      <div class="param-row"><div class="param-name">MaxTradesPerDay</div><div class="param-val">3</div><div class="param-note">Psychology rule. EA stops taking entries after 3 trades regardless of outcome.</div></div>
+      <div class="param-row"><div class="param-name">DailyLossLimitPct ★</div><div class="param-val">2.0%</div><div class="param-note">Hard daily stop. EA shuts down if account loses 2% of opening balance. Non-negotiable.</div></div>
+      <div class="param-row"><div class="param-name">PartialTP_R</div><div class="param-val">1.5</div><div class="param-note">Close 50% of position at 1.5R profit. Then move SL to breakeven on remainder.</div></div>
+      <div class="param-row"><div class="param-name">PartialClose_Pct</div><div class="param-val">50%</div><div class="param-note">Percentage of position to close at partial TP. 50% is standard. Can increase to 75% for safety.</div></div>
+      <div class="param-row"><div class="param-name">ConsecLossLimit</div><div class="param-val">2</div><div class="param-note">Consecutive losses before cooldown activates. After 2 in a row, EA pauses for CooldownMinutes.</div></div>
+      <div class="param-row"><div class="param-name">CooldownMinutes</div><div class="param-val">60 min</div><div class="param-note">Duration of cooldown pause after consecutive loss limit hit. Prevents revenge trading algorithmically.</div></div>
+
+      <div class="params-group">📡 PHASE-404 SIGNAL PARAMETERS</div>
+      <div class="param-row"><div class="param-name">LiqPool_Lookback</div><div class="param-val">30 bars</div><div class="param-note">How many M15 bars to scan when identifying BSL/SSL swing points. 20–40 is optimal range.</div></div>
+      <div class="param-row"><div class="param-name">SwingStrength</div><div class="param-val">3</div><div class="param-note">Bars on each side required to confirm a swing high/low. Higher = cleaner but fewer levels found.</div></div>
+      <div class="param-row"><div class="param-name">FVG_MinPips</div><div class="param-val">2.0 pips</div><div class="param-note">Minimum FVG size. Filters micro-gaps. Increase to 3–4 for cleaner setups with fewer signals.</div></div>
+      <div class="param-row"><div class="param-name">RequireFVG</div><div class="param-val">true</div><div class="param-note">Force FVG as POI. If false, falls back to OB when no FVG found. Keep true for PHASE-404 purity.</div></div>
+      <div class="param-row"><div class="param-name">RequireMSS ★</div><div class="param-val">true</div><div class="param-note">Require Market Structure Shift confirmation before entry. Critical filter. Never disable.</div></div>
+      <div class="param-row"><div class="param-name">RequireOTE</div><div class="param-val">false</div><div class="param-note">Require price in 61.8–78.6% Fibonacci zone. Enable for highest quality entries only (fewer signals).</div></div>
+      <div class="param-row"><div class="param-name">ATR_SL_Mult</div><div class="param-val">0.3</div><div class="param-note">SL buffer beyond sweep level = ATR × 0.3. Small buffer avoids premature stops from spread.</div></div>
+      <div class="param-row"><div class="param-name">StateTTL_Bars</div><div class="param-val">40 bars</div><div class="param-note">Auto-reset after 40 bars without an entry. Prevents stale setup accumulation.</div></div>
+
+      <div class="params-group">🕐 SESSION FILTER ★ CRITICAL</div>
+      <div class="param-row"><div class="param-name">UseLondonKZ ★</div><div class="param-val">true</div><div class="param-note">Enable London Kill Zone entries (02:00–05:00 EST). Primary session. Keep enabled.</div></div>
+      <div class="param-row"><div class="param-name">UseNYKZ ★</div><div class="param-val">true</div><div class="param-note">Enable NY Kill Zone entries (07:00–10:00 EST). Secondary session. Keep enabled.</div></div>
+      <div class="param-row"><div class="param-name">BlockRollover</div><div class="param-val">true</div><div class="param-note">Block all entries during 16:45–17:15 EST daily close. Never disable — spread spikes here.</div></div>
+      <div class="param-row"><div class="param-name">ServerToEST_Offset ★</div><div class="param-val">−7 (Exness)</div><div class="param-note">Hour offset from your broker's server time to EST. Exness GMT+3 = −7 offset. Critical to set correctly.</div></div>
+
+      <div class="params-group">⚡ SPREAD & EXECUTION</div>
+      <div class="param-row"><div class="param-name">MaxSpread_Pips ★</div><div class="param-val">1.5 pips</div><div class="param-note">Skip entry if spread exceeds this. EURUSD normal = 0.5–1.2. Never set above 2.5.</div></div>
+      <div class="param-row"><div class="param-name">Slippage_Points</div><div class="param-val">10</div><div class="param-note">Maximum allowable slippage in points. 10 points = 1 pip for 5-digit broker. Reasonable for forex.</div></div>
+      <div class="param-row"><div class="param-name">FillMode</div><div class="param-val">FOK</div><div class="param-note">Fill-or-Kill. Change to IOC if broker rejects FOK orders. Most ECN brokers support FOK.</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════ PAIRS ══════════════════════ -->
+<section id="pairs">
+  <div class="wrap">
+    <div class="section-label">Instrument Selection</div>
+    <h2 class="section-title">Best Pairs For<br>This Strategy</h2>
+    <p class="section-desc">// Ranked by FVG quality, session model clarity, liquidity depth, and spread tightness. EURUSD + GBPUSD run simultaneously for SMT divergence confirmation.</p>
+    <div class="pairs-grid">
+      <div class="pair-card" style="border-color:rgba(240,180,41,0.4)">
+        <div class="pair-sym">EURUSD</div>
+        <div class="pair-tier tier-1">★★★ TIER 1 · PRIMARY</div>
+        <div class="pair-note">Deepest liquidity. Cleanest FVGs. Strategy built around this pair. Tightest spread.</div>
+        <div class="pair-score"><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div></div>
+      </div>
+      <div class="pair-card" style="border-color:rgba(240,180,41,0.4)">
+        <div class="pair-sym">GBPUSD</div>
+        <div class="pair-tier tier-1">★★★ TIER 1 · SMT PAIR</div>
+        <div class="pair-note">Run alongside EURUSD for SMT divergence. Near-identical parameters. Strong FVGs.</div>
+        <div class="pair-score"><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div></div>
+      </div>
+      <div class="pair-card" style="border-color:rgba(240,180,41,0.3)">
+        <div class="pair-sym">GBPJPY</div>
+        <div class="pair-tier tier-1">★★★ TIER 1 · VOLATILE</div>
+        <div class="pair-note">Explosive London KZ moves. Large FVGs. Wider SL needed. Increase ATR_SL_Mult to 0.5.</div>
+        <div class="pair-score"><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot off"></div></div>
+      </div>
+      <div class="pair-card">
+        <div class="pair-sym">USDJPY</div>
+        <div class="pair-tier tier-2">★★ TIER 2 · STRONG</div>
+        <div class="pair-note">Excellent NY session. Clean round-number sweeps. Good structure. Responds well to MSS.</div>
+        <div class="pair-score"><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot off"></div></div>
+      </div>
+      <div class="pair-card">
+        <div class="pair-sym">AUDUSD</div>
+        <div class="pair-tier tier-2">★★ TIER 2 · CLEAN</div>
+        <div class="pair-note">Good FVG formation. Asia session creates the range (home market). London/NY are the plays.</div>
+        <div class="pair-score"><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot off"></div><div class="dot off"></div></div>
+      </div>
+      <div class="pair-card">
+        <div class="pair-sym">EURCAD</div>
+        <div class="pair-tier tier-2">★★ TIER 2 · VOLATILE</div>
+        <div class="pair-note">Large FVGs, frequent sweeps. Raise FVG_MinPips to 4–5. MaxSpread to 2.5.</div>
+        <div class="pair-score"><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot off"></div><div class="dot off"></div></div>
+      </div>
+      <div class="pair-card">
+        <div class="pair-sym">XAUUSD</div>
+        <div class="pair-tier tier-3">★ TIER 3 · MODIFY CODE</div>
+        <div class="pair-note">ICT was built around gold. Strategy fits perfectly but requires tick value code changes.</div>
+        <div class="pair-score"><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot off"></div><div class="dot off"></div></div>
+      </div>
+      <div class="pair-card" style="opacity:0.5">
+        <div class="pair-sym">EURGBP</div>
+        <div class="pair-tier tier-3">✗ AVOID</div>
+        <div class="pair-note">Range too tight. FVGs too small. Session models unclear. Low volatility kills setups.</div>
+        <div class="pair-score"><div class="dot on"></div><div class="dot off"></div><div class="dot off"></div><div class="dot off"></div><div class="dot off"></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════ CHECKLIST ══════════════════════ -->
+<section id="checklist">
+  <div class="wrap">
+    <div class="section-label">Pre-Trade Protocol</div>
+    <h2 class="section-title">Full Trade<br>Checklist</h2>
+    <p class="section-desc">// Every single condition the EA checks before firing an entry. If any condition fails, the trade is skipped. This is the complete sequential gate. Manual traders should verify all before any discretionary entry.</p>
+    <div class="checklist">
+      <div class="check-item"><div class="check-icon pass">✓</div><div class="check-text">Am I inside London (02:00–05:00 EST) or NY (07:00–10:00 EST) kill zone?</div></div>
+      <div class="check-item"><div class="check-icon pass">✓</div><div class="check-text">Has the Asia range been fully formed and recorded (H/L captured)?</div></div>
+      <div class="check-item"><div class="check-icon pass">✓</div><div class="check-text">Has a session model been identified — is it NOT Model 4 (Seek & Destroy)?</div></div>
+      <div class="check-item"><div class="check-icon pass">✓</div><div class="check-text">Are BSL and SSL levels marked on M15 from the last 30 bars?</div></div>
+      <div class="check-item"><div class="check-icon pass">✓</div><div class="check-text">Has a liquidity sweep occurred — wick through BSL or SSL with close back inside?</div></div>
+      <div class="check-item"><div class="check-icon pass">✓</div><div class="check-text">Does the sweep direction align with the session model bias?</div></div>
+      <div class="check-item"><div class="check-icon pass">✓</div><div class="check-text">Has a valid BISI (bullish) or SIBI (bearish) FVG been identified on M5 post-sweep?</div></div>
+      <div class="check-item"><div class="check-icon pass">✓</div><div class="check-text">Is the FVG at least 2 pips in size (not a micro-gap)?</div></div>
+      <div class="check-item"><div class="check-icon pass">✓</div><div class="check-text">Has MSS been confirmed — did price break the last swing H/L on M5?</div></div>
+      <div class="check-item"><div class="check-icon pass">✓</div><div class="check-text">Is current price (Ask/Bid) inside or touching the FVG/OB zone?</div></div>
+      <div class="check-item"><div class="check-icon pass">✓</div><div class="check-text">Is spread under 1.5 pips at the moment of entry?</div></div>
+      <div class="check-item"><div class="check-icon pass">✓</div><div class="check-text">Is daily loss limit NOT hit (account has not lost 2% today)?</div></div>
+      <div class="check-item"><div class="check-icon pass">✓</div><div class="check-text">Is trade count for today under the maximum (less than 3 trades taken)?</div></div>
+      <div class="check-item"><div class="check-icon pass">✓</div><div class="check-text">Is there no active cooldown period (no 2 consecutive losses recently)?</div></div>
+      <div class="check-item"><div class="check-icon pass">✓</div><div class="check-text">Is SL geometry valid — SL below entry (long) or above entry (short)?</div></div>
+      <div class="check-item"><div class="check-icon pass">✓</div><div class="check-text">Is SL at least 50 points from entry — not a micro-stop trade?</div></div>
+      <div class="check-item"><div class="check-icon fail">✗</div><div class="check-text">SKIP if session model is 4 (Seek & Destroy) — no directional bias possible</div></div>
+      <div class="check-item"><div class="check-icon fail">✗</div><div class="check-text">SKIP if price has already left the POI zone — setup is stale, reset state</div></div>
+      <div class="check-item"><div class="check-icon fail">✗</div><div class="check-text">SKIP if state TTL has expired (40 bars without entry) — reset and wait fresh</div></div>
+      <div class="check-item"><div class="check-icon fail">✗</div><div class="check-text">SKIP during rollover window 16:45–17:15 EST regardless of any other conditions</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════ FOOTER ══════════════════════ -->
+<footer>
+  <div class="wrap">
+    <div style="border-top:1px solid var(--border);padding-top:40px">
+      <p style="font-size:16px;color:var(--gold);font-weight:700;letter-spacing:-0.5px;margin-bottom:8px;font-family:'Syne',sans-serif">PHASE-404 EA v2.0</p>
+      <p>Built on ICT · SMC · Wyckoff · AMD Framework</p>
+      <p style="margin-top:8px">Strategy: <span>@PHASE4o4</span> · Implementation: EURUSD Expert Advisor · Exness Demo</p>
+      <p style="margin-top:16px;font-size:10px;color:rgba(90,112,128,0.6)">This document is for educational and reference purposes. Trading involves substantial risk of loss. Past performance does not guarantee future results.</p>
+    </div>
+  </div>
+</footer>
+
+<script>
+// Handle navigation to index.html
+document.querySelectorAll('a[href="../index.html"]').forEach(link => {
+  link.addEventListener('click', function(e) {
+    e.preventDefault();
+    sessionStorage.setItem('nukrax_from_ea', 'true');
+    window.location.href = '../index.html';
+  });
+});
+</script>
+
+<script type="module" src="../assets/ai/widget.js"></script>
+</body>
+</html>
