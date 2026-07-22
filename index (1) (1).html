@@ -1,0 +1,2979 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>NUKRAX — Precision Tools for Elite Traders</title>
+<meta name="description" content="NUKRAX is a private trading ecosystem — institutional-grade Expert Advisors, SMC/ICT strategy systems, and live trading platforms for serious market participants."/>
+<link rel="icon" href="assets/logo.png" type="image/png"/>
+
+<!-- Open Graph -->
+<meta property="og:type" content="website"/>
+<meta property="og:title" content="NUKRAX — Precision Tools for Elite Traders"/>
+<meta property="og:description" content="A private trading ecosystem — institutional-grade Expert Advisors, SMC/ICT strategy systems, and live trading infrastructure."/>
+<meta property="og:image" content="https://nukrax.shop/assets/logo.png"/>
+<meta property="og:url" content="https://nukrax.shop/"/>
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:title" content="NUKRAX — Precision Tools for Elite Traders"/>
+<meta name="twitter:description" content="A private trading ecosystem — institutional-grade Expert Advisors, SMC/ICT strategy systems, and live trading infrastructure."/>
+<meta name="twitter:image" content="https://nukrax.shop/assets/logo.png"/>
+
+<!-- Structured data -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "NUKRAX",
+  "url": "https://nukrax.shop",
+  "logo": "https://nukrax.shop/assets/logo.png",
+  "sameAs": [
+    "https://github.com/CosmoLanex",
+    "https://github.com/nukrax",
+    "https://x.com/CosmoLanex",
+    "https://www.youtube.com/@CosmoLanex",
+    "https://t.me/CosmoLanex"
+  ]
+}
+</script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Outfit:wght@200;300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+
+/* ── Wordmark display face — used ONLY for the NUKRAX logotype ── */
+@font-face{
+  font-family:'NKX Display';
+  src:url('assets/fonts/nukrax-display.woff2') format('woff2'),
+      url('assets/fonts/nukrax-display.otf') format('opentype');
+  font-weight:400;
+  font-style:normal;
+  font-display:swap;
+}
+
+:root {
+  --black:    #030507;
+  --panel:    #0A0F13;
+  --line:     #1B2328;
+  --line-lit: #2A353C;
+  --muted:    #8A9BA3;
+  --text:     #D3DBDD;
+  --white:    #F2F5F5;
+  --accent:   #8FB8C4;
+  --accent-dim: #46626B;
+
+  --font-logo: 'NKX Display', 'Outfit', sans-serif;
+  --font-m:   'Space Mono', monospace;
+  --font-b:   'Outfit', sans-serif;
+  --ease:     cubic-bezier(0.22,1,0.36,1);
+  --ease-out: cubic-bezier(0.16,1,0.3,1);
+
+  --container: 1180px;
+  --gutter: clamp(24px, 5vw, 64px);
+}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;font-size:16px;-webkit-text-size-adjust:100%;text-size-adjust:100%}
+body{
+  background:var(--black);
+  color:var(--text);
+  font-family:var(--font-b);
+  font-weight:300;
+  overflow-x:hidden;
+  line-height:1.65;
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+}
+
+::selection{background:rgba(143,184,196,0.22);color:var(--white)}
+::-webkit-scrollbar{width:3px}
+::-webkit-scrollbar-track{background:var(--black)}
+::-webkit-scrollbar-thumb{background:var(--line-lit);border-radius:2px}
+
+a{color:inherit;text-decoration:none}
+img{max-width:100%;display:block}
+
+.wrap{max-width:var(--container);margin:0 auto;padding-left:var(--gutter);padding-right:var(--gutter)}
+
+/* Dim ambient layer — keeps the page calm and legible */
+body::before{
+  content:'';
+  position:fixed;inset:0;
+  z-index:1;
+  pointer-events:none;
+  background:linear-gradient(180deg,rgba(3,5,7,0.62) 0%,rgba(3,5,7,0.74) 100%);
+}
+
+/* ══════════ LOADING SCREEN ══════════ */
+#loader{
+  position:fixed;inset:0;z-index:10000;
+  background:var(--black);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:22px;
+  transition:opacity .5s var(--ease),visibility .5s var(--ease);
+}
+#loader.hidden{opacity:0;visibility:hidden;pointer-events:none}
+.loader-mark{
+  font-family:var(--font-logo);
+  font-size:38px;letter-spacing:.06em;color:var(--white);
+}
+.loader-status{
+  font-family:var(--font-m);font-size:10.5px;letter-spacing:.22em;
+  text-transform:uppercase;color:var(--muted);
+}
+.loader-bar{width:180px;height:1px;background:var(--line);overflow:hidden}
+.loader-bar-fill{
+  height:100%;width:0%;background:var(--accent);
+  animation:loader-fill 0.9s var(--ease-out) forwards;
+}
+@keyframes loader-fill{to{width:100%}}
+
+/* ══════════ SCROLL PROGRESS ══════════ */
+#scroll-progress{
+  position:fixed;top:0;left:0;height:2px;
+  background:var(--accent);
+  width:0%;
+  z-index:9997;
+  transition:width .1s linear;
+}
+
+/* ── Page curtain ── */
+#page-curtain{
+  position:fixed;inset:0;z-index:9999;
+  background:var(--black);
+  transform:translateY(101%);
+  transition:transform .5s var(--ease);
+  pointer-events:none;
+}
+#page-curtain.active{transform:translateY(0)}
+
+/* ── Reveal on scroll ── */
+.reveal{opacity:0;transform:translateY(12px);transition:opacity .6s var(--ease-out),transform .6s var(--ease-out)}
+.reveal.visible{opacity:1;transform:translateY(0)}
+.reveal-delay-1.visible{transition-delay:.05s}
+.reveal-delay-2.visible{transition-delay:.1s}
+.reveal-delay-3.visible{transition-delay:.15s}
+.reveal-delay-4.visible{transition-delay:.2s}
+
+.section-label{
+  display:flex;align-items:center;gap:12px;
+  font-family:var(--font-m);
+  font-size:11px;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--muted);
+  margin-bottom:18px;
+  position:relative;
+}
+.section-label::before{content:'';width:20px;height:1px;background:var(--line-lit)}
+
+/* ══════════ NAV ══════════ */
+nav{
+  position:fixed;top:0;left:0;right:0;
+  z-index:100;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:26px var(--gutter);
+  background:transparent;
+  border-bottom:1px solid transparent;
+  transition:background .5s var(--ease),border-color .5s var(--ease),padding .5s var(--ease);
+}
+nav.scrolled{
+  padding:17px var(--gutter);
+  background:rgba(3,5,7,0.88);
+  backdrop-filter:blur(16px);
+  border-bottom-color:var(--line);
+}
+@media(max-width:768px){
+  nav.scrolled{
+    background:rgba(3,5,7,0.97);
+    backdrop-filter:none;
+  }
+}
+
+.nav-logo-container{display:flex;align-items:center;gap:11px}
+.nav-logo-img{
+  width:30px;height:30px;border-radius:7px;overflow:hidden;
+  border:1px solid var(--line);
+  background:var(--panel);
+}
+.nav-logo-img img{width:100%;height:100%;object-fit:cover}
+.nav-logo{
+  font-family:var(--font-logo);font-weight:400;font-size:16px;
+  letter-spacing:.05em;text-transform:uppercase;color:var(--white);
+}
+
+.nav-links{display:flex;align-items:center;gap:36px;list-style:none;position:absolute;left:50%;transform:translateX(-50%)}
+.nav-links a{
+  position:relative;
+  font-size:13px;font-weight:400;color:var(--muted);
+  transition:color .3s var(--ease);
+}
+.nav-links a::after{
+  content:'';position:absolute;left:0;bottom:-5px;width:100%;height:1px;
+  background:var(--accent);
+  transform:scaleX(0);transform-origin:right;
+  transition:transform .4s var(--ease);
+}
+.nav-links a:hover{color:var(--white)}
+.nav-links a:hover::after{transform:scaleX(1);transform-origin:left}
+
+.nav-right{display:flex;align-items:center;gap:22px}
+.nav-status{display:flex;align-items:center;gap:8px;font-family:var(--font-m);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.nav-dot{width:5px;height:5px;border-radius:50%;background:var(--accent)}
+.nav-cta{
+  font-family:var(--font-b);font-size:12.5px;font-weight:500;
+  color:var(--black);background:var(--white);
+  padding:9px 18px;border-radius:2px;
+  transition:background .3s var(--ease),transform .2s var(--ease);
+}
+.nav-cta:hover{background:var(--accent);transform:translateY(-1px)}
+
+.nav-map-btn{
+  display:flex;align-items:center;gap:8px;
+  font-family:var(--font-b);font-size:12px;font-weight:600;letter-spacing:.03em;
+  text-transform:uppercase;color:var(--black);
+  background:var(--accent);border:1px solid var(--accent);
+  padding:9px 16px;border-radius:20px;
+  transition:background .25s var(--ease),border-color .25s var(--ease),transform .15s var(--ease-out);
+}
+.nav-map-btn:hover{background:var(--white);border-color:var(--white)}
+.nav-map-btn:active{transform:scale(.93)}
+.nav-map-btn .map-live-dot{width:6px;height:6px;border-radius:50%;background:var(--black);position:relative;flex-shrink:0}
+.nav-map-btn .map-live-dot::before{
+  content:'';position:absolute;inset:-3px;border-radius:50%;border:1px solid var(--black);
+  opacity:.6;animation:nkx-mapbtn-pulse 2.2s var(--ease-out) infinite;
+}
+@keyframes nkx-mapbtn-pulse{0%{opacity:.6;transform:scale(1)}100%{opacity:0;transform:scale(2.3)}}
+@media(max-width:560px){
+  .nav-map-btn{display:none}
+  .nav-status{display:none}
+}
+
+@media(max-width:860px){.nav-links{display:none}}
+
+
+/* ══════════ BUTTONS / LINKS ══════════ */
+.btn{
+  position:relative;overflow:hidden;
+  display:inline-flex;align-items:center;gap:9px;
+  padding:14px 30px;
+  font-family:var(--font-b);font-size:13.5px;font-weight:500;
+  letter-spacing:.02em;
+  border-radius:2px;
+  cursor:pointer;
+  transition:border-color .3s var(--ease),background .3s var(--ease),color .3s var(--ease);
+}
+.btn-arrow{display:inline-block;transition:transform .35s var(--ease-out)}
+.btn:hover .btn-arrow{transform:translateX(3px)}
+
+.btn-primary{
+  background:var(--accent);
+  color:var(--black);
+  border:1px solid var(--accent);
+  font-weight:600;
+}
+.btn-primary:hover{background:var(--white);border-color:var(--white);color:var(--black)}
+
+.link-row{display:flex;flex-wrap:wrap;justify-content:center;gap:30px}
+.link-inline{
+  display:inline-flex;align-items:center;gap:7px;
+  font-size:12.5px;color:var(--muted);
+  border-bottom:1px solid transparent;
+  padding-bottom:2px;
+  transition:color .3s var(--ease),border-color .3s var(--ease);
+}
+.link-inline:hover{color:var(--white);border-color:var(--line-lit)}
+
+.link-inline-glow{color:var(--accent);text-shadow:0 0 6px rgba(143,184,196,.5);animation:nkx-community-glow 2.6s ease-in-out infinite}
+.link-inline-glow:hover{color:var(--white)}
+@keyframes nkx-community-glow{
+  0%,100%{text-shadow:0 0 6px rgba(143,184,196,.5)}
+  50%{text-shadow:0 0 14px rgba(143,184,196,.9),0 0 4px rgba(143,184,196,.6)}
+}
+
+.ripple{position:absolute;border-radius:50%;background:rgba(255,255,255,0.22);transform:scale(0);animation:ripple-anim .6s ease-out;pointer-events:none}
+@keyframes ripple-anim{to{transform:scale(1);opacity:0}}
+
+/* ══════════ HERO ══════════ */
+.hero{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;
+  padding:150px var(--gutter) 70px;
+  position:relative;
+  z-index:2;
+}
+
+/* signature "wow" element — soft volumetric glow behind the wordmark that
+   drifts gently toward the cursor. Restrained: single blurred radial gradient,
+   pure CSS-transition driven (no animation loop). */
+.hero-glow{
+  position:absolute;
+  top:50%;left:50%;
+  width:min(900px,90vw);height:min(900px,90vw);
+  transform:translate(-50%,-50%);
+  background:radial-gradient(circle at center, rgba(143,184,196,0.14), rgba(143,184,196,0.04) 45%, transparent 70%);
+  filter:blur(30px);
+  pointer-events:none;
+  z-index:0;
+  transition:transform 1.1s var(--ease-out), opacity 1.2s var(--ease-out);
+  opacity:0;
+}
+.hero-glow.active{opacity:1}
+
+.hero-label{
+  position:relative;z-index:1;
+  font-family:var(--font-m);font-size:11px;letter-spacing:.26em;
+  text-transform:uppercase;color:var(--muted);
+  margin-bottom:34px;
+  animation:fade-up .8s var(--ease-out) both;
+}
+.hero-label span{color:var(--accent)}
+
+.hero-logo{
+  position:relative;z-index:1;
+  font-family:var(--font-logo);
+  font-weight:400;
+  font-size:clamp(58px,12vw,158px);
+  line-height:1;
+  letter-spacing:.04em;
+  color:var(--white);
+  animation:fade-up .9s .06s var(--ease-out) both;
+}
+
+.hero-tagline{
+  position:relative;z-index:1;
+  font-size:clamp(17px,2vw,22px);
+  font-weight:300;
+  color:var(--text);
+  margin:24px auto 0;
+  max-width:22ch;
+  letter-spacing:.005em;
+  animation:fade-up .9s .12s var(--ease-out) both;
+}
+
+.hero-divider{
+  position:relative;z-index:1;
+  width:1px;height:44px;
+  background:var(--line-lit);
+  margin:40px 0;
+  animation:fade-up .9s .18s var(--ease-out) both;
+}
+
+.hero-ctas{
+  position:relative;z-index:1;
+  display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:28px;
+  animation:fade-up .9s .24s var(--ease-out) both;
+}
+
+/* ── Global Market Network — rotating wireframe globe, replaces the old
+   scroll hint. Fills the freed hero space with a live, on-theme visual
+   instead of empty space / the mountain silhouette showing through. ── */
+.hero-globe-wrap{
+  position:relative;z-index:1;
+  width:min(230px,52vw);height:min(230px,52vw);
+  margin-top:54px;
+  display:flex;flex-direction:column;align-items:center;gap:14px;
+  opacity:0;
+  transition:opacity 1.6s var(--ease);
+}
+.hero-globe-wrap.active{opacity:1}
+#heroGlobe{width:100%;aspect-ratio:1;display:block}
+.hero-globe-label{
+  font-family:var(--font-m);font-size:9.5px;letter-spacing:.2em;
+  text-transform:uppercase;color:var(--muted);
+  display:flex;align-items:center;gap:8px;
+  white-space:nowrap;
+}
+.hero-globe-label .nav-dot{width:4px;height:4px}
+
+@keyframes fade-up{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+
+@media(max-width:600px){
+  .hero{padding-top:clamp(150px, 28vh, 280px)}
+  .hero-ctas{flex-direction:column;width:100%}
+  .hero-ctas .btn{width:100%;justify-content:center}
+  .hero-globe-wrap{margin-top:80px}
+}
+@media(max-width:380px){
+  .hero-logo{font-size:clamp(44px,14vw,58px);letter-spacing:.02em}
+}
+
+/* ══════════ ABOUT / INFRASTRUCTURE ══════════ */
+.about{
+  padding:40px var(--gutter) 90px;
+  max-width:var(--container);
+  margin:0 auto;
+  position:relative;
+  z-index:2;
+}
+
+.about-grid{
+  display:grid;
+  grid-template-columns:.78fr 1.22fr;
+  gap:clamp(40px,6vw,96px);
+  align-items:start;
+}
+
+.about-sticky{position:sticky;top:130px}
+
+.about-headline{
+  font-family:var(--font-b);
+  font-weight:200;
+  font-size:clamp(32px,4vw,46px);
+  line-height:1.18;
+  letter-spacing:-.01em;
+  color:var(--white);
+}
+.about-headline em{font-style:normal;font-weight:500;color:var(--accent)}
+
+.about-intro{
+  font-size:14px;color:var(--muted);font-weight:300;
+  margin-top:22px;max-width:42ch;
+}
+
+/* accordion */
+.accordion{border-top:1px solid var(--line)}
+.acc-item{border-bottom:1px solid var(--line)}
+.acc-item summary{
+  list-style:none;cursor:pointer;
+  display:flex;align-items:center;justify-content:space-between;gap:20px;
+  padding:24px 2px;
+  transition:padding-left .3s var(--ease);
+}
+.acc-item summary::-webkit-details-marker{display:none}
+.acc-item summary:hover{padding-left:8px}
+.acc-num{
+  font-family:var(--font-m);font-size:11px;color:var(--accent-dim);
+  letter-spacing:.1em;margin-right:18px;
+}
+.acc-title{
+  font-size:15.5px;font-weight:500;color:var(--white);
+  flex:1;letter-spacing:.005em;
+}
+.acc-chevron{
+  width:9px;height:9px;
+  border-right:1px solid var(--muted);border-bottom:1px solid var(--muted);
+  transform:rotate(-45deg);
+  transition:transform .35s var(--ease-out);
+  flex-shrink:0;
+}
+.acc-body{
+  padding:0 2px 26px 68px;
+  font-size:13.5px;color:var(--muted);line-height:1.75;
+  max-width:58ch;
+}
+
+@media(max-width:900px){
+  .about-grid{grid-template-columns:1fr;gap:40px}
+  .about-sticky{position:static}
+  .acc-body{padding-left:2px}
+}
+
+/* ── Stats ── */
+.stats{
+  max-width:var(--container);
+  margin:0 auto;
+  padding:0 var(--gutter) 184px;
+  position:relative;
+  z-index:2;
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  border-top:1px solid var(--line);
+  border-left:1px solid var(--line);
+}
+.stat{
+  padding:32px 24px;
+  border-right:1px solid var(--line);
+  border-bottom:1px solid var(--line);
+  text-align:center;
+}
+.stat-num{
+  font-family:var(--font-b);font-weight:200;font-size:clamp(26px,3vw,38px);
+  color:var(--white);letter-spacing:-.01em;margin-bottom:8px;
+}
+.stat-label{
+  font-family:var(--font-m);font-size:10px;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--muted);
+}
+@media(max-width:700px){.stats{grid-template-columns:repeat(2,1fr)}}
+
+/* ══════════ TERMINAL SHOWCASE ══════════ */
+.terminal-section{
+  max-width:var(--container);
+  margin:0 auto;
+  padding:0 var(--gutter) 184px;
+  position:relative;
+  z-index:2;
+}
+.terminal-head{max-width:60ch;margin-bottom:44px}
+.terminal-title{
+  font-family:var(--font-b);font-weight:200;
+  font-size:clamp(26px,3vw,38px);color:var(--white);
+  letter-spacing:-.01em;margin-bottom:14px;
+}
+.terminal-desc{font-size:13.5px;color:var(--muted);line-height:1.7}
+
+.terminal-panel{
+  border:1px solid var(--line);
+  background:rgba(10,15,19,0.5);
+  padding:0;
+  overflow:hidden;
+}
+.terminal-bar{
+  display:flex;align-items:center;gap:8px;
+  padding:14px 18px;
+  border-bottom:1px solid var(--line);
+}
+.terminal-dot{width:7px;height:7px;border-radius:50%;background:var(--line-lit)}
+.terminal-bar-label{
+  margin-left:10px;font-family:var(--font-m);font-size:10.5px;
+  letter-spacing:.1em;color:var(--muted);text-transform:uppercase;
+}
+.terminal-body{
+  display:grid;
+  grid-template-columns:1.4fr 1fr;
+  gap:0;
+}
+.terminal-chart{
+  padding:34px 30px;
+  border-right:1px solid var(--line);
+}
+.terminal-chart svg{width:100%;height:180px;display:block}
+.terminal-chart-label{
+  font-family:var(--font-m);font-size:10px;letter-spacing:.1em;
+  color:var(--muted);text-transform:uppercase;margin-bottom:20px;
+}
+.terminal-metrics{padding:34px 30px;display:flex;flex-direction:column;gap:22px}
+.terminal-metric{display:flex;justify-content:space-between;align-items:baseline;padding-bottom:16px;border-bottom:1px solid var(--line)}
+.terminal-metric:last-child{border-bottom:none;padding-bottom:0}
+.terminal-metric-label{font-family:var(--font-m);font-size:10.5px;letter-spacing:.08em;color:var(--muted);text-transform:uppercase}
+.terminal-metric-value{font-size:15px;color:var(--white);font-weight:500}
+
+.terminal-caption{
+  margin-top:16px;
+  font-family:var(--font-m);font-size:10px;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--accent-dim);
+}
+
+@media(max-width:800px){
+  .terminal-body{grid-template-columns:1fr}
+  .terminal-chart{border-right:none;border-bottom:1px solid var(--line)}
+}
+
+/* ══════════ EA SECTION ══════════ */
+.ea-section{
+  padding:0 var(--gutter) 184px;
+  max-width:var(--container);
+  margin:0 auto;
+  position:relative;
+  z-index:2;
+}
+
+.ea-section-title{
+  font-family:var(--font-b);
+  font-weight:200;
+  font-size:clamp(26px,3vw,38px);
+  color:var(--white);
+  letter-spacing:-.01em;
+  margin-bottom:50px;
+}
+
+.ea-preview-grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  border-top:1px solid var(--line);
+  border-left:1px solid var(--line);
+}
+
+.ea-preview-card{
+  position:relative;
+  padding:30px 24px 32px;
+  border-right:1px solid var(--line);
+  border-bottom:1px solid var(--line);
+  transition:transform .4s var(--ease-out),box-shadow .4s var(--ease),background .3s var(--ease);
+}
+.ea-preview-card::after{
+  content:'';position:absolute;inset:0;pointer-events:none;
+  box-shadow:inset 0 0 0 1px transparent;
+  transition:box-shadow .4s var(--ease);
+}
+.ea-preview-card:hover{
+  transform:translateY(-4px);
+  background:rgba(143,184,196,0.035);
+  box-shadow:0 18px 40px rgba(0,0,0,0.35);
+  z-index:1;
+}
+.ea-preview-card:hover::after{box-shadow:inset 0 0 0 1px rgba(143,184,196,0.28)}
+
+.ea-preview-card-tag{
+  display:inline-block;
+  font-family:var(--font-m);font-size:10.5px;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--accent-dim);
+  margin-bottom:20px;
+}
+.ea-preview-card-name{
+  font-family:var(--font-b);font-weight:500;font-size:19px;letter-spacing:.01em;
+  color:var(--white);margin-bottom:11px;
+}
+.ea-preview-card-desc{
+  font-size:12.5px;color:var(--muted);line-height:1.65;
+  margin-bottom:20px;
+}
+.ea-preview-card-arrow{
+  display:inline-flex;align-items:center;gap:6px;
+  font-family:var(--font-m);font-size:11px;letter-spacing:.08em;
+  text-transform:uppercase;color:var(--muted);
+  transition:color .3s var(--ease),gap .3s var(--ease);
+}
+.ea-preview-card:hover .ea-preview-card-arrow{color:var(--accent);gap:10px}
+
+.ea-cta-wrap{display:flex;justify-content:center;margin-top:52px}
+
+@media(max-width:1000px){.ea-preview-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:560px){.ea-preview-grid{grid-template-columns:1fr}}
+
+/* ══════════ FOOTER ══════════ */
+footer{
+  border-top:1px solid var(--line);
+  padding:88px var(--gutter) 32px;
+  position:relative;
+  z-index:2;
+  background:rgba(3,5,7,0.45);
+}
+.footer-content{max-width:var(--container);margin:0 auto}
+
+.footer-grid{
+  display:grid;
+  grid-template-columns:1fr 1.3fr;
+  gap:clamp(40px,6vw,96px);
+  padding-bottom:52px;
+}
+
+.footer-column h3{
+  font-family:var(--font-m);font-size:10.5px;letter-spacing:.16em;
+  color:var(--muted);margin-bottom:22px;font-weight:400;
+}
+
+.footer-ea-list{display:flex;flex-direction:column}
+.footer-ea-item{
+  display:block;padding:13px 0;border-bottom:1px solid var(--line);
+  transition:padding-left .3s var(--ease);
+}
+.footer-ea-item:first-child{border-top:1px solid var(--line)}
+.footer-ea-item:hover{padding-left:8px}
+.footer-ea-name{font-size:13.5px;font-weight:600;color:var(--white);margin-bottom:3px}
+.footer-ea-desc{font-size:11.5px;color:var(--muted)}
+
+.footer-info{font-size:12.5px;color:var(--muted);line-height:1.75;margin-bottom:24px;max-width:56ch}
+.footer-info strong{color:var(--white);font-weight:500}
+
+.footer-social-title{font-family:var(--font-m);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:14px}
+.footer-social-links{display:flex;flex-wrap:wrap;gap:8px}
+.social-icon{
+  width:32px;height:32px;border-radius:6px;
+  display:flex;align-items:center;justify-content:center;
+  border:1px solid var(--line);
+  transition:border-color .3s var(--ease),background .3s var(--ease);
+}
+.social-icon svg{width:13px;height:13px;fill:var(--muted);transition:fill .3s var(--ease)}
+.social-icon:hover{border-color:var(--accent-dim);background:rgba(143,184,196,0.05)}
+.social-icon:hover svg{fill:var(--white)}
+
+.footer-bottom{
+  display:flex;justify-content:space-between;align-items:center;
+  flex-wrap:wrap;gap:16px;
+  padding-top:26px;
+  border-top:1px solid var(--line);
+}
+.footer-logo{font-family:var(--font-logo);font-weight:400;font-size:14px;letter-spacing:.05em;color:var(--muted)}
+.footer-copy{font-size:11px;color:var(--muted)}
+.footer-links{display:flex;gap:20px;flex-wrap:wrap}
+.footer-links a{font-size:11px;color:var(--muted);transition:color .3s var(--ease)}
+.footer-links a:hover{color:var(--white)}
+
+@media(max-width:760px){
+  .footer-grid{grid-template-columns:1fr}
+  .footer-bottom{flex-direction:column;align-items:flex-start}
+}
+
+/* ══════════ COOKIE BANNER (compact) ══════════ */
+#cookie-banner{
+  position:fixed;bottom:18px;left:18px;
+  max-width:320px;
+  display:flex;align-items:center;gap:12px;
+  padding:12px 14px;border-radius:5px;
+  background:rgba(10,15,19,0.94);
+  border:1px solid var(--line);
+  backdrop-filter:blur(14px);
+  z-index:9000;
+  transform:translateY(140%);
+  opacity:0;
+  transition:transform .5s var(--ease-out),opacity .5s var(--ease-out);
+}
+#cookie-banner.visible{transform:translateY(0);opacity:1}
+#cookie-banner.hiding{transform:translateY(140%);opacity:0}
+.cookie-body{font-size:11px;color:var(--muted);line-height:1.5;flex:1}
+.cookie-body a{color:var(--accent);text-decoration:underline}
+.cookie-actions{display:flex;gap:6px;flex-shrink:0}
+.cookie-btn{
+  padding:7px 11px;border-radius:2px;cursor:pointer;
+  font-family:var(--font-b);font-size:11px;font-weight:500;
+  transition:opacity .3s var(--ease);
+  white-space:nowrap;
+}
+.cookie-btn-reject{background:transparent;color:var(--muted);border:1px solid var(--line)}
+.cookie-btn-reject:hover{color:var(--white)}
+.cookie-btn-accept{background:var(--white);color:var(--black);border:1px solid var(--white);font-weight:600}
+.cookie-btn-accept:hover{background:var(--accent);border-color:var(--accent)}
+
+@media(max-width:520px){#cookie-banner{left:12px;right:12px;bottom:12px;max-width:none}}
+
+/* ══════════ PREMIUM MOTION ENHANCEMENTS ══════════ */
+
+/* Heading reveal — words animate individually */
+.reveal-word{
+  display:inline-block;
+  opacity:0;
+  transform:translateY(22px);
+  filter:blur(4px);
+  transition:opacity .7s var(--ease),transform .7s var(--ease),filter .7s var(--ease);
+  will-change:transform,opacity,filter;
+}
+.reveal-heading.visible .reveal-word{opacity:1;transform:translateY(0);filter:blur(0)}
+
+/* Paragraph reveal */
+.reveal-para{
+  opacity:0;
+  transform:translateY(20px);
+  transition:opacity .7s var(--ease-out),transform .7s var(--ease-out);
+}
+.reveal-para.visible{opacity:1;transform:translateY(0)}
+
+/* Button-group reveal */
+.reveal-btn{
+  opacity:0;
+  transform:translateY(14px) scale(.95);
+  transition:opacity .5s var(--ease-out),transform .5s var(--ease-out);
+}
+.reveal-btn.visible{opacity:1;transform:translateY(0) scale(1)}
+
+/* Card reveal */
+.reveal-card{
+  opacity:0;
+  transform:translateY(28px) scale(.97) rotateX(3deg);
+  transition:opacity .6s var(--ease),transform .6s var(--ease);
+  will-change:transform,opacity;
+}
+.reveal-card.visible{opacity:1;transform:translateY(0) scale(1) rotateX(0)}
+
+/* Image reveal */
+.reveal-image{
+  opacity:0;
+  transform:scale(1.08);
+  filter:blur(8px);
+  transition:opacity .8s var(--ease),transform .8s var(--ease),filter .8s var(--ease);
+}
+.reveal-image.visible{opacity:1;transform:scale(1);filter:blur(0)}
+
+/* Footer reveal */
+.reveal-footer{opacity:0;transform:translateY(40px);transition:opacity .8s var(--ease),transform .8s var(--ease)}
+.reveal-footer.visible{opacity:1;transform:translateY(0)}
+
+/* Terminal metrics — staggered rows */
+.terminal-metric{opacity:0;transform:translateY(16px);transition:opacity .5s var(--ease-out),transform .5s var(--ease-out)}
+.reveal-metrics.visible .terminal-metric{opacity:1;transform:translateY(0)}
+.reveal-metrics.visible .terminal-metric:nth-child(1){transition-delay:.05s}
+.reveal-metrics.visible .terminal-metric:nth-child(2){transition-delay:.15s}
+.reveal-metrics.visible .terminal-metric:nth-child(3){transition-delay:.25s}
+.reveal-metrics.visible .terminal-metric:nth-child(4){transition-delay:.35s}
+
+/* Nav — logo scales down slightly while scrolled */
+.nav-logo-container{transition:transform .5s var(--ease);transform-origin:left center}
+nav.scrolled .nav-logo-container{transform:scale(.92)}
+
+/* Buttons — hover lift + soft glow, press feedback */
+.btn{will-change:transform}
+.btn:hover{transform:translateY(-2px)}
+.btn-primary:hover{box-shadow:0 10px 30px rgba(143,184,196,0.22)}
+.btn:active{transform:translateY(0) scale(.97)}
+.nav-cta:active{transform:scale(.97)}
+
+/* Social icons — lift, rotate, glow */
+.social-icon{will-change:transform}
+.social-icon:hover{transform:translateY(-3px) rotate(-6deg);box-shadow:0 8px 18px rgba(143,184,196,0.16)}
+
+/* EA cards — 3D tilt support */
+.ea-preview-card{transform-style:preserve-3d}
+.ea-preview-grid{perspective:900px}
+
+/* Accordion — smooth height/fade support (JS-driven), chevron decoupled from [open] */
+.acc-item .acc-chevron{transform:rotate(-45deg)}
+.acc-item.opening .acc-chevron{transform:rotate(45deg)}
+.acc-body{transition:opacity .3s var(--ease-out)}
+
+/* Equity graph draw */
+.terminal-chart svg polygon{transition:opacity .5s var(--ease-out)}
+
+/* ══════════════════════════════════════════════════════════════
+   NUKRAX SIGNATURE SYSTEM — one connected, quietly-alive identity
+   ══════════════════════════════════════════════════════════════ */
+
+/* ── Ambient signal field — fixed neural mesh threading the whole page ── */
+#nkxField{
+  position:fixed;inset:0;
+  width:100%;height:100%;
+  z-index:1;
+  pointer-events:none;
+  opacity:.5;
+  mix-blend-mode:screen;
+}
+@media(max-width:768px){
+  #nkxField{display:none}
+}
+
+/* ── Nav status dot — the smallest expression of the living core ── */
+.nav-status{position:relative}
+.nav-dot{position:relative;z-index:1}
+.nav-dot::before,.nav-dot::after{
+  content:'';position:absolute;inset:-3px;
+  border-radius:50%;border:1px solid var(--accent);
+  opacity:0;
+  animation:nkx-ring-pulse 3.6s var(--ease-out) infinite;
+}
+.nav-dot::after{animation-delay:1.8s}
+@keyframes nkx-ring-pulse{
+  0%{opacity:.55;transform:scale(1)}
+  100%{opacity:0;transform:scale(2.6)}
+}
+
+/* ── Section labels — a quiet pulse of energy at the start of every section ── */
+.section-label::before{
+  position:relative;overflow:hidden;
+  background:var(--line-lit);
+}
+.section-label::after{
+  content:'';position:absolute;left:-9px;top:9px;
+  width:8px;height:1px;
+  background:var(--accent);
+  opacity:0;
+  animation:nkx-flow 5s var(--ease) infinite;
+}
+@keyframes nkx-flow{
+  0%{transform:translateX(0);opacity:0}
+  8%{opacity:1}
+  45%{opacity:1}
+  55%{transform:translateX(20px);opacity:0}
+  100%{transform:translateX(20px);opacity:0}
+}
+
+/* ── Breathing card edge — a faint top highlight that softly rises and falls ── */
+.x-cell,.dash-card,.why-card,.security-card,.stack-card,.testimonial-card,.ea-preview-card{position:relative}
+.x-cell::before,.dash-card::before,.why-card::before,.security-card::before,.stack-card::before,.testimonial-card::before,.ea-preview-card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,var(--accent-dim),transparent);
+  opacity:.35;
+  animation:nkx-breathe 6s var(--ease-out) infinite;
+}
+@keyframes nkx-breathe{
+  0%,100%{opacity:.18}
+  50%{opacity:.55}
+}
+@media(max-width:768px){
+  .x-cell::before,.dash-card::before,.why-card::before,.security-card::before,.stack-card::before,.testimonial-card::before,.ea-preview-card::before{
+    animation:none;opacity:.3;
+  }
+}
+
+/* ── Shimmer sweep — a single pass of light on hover, craftsmanship over spectacle ── */
+.dash-card,.why-card,.security-card,.stack-card,.testimonial-card,.ea-preview-card,.x-panel{
+  --shimmer-x:-120%;
+}
+.dash-card::after,.why-card::after,.security-card::after,.stack-card::after,.testimonial-card::after,.ea-preview-card::after{
+  content:'';position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(115deg,transparent 40%,rgba(143,184,196,0.05) 50%,transparent 60%);
+  transform:translateX(var(--shimmer-x));
+  transition:transform .9s var(--ease-out);
+}
+.dash-card:hover::after,.why-card:hover::after,.security-card:hover::after,.stack-card:hover::after,.testimonial-card:hover::after,.ea-preview-card:hover::after{
+  transform:translateX(120%);
+}
+
+/* ── Chart aliveness — nothing sits frozen ── */
+.gauge-fill.idle-alive{animation:nkx-gauge-breathe 4.2s var(--ease-out) infinite}
+@keyframes nkx-gauge-breathe{
+  0%,100%{filter:drop-shadow(0 0 0 rgba(143,184,196,0))}
+  50%{filter:drop-shadow(0 0 3px rgba(143,184,196,0.5))}
+}
+.sentiment-dot{animation:nkx-dot-drift 5s var(--ease-out) infinite}
+@keyframes nkx-dot-drift{
+  0%,100%{transform:translate(-50%,-50%) scale(1)}
+  50%{transform:translate(-50%,-50%) scale(1.18)}
+}
+/* ── Focus states — quiet, precise, never intrusive ── */
+a:focus-visible,button:focus-visible,summary:focus-visible,[tabindex]:focus-visible{
+  outline:1px solid var(--accent-dim);
+  outline-offset:3px;
+  border-radius:1px;
+}
+.btn:focus-visible{outline-color:var(--white)}
+
+.equity-live-dot{
+  fill:var(--accent);
+  opacity:0;
+  transition:opacity .6s var(--ease);
+}
+.equity-live-dot.on{opacity:1;animation:nkx-live-pulse 2.2s var(--ease-out) infinite}
+@keyframes nkx-live-pulse{
+  0%,100%{r:3;opacity:1}
+  50%{r:5;opacity:.55}
+}
+.terminal-chart{position:relative;overflow:hidden}
+.terminal-chart::after{
+  content:'';position:absolute;top:0;bottom:0;width:35%;
+  background:linear-gradient(90deg,transparent,rgba(143,184,196,0.05),transparent);
+  transform:translateX(-140%);
+  animation:nkx-scan 7s linear infinite;
+  pointer-events:none;
+}
+@keyframes nkx-scan{
+  0%{transform:translateX(-140%)}
+  100%{transform:translateX(340%)}
+}
+
+/* ── Heartbeat — a barely-perceptible synchronized pulse across the whole page ── */
+body.nkx-pulse .x-panel,
+body.nkx-pulse .dash-card,
+body.nkx-pulse .terminal-panel,
+body.nkx-pulse .stack-card,
+body.nkx-pulse .security-card{
+  box-shadow:0 0 0 1px rgba(143,184,196,0.16),0 0 26px rgba(143,184,196,0.06);
+  transition:box-shadow 1.1s var(--ease-out);
+}
+.x-panel,.dash-card,.terminal-panel,.stack-card,.security-card{
+  transition:box-shadow 1.4s var(--ease);
+}
+
+/* ── Finale convergence — everything gathers focus at the end ── */
+.final-cta{transition:filter 1.6s var(--ease);filter:brightness(1)}
+.final-cta.visible{filter:brightness(1.05)}
+
+@media (prefers-reduced-motion: reduce){
+  #nkxField{display:none}
+  .nav-dot::before,.nav-dot::after,
+  .section-label::after,
+  .x-cell::before,.dash-card::before,.why-card::before,.security-card::before,.stack-card::before,.testimonial-card::before,.ea-preview-card::before,
+  .gauge-fill.idle-alive,.sentiment-dot,.equity-live-dot.on,.terminal-chart::after{
+    animation:none !important;
+  }
+}
+
+/* Respect reduced motion preference */
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{
+    animation-duration:.001ms !important;
+    animation-iteration-count:1 !important;
+    transition-duration:.001ms !important;
+    scroll-behavior:auto !important;
+  }
+}
+
+/* ══════════════════════════════════════════════════════════════
+   SITE EXPANSION — shared layout primitives
+   ══════════════════════════════════════════════════════════════ */
+
+.x-section{
+  max-width:var(--container);
+  margin:0 auto;
+  padding:0 var(--gutter) 184px;
+  position:relative;
+  z-index:2;
+}
+.x-head{max-width:64ch;margin-bottom:44px}
+.x-title{
+  font-family:var(--font-b);font-weight:200;
+  font-size:clamp(26px,3vw,38px);color:var(--white);
+  letter-spacing:-.01em;margin-bottom:14px;
+}
+.x-desc{font-size:13.5px;color:var(--muted);line-height:1.7;max-width:60ch}
+
+/* Bordered "ledger" grid — reuses the .stats / .ea-preview-grid pattern */
+.x-grid{
+  display:grid;
+  border-top:1px solid var(--line);
+  border-left:1px solid var(--line);
+}
+.x-cell{
+  padding:30px 26px 32px;
+  border-right:1px solid var(--line);
+  border-bottom:1px solid var(--line);
+  position:relative;
+  transition:background .35s var(--ease),transform .4s var(--ease-out);
+}
+.x-cell:hover{background:rgba(143,184,196,0.035)}
+
+.x-panel{
+  border:1px solid var(--line);
+  background:rgba(10,15,19,0.5);
+  overflow:hidden;
+}
+.x-panel-bar{
+  display:flex;align-items:center;gap:8px;
+  padding:14px 18px;
+  border-bottom:1px solid var(--line);
+  font-family:var(--font-m);font-size:10.5px;letter-spacing:.1em;
+  color:var(--muted);text-transform:uppercase;
+}
+.x-panel-bar .terminal-dot{width:7px;height:7px;border-radius:50%;background:var(--line-lit)}
+
+/* ══════════ 04 — MARKET INTELLIGENCE DASHBOARD ══════════ */
+.dash-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  border-top:1px solid var(--line);
+  border-left:1px solid var(--line);
+}
+@media(max-width:900px){.dash-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:600px){.dash-grid{grid-template-columns:1fr}}
+
+.dash-card{
+  padding:28px 24px 30px;
+  border-right:1px solid var(--line);
+  border-bottom:1px solid var(--line);
+  transition:background .35s var(--ease);
+}
+.dash-card:hover{background:rgba(143,184,196,0.035)}
+.dash-card-label{
+  font-family:var(--font-m);font-size:10px;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--muted);margin-bottom:18px;
+  display:flex;align-items:center;justify-content:space-between;
+}
+
+/* circular gauge */
+.gauge-wrap{display:flex;align-items:center;gap:18px}
+.gauge-svg{width:88px;height:88px;flex-shrink:0}
+.gauge-track{fill:none;stroke:var(--line);stroke-width:5}
+.gauge-fill{fill:none;stroke:var(--accent);stroke-width:5;stroke-linecap:round;transform:rotate(-90deg);transform-origin:50% 50%;transition:stroke-dashoffset 1.3s var(--ease)}
+.gauge-num{font-family:var(--font-b);font-weight:500;font-size:20px;color:var(--white)}
+.gauge-sub{font-family:var(--font-m);font-size:10px;color:var(--muted);letter-spacing:.06em;margin-top:4px}
+
+/* liquidity heatmap */
+.heatmap{display:grid;grid-template-columns:repeat(8,1fr);gap:4px}
+.heat-cell{
+  aspect-ratio:1;border-radius:1px;
+  background:var(--accent);
+  opacity:0;
+  transform:scale(.5);
+  transition:opacity .5s var(--ease-out),transform .5s var(--ease-out);
+}
+.heatmap.visible .heat-cell{opacity:var(--cell-o,.2);transform:scale(1)}
+
+/* session activity bars */
+.session-bars{display:flex;align-items:flex-end;gap:5px;height:70px}
+.session-bar{
+  flex:1;background:var(--accent-dim);border-radius:1px 1px 0 0;
+  height:0%;
+  transition:height 1s var(--ease-out),background .3s var(--ease);
+}
+.session-bars.visible .session-bar{height:var(--bar-h,20%)}
+.session-bar.active{background:var(--accent)}
+
+/* sentiment meter */
+.sentiment-track{
+  position:relative;height:6px;border-radius:3px;
+  background:linear-gradient(90deg,var(--line-lit),var(--accent-dim),var(--accent));
+  margin-top:10px;
+}
+.sentiment-dot{
+  position:absolute;top:50%;width:10px;height:10px;border-radius:50%;
+  background:var(--white);border:2px solid var(--black);
+  transform:translate(-50%,-50%);
+  left:0%;
+  transition:left 1.2s var(--ease);
+  box-shadow:0 0 10px rgba(143,184,196,0.5);
+}
+.sentiment-track.visible .sentiment-dot{left:var(--pos,50%)}
+
+/* flow / imbalance bars */
+.flow-row{display:flex;align-items:center;gap:12px;margin-bottom:10px}
+.flow-row:last-child{margin-bottom:0}
+.flow-row-label{font-family:var(--font-m);font-size:10px;color:var(--muted);width:56px;flex-shrink:0}
+.flow-track{flex:1;height:5px;background:var(--line);border-radius:3px;overflow:hidden}
+.flow-fill{height:100%;width:0%;background:var(--accent);border-radius:3px;transition:width 1.1s var(--ease-out)}
+.flow-row.visible .flow-fill{width:var(--fw,50%)}
+
+/* ══════════ 05 — TRADING PERFORMANCE TIMELINE ══════════ */
+.timeline-track{
+  display:flex;align-items:stretch;gap:0;
+  overflow-x:auto;
+  padding-bottom:12px;
+  scrollbar-width:thin;
+}
+.timeline-step{
+  flex:0 0 auto;width:180px;
+  display:flex;flex-direction:column;align-items:flex-start;
+  padding-right:8px;
+}
+.timeline-num{
+  font-family:var(--font-m);font-size:10px;color:var(--accent-dim);
+  letter-spacing:.1em;margin-bottom:14px;
+}
+.timeline-dot{
+  width:9px;height:9px;border-radius:50%;
+  background:var(--panel);border:1.5px solid var(--line-lit);
+  margin-bottom:16px;
+  transition:background .4s var(--ease),border-color .4s var(--ease),box-shadow .4s var(--ease);
+}
+.timeline-step.visible .timeline-dot{background:var(--accent);border-color:var(--accent);box-shadow:0 0 10px rgba(143,184,196,0.4)}
+.timeline-line{
+  flex:0 0 auto;width:52px;align-self:flex-start;
+  margin-top:31.5px;
+  height:1px;background:var(--line);
+  position:relative;
+  overflow:hidden;
+}
+.timeline-line::after{
+  content:'';position:absolute;inset:0;
+  background:var(--accent-dim);
+  transform:scaleX(0);transform-origin:left;
+  transition:transform .8s var(--ease);
+}
+.timeline-line.visible::after{transform:scaleX(1)}
+.timeline-title{font-size:14.5px;font-weight:500;color:var(--white);margin-bottom:8px}
+.timeline-desc{font-size:12px;color:var(--muted);line-height:1.6}
+
+@media(max-width:700px){
+  .timeline-track{flex-direction:column;overflow-x:visible}
+  .timeline-step{width:100%;flex-direction:row;gap:16px;padding-right:0}
+  .timeline-line{width:1px;height:40px;align-self:center;margin:0 0 0 4px}
+  .timeline-dot{margin-bottom:0}
+}
+
+/* ══════════ 06 — WHY TRADERS CHOOSE ══════════ */
+.why-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);
+  border-top:1px solid var(--line);border-left:1px solid var(--line);
+}
+@media(max-width:900px){.why-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:560px){.why-grid{grid-template-columns:1fr}}
+.why-card{
+  padding:30px 24px 32px;
+  border-right:1px solid var(--line);border-bottom:1px solid var(--line);
+  transition:transform .4s var(--ease-out),background .35s var(--ease);
+}
+.why-card:hover{transform:translateY(-4px);background:rgba(143,184,196,0.035)}
+.why-icon{
+  width:36px;height:36px;margin-bottom:20px;
+  display:flex;align-items:center;justify-content:center;
+  border:1px solid var(--line);border-radius:6px;
+  color:var(--accent);
+  transition:border-color .3s var(--ease),transform .3s var(--ease);
+}
+.why-card:hover .why-icon{border-color:var(--accent-dim);transform:translateY(-2px)}
+.why-icon svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.4}
+.why-title{font-size:15.5px;font-weight:500;color:var(--white);margin-bottom:10px}
+.why-desc{font-size:12.5px;color:var(--muted);line-height:1.65}
+
+/* ══════════ 07 — ADVANCED ANALYTICS ══════════ */
+.analytics-grid{display:grid;grid-template-columns:1.3fr 1fr;gap:0}
+.analytics-grid .x-panel{border-radius:0}
+@media(max-width:860px){.analytics-grid{grid-template-columns:1fr}}
+
+.analytics-main{border-right:1px solid var(--line)}
+@media(max-width:860px){.analytics-main{border-right:none;border-bottom:1px solid var(--line)}}
+
+.candle-svg{width:100%;height:200px;display:block}
+.candle{transition:transform .3s var(--ease)}
+
+.metrics-col{padding:28px 26px}
+.metric-block{margin-bottom:22px}
+.metric-block:last-child{margin-bottom:0}
+.metric-top{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px}
+.metric-name{font-family:var(--font-m);font-size:10.5px;letter-spacing:.08em;color:var(--muted);text-transform:uppercase}
+.metric-value{font-size:15px;color:var(--white);font-weight:500}
+.metric-bar-track{height:4px;background:var(--line);border-radius:3px;overflow:hidden}
+.metric-bar-fill{height:100%;width:0%;background:var(--accent);border-radius:3px;transition:width 1.1s var(--ease-out)}
+.metric-block.visible .metric-bar-fill{width:var(--mw,50%)}
+
+.pie-row{display:flex;gap:26px;align-items:center;padding:26px;flex-wrap:wrap;border-top:1px solid var(--line)}
+.pie-svg{width:110px;height:110px;flex-shrink:0}
+.pie-legend{display:flex;flex-direction:column;gap:8px;font-size:12px;color:var(--muted)}
+.pie-legend-dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:8px}
+
+.monthly-bars{display:flex;align-items:flex-end;gap:6px;height:90px;padding:26px;border-top:1px solid var(--line)}
+.monthly-bar{flex:1;background:var(--accent-dim);border-radius:1px 1px 0 0;height:0%;transition:height 1s var(--ease-out)}
+.monthly-bars.visible .monthly-bar{height:var(--mb,30%)}
+.monthly-bar.neg{background:var(--line-lit)}
+
+/* ══════════ 08 — TECHNOLOGY STACK ══════════ */
+.stack-wrap{position:relative}
+.stack-lines{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:0}
+.stack-lines path{fill:none;stroke:var(--line-lit);stroke-width:1}
+.stack-grid{
+  position:relative;z-index:1;
+  display:grid;grid-template-columns:repeat(3,1fr);gap:1px;
+  background:var(--line);
+}
+@media(max-width:900px){.stack-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:560px){.stack-grid{grid-template-columns:1fr}}
+.stack-card{
+  background:var(--black);
+  padding:28px 24px;
+  transition:background .35s var(--ease);
+}
+.stack-card:hover{background:rgba(143,184,196,0.035)}
+.stack-icon{
+  width:34px;height:34px;border-radius:6px;
+  border:1px solid var(--line-lit);
+  display:flex;align-items:center;justify-content:center;
+  color:var(--accent);margin-bottom:18px;
+}
+.stack-icon svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:1.4}
+.stack-name{font-size:14.5px;font-weight:500;color:var(--white);margin-bottom:8px}
+.stack-desc{font-size:12px;color:var(--muted);line-height:1.6}
+
+/* ══════════ 09 — LIVE STATISTICS BAND ══════════ */
+.livestats-band{
+  border-top:1px solid var(--line);border-bottom:1px solid var(--line);
+  background:rgba(10,15,19,0.35);
+}
+.livestats-grid{
+  max-width:var(--container);margin:0 auto;
+  display:grid;grid-template-columns:repeat(6,1fr);
+  border-left:1px solid var(--line);
+}
+@media(max-width:900px){.livestats-grid{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:520px){.livestats-grid{grid-template-columns:repeat(2,1fr)}}
+.livestat{
+  padding:38px 20px;text-align:center;
+  border-right:1px solid var(--line);
+  transition:background .4s var(--ease);
+}
+.livestat:hover{background:rgba(143,184,196,0.03)}
+.livestat-num{
+  font-family:var(--font-b);font-weight:200;font-size:clamp(22px,2.4vw,30px);
+  color:var(--white);letter-spacing:-.01em;margin-bottom:8px;
+  transition:text-shadow .4s var(--ease);
+}
+.livestat:hover .livestat-num{text-shadow:0 0 18px rgba(143,184,196,0.35)}
+.livestat-label{font-family:var(--font-m);font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+
+/* ══════════ 10 — SECURITY ══════════ */
+.security-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);
+  border-top:1px solid var(--line);border-left:1px solid var(--line);
+}
+@media(max-width:900px){.security-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:560px){.security-grid{grid-template-columns:1fr}}
+.security-card{
+  padding:30px 24px 32px;
+  border-right:1px solid var(--line);border-bottom:1px solid var(--line);
+}
+.security-icon{width:40px;height:40px;margin-bottom:18px;color:var(--accent)}
+.security-icon svg{width:100%;height:100%;stroke:currentColor;fill:none;stroke-width:1.2}
+.security-icon path{stroke-dasharray:120;stroke-dashoffset:120;transition:stroke-dashoffset 1.2s var(--ease)}
+.security-card.visible .security-icon path{stroke-dashoffset:0}
+.security-title{font-size:15px;font-weight:500;color:var(--white);margin-bottom:9px}
+.security-desc{font-size:12.5px;color:var(--muted);line-height:1.65}
+
+/* ══════════ 11 — TESTIMONIALS ══════════ */
+.testimonial-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line)}
+@media(max-width:900px){.testimonial-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:560px){.testimonial-grid{grid-template-columns:1fr}}
+.testimonial-card{
+  background:var(--black);
+  padding:28px 26px 30px;
+  display:flex;flex-direction:column;gap:16px;
+  transition:background .35s var(--ease),transform .4s var(--ease-out);
+}
+a.testimonial-card{cursor:pointer}
+.testimonial-card:hover{background:rgba(143,184,196,0.035)}
+a.testimonial-card:hover{transform:translateY(-3px)}
+.testimonial-quote{font-size:13.5px;color:var(--text);line-height:1.75;font-weight:300}
+.testimonial-person{display:flex;align-items:center;gap:12px}
+.testimonial-name{font-size:12.5px;color:var(--white);font-weight:500}
+.testimonial-role{font-family:var(--font-m);font-size:10px;color:var(--muted);letter-spacing:.06em;margin-top:2px}
+
+/* Anonymous avatar — generic silhouette, never a real photo */
+.avatar{
+  width:38px;height:38px;border-radius:50%;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  color:var(--accent);
+  background:radial-gradient(circle at 32% 28%, rgba(143,184,196,0.16), rgba(10,15,19,0.9));
+  border:1px solid var(--accent-dim);
+  box-shadow:0 0 16px rgba(143,184,196,0.14);
+}
+.avatar svg{width:52%;height:52%}
+.avatar-lg{width:72px;height:72px;box-shadow:0 0 26px rgba(143,184,196,0.2)}
+
+/* Star rating — mono-character stars, accent fill clipped by width */
+.star-rating{position:relative;display:inline-block;font-family:var(--font-m);font-size:13px;letter-spacing:2px;line-height:1;height:13px}
+.star-row{white-space:nowrap}
+.star-row-bg{color:var(--line-lit)}
+.star-row-fg{position:absolute;top:0;left:0;overflow:hidden;color:var(--accent);width:0%}
+.star-rating-lg{font-size:19px;letter-spacing:3px;height:19px}
+
+/* ══════════ 12 — FAQ (extended) ══════════ */
+.faq-columns{columns:1}
+
+/* ══════════ 13 — FINAL CTA ══════════ */
+.final-cta{
+  position:relative;
+  min-height:78vh;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;
+  padding:120px var(--gutter);
+  overflow:hidden;
+  border-top:1px solid var(--line);
+  z-index:2;
+}
+.final-cta-grid{
+  position:absolute;inset:0;z-index:0;pointer-events:none;
+  background-image:
+    linear-gradient(rgba(143,184,196,0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(143,184,196,0.05) 1px, transparent 1px);
+  background-size:56px 56px;
+  -webkit-mask-image:radial-gradient(circle at 50% 50%, black, transparent 72%);
+  mask-image:radial-gradient(circle at 50% 50%, black, transparent 72%);
+  opacity:0;
+  transition:opacity 1.2s var(--ease);
+}
+.final-cta.visible .final-cta-grid{opacity:1}
+.final-cta-glow{
+  position:absolute;top:50%;left:50%;
+  width:min(1000px,110vw);height:min(700px,80vw);
+  transform:translate(-50%,-50%);
+  background:radial-gradient(circle at center, rgba(143,184,196,0.16), rgba(143,184,196,0.03) 45%, transparent 72%);
+  filter:blur(40px);
+  z-index:0;pointer-events:none;
+  opacity:0;
+  transition:opacity 1.4s var(--ease);
+}
+.final-cta.visible .final-cta-glow{opacity:1}
+.final-cta-content{position:relative;z-index:1}
+.final-cta-label{
+  font-family:var(--font-m);font-size:11px;letter-spacing:.26em;
+  text-transform:uppercase;color:var(--muted);margin-bottom:26px;
+}
+.final-cta-title{
+  font-family:var(--font-b);font-weight:200;
+  font-size:clamp(34px,6vw,64px);
+  line-height:1.1;letter-spacing:-.01em;color:var(--white);
+  max-width:16ch;margin:0 auto 22px;
+}
+.final-cta-title em{font-style:normal;font-weight:500;color:var(--accent)}
+.final-cta-sub{
+  font-size:14.5px;color:var(--muted);max-width:48ch;margin:0 auto 40px;line-height:1.7;
+}
+.final-cta-actions{display:flex;flex-wrap:wrap;justify-content:center;gap:22px}
+</style>
+</head>
+<body>
+
+<!-- NUKRAX SIGNAL FIELD — ambient neural mesh, ties every section into one system -->
+<canvas id="nkxField" aria-hidden="true"></canvas>
+
+<!-- LOADING SCREEN -->
+<div id="loader">
+  <div class="loader-mark">NUKRAX</div>
+  <div class="loader-status">Initializing…</div>
+  <div class="loader-bar"><div class="loader-bar-fill"></div></div>
+</div>
+<script>
+/* Show the loading animation only once per browser session — a refresh
+   or a click through to another page won't trigger it again, but closing
+   the tab/browser and coming back fresh will. */
+(function(){
+  try{
+    if(sessionStorage.getItem('nukrax_loader_seen')){
+      document.getElementById('loader').style.display = 'none';
+    } else {
+      sessionStorage.setItem('nukrax_loader_seen', 'true');
+    }
+  }catch(e){}
+})();
+</script>
+
+<!-- SCROLL PROGRESS -->
+<div id="scroll-progress"></div>
+
+<!-- PAGE CURTAIN -->
+<div id="page-curtain"></div>
+
+<!-- NAV -->
+<nav id="navbar">
+  <div class="nav-logo-container">
+    <a href="index.html" class="nav-logo-img">
+      <img src="assets/logo.png" alt="NUKRAX Logo">
+    </a>
+    <span class="nav-logo">nukrax</span>
+  </div>
+  <ul class="nav-links">
+    <li><a href="#about">Infrastructure</a></li>
+    <li><a href="#terminal">Terminal</a></li>
+    <li><a href="#ea">Execution Systems</a></li>
+  </ul>
+  <div class="nav-right">
+    <div class="nav-status">
+      <div class="nav-dot"></div>
+      <span>Systems Online</span>
+    </div>
+    <a href="map.html" class="nav-map-btn" id="nav-map-btn"><span class="map-live-dot"></span>Market Map</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="heroSection">
+  <div class="hero-glow" id="heroGlow"></div>
+  <p class="hero-label">Est. 2024 &nbsp;/&nbsp; <span>Professional Trading Suite</span></p>
+  <h1 class="hero-logo" aria-label="NUKRAX">NUKRAX</h1>
+  <p class="hero-tagline">Precision tools for elite traders.</p>
+  <div class="hero-divider"></div>
+  <div class="hero-ctas">
+    <a href="ea-selection.html" class="btn btn-primary" id="btn-ea">
+      Explore Expert Advisors
+      <span class="btn-arrow">→</span>
+    </a>
+    <a href="community.html" class="link-inline link-inline-glow" id="btn-community">
+      COMMUNITY <span class="btn-arrow">→</span>
+    </a>
+    <a href="redirect.html?dest=tr" class="link-inline" id="btn-tr">
+      nukrax.tr <span class="btn-arrow">↗</span>
+    </a>
+    <a href="nukrax-cr.html" class="link-inline" id="btn-cr">
+      nukrax.cr <span class="btn-arrow">↗</span>
+    </a>
+  </div>
+  <div class="hero-globe-wrap" id="heroGlobeWrap">
+    <canvas id="heroGlobe" aria-hidden="true"></canvas>
+    <div class="hero-globe-label"><div class="nav-dot"></div> Precision Signal Core</div>
+  </div>
+</section>
+
+<!-- INFRASTRUCTURE -->
+<section class="about" id="about">
+  <div class="section-label reveal">01 — The Infrastructure</div>
+  <div class="about-grid">
+    <div class="reveal about-sticky">
+      <h2 class="about-headline reveal-heading">
+        Built for <em>professionals.</em>
+      </h2>
+      <p class="about-intro reveal-para">
+        A private trading ecosystem engineered for serious market participants who demand institutional-grade tools without compromise.
+      </p>
+    </div>
+    <div class="reveal">
+      <div class="accordion">
+        <details class="acc-item opening" open>
+          <summary>
+            <span class="acc-num">01</span>
+            <span class="acc-title">Institutional-Grade Expert Advisors</span>
+            <span class="acc-chevron"></span>
+          </summary>
+          <div class="acc-body">
+            Our Expert Advisors operate on millisecond-precision HFT architecture, incorporating Smart Money Concepts (SMC), Inner Circle Trader (ICT) methodologies, and proprietary liquidity-targeting algorithms. Each EA undergoes rigorous backtesting across multiple timeframes and market conditions before deployment.
+          </div>
+        </details>
+        <details class="acc-item">
+          <summary>
+            <span class="acc-num">02</span>
+            <span class="acc-title">SMC + ICT Architecture</span>
+            <span class="acc-chevron"></span>
+          </summary>
+          <div class="acc-body">
+            Market structure, liquidity sweeps, fair value gaps, and order blocks — translated from concept into executable, live-tested logic. No indicators borrowed wholesale from retail templates; every rule is rebuilt from the ground up for automation.
+          </div>
+        </details>
+        <details class="acc-item">
+          <summary>
+            <span class="acc-num">03</span>
+            <span class="acc-title">Live Trading Infrastructure</span>
+            <span class="acc-chevron"></span>
+          </summary>
+          <div class="acc-body">
+            nukrax.tr and nukrax.cr serve as our live trading platforms — providing real-time market analysis, comprehensive journaling systems, and secure crypto deposit portals for professional traders. Both integrate directly with our EA suite.
+          </div>
+        </details>
+        <details class="acc-item">
+          <summary>
+            <span class="acc-num">04</span>
+            <span class="acc-title">Precision First</span>
+            <span class="acc-chevron"></span>
+          </summary>
+          <div class="acc-body">
+            No noise, no clutter. Every feature exists because it delivers a measurable performance improvement. Whether you're running automated strategies on MT5 or managing risk across multiple positions, NUKRAX gives you infrastructure — not gimmicks.
+          </div>
+        </details>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STATS -->
+<div class="stats">
+  <div class="stat reveal reveal-delay-1">
+    <div class="stat-num" data-count-target="3">0</div>
+    <div class="stat-label">Expert Advisors</div>
+  </div>
+  <div class="stat reveal reveal-delay-2">
+    <div class="stat-num" data-count-target="2">0</div>
+    <div class="stat-label">Live Platforms</div>
+  </div>
+  <div class="stat reveal reveal-delay-3">
+    <div class="stat-num">24/7</div>
+    <div class="stat-label">Automated Execution</div>
+  </div>
+  <div class="stat reveal reveal-delay-4">
+    <div class="stat-num">MT5</div>
+    <div class="stat-label">Native Platform</div>
+  </div>
+</div>
+
+<!-- TERMINAL SHOWCASE -->
+<section class="terminal-section" id="terminal">
+  <div class="section-label reveal">02 — The Terminal</div>
+  <div class="terminal-head reveal">
+    <h2 class="terminal-title reveal-heading">Where execution happens.</h2>
+    <p class="terminal-desc reveal-para">Every EA reports into the same environment — live position state, risk exposure, and execution latency, at a glance.</p>
+  </div>
+  <div class="terminal-panel reveal">
+    <div class="terminal-bar">
+      <div class="terminal-dot"></div>
+      <div class="terminal-dot"></div>
+      <div class="terminal-dot"></div>
+      <span class="terminal-bar-label">nukrax // execution terminal</span>
+    </div>
+    <div class="terminal-body">
+      <div class="terminal-chart">
+        <div class="terminal-chart-label">Equity Curve — Illustrative</div>
+        <svg viewBox="0 0 400 180" preserveAspectRatio="none">
+          <defs>
+            <linearGradient id="chartFill" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#8FB8C4" stop-opacity="0.28"/>
+              <stop offset="100%" stop-color="#8FB8C4" stop-opacity="0"/>
+            </linearGradient>
+          </defs>
+          <polyline id="equityLine" points="0,150 40,140 80,145 120,110 160,120 200,85 240,95 280,60 320,68 360,32 400,40"
+            fill="none" stroke="#8FB8C4" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+          <polygon id="equityFill" points="0,150 40,140 80,145 120,110 160,120 200,85 240,95 280,60 320,68 360,32 400,40 400,180 0,180"
+            fill="url(#chartFill)"/>
+          <circle id="equityLiveDot" class="equity-live-dot" cx="400" cy="40" r="3"/>
+          <line x1="0" y1="45" x2="400" y2="45" stroke="#1B2328" stroke-width="1"/>
+          <line x1="0" y1="90" x2="400" y2="90" stroke="#1B2328" stroke-width="1"/>
+          <line x1="0" y1="135" x2="400" y2="135" stroke="#1B2328" stroke-width="1"/>
+        </svg>
+      </div>
+      <div class="terminal-metrics reveal-metrics">
+        <div class="terminal-metric">
+          <span class="terminal-metric-label">Active Systems</span>
+          <span class="terminal-metric-value">3 / 3</span>
+        </div>
+        <div class="terminal-metric">
+          <span class="terminal-metric-label">Avg. Latency</span>
+          <span class="terminal-metric-value">&lt; 10ms</span>
+        </div>
+        <div class="terminal-metric">
+          <span class="terminal-metric-label">Risk Engine</span>
+          <span class="terminal-metric-value">Active</span>
+        </div>
+        <div class="terminal-metric">
+          <span class="terminal-metric-label">Session</span>
+          <span class="terminal-metric-value">London / NY</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="terminal-caption reveal">Interface preview — illustrative, not live data</div>
+</section>
+
+<!-- EA PREVIEW -->
+<section class="ea-section" id="ea">
+  <div class="section-label reveal">03 — Execution Systems</div>
+  <h2 class="ea-section-title reveal reveal-heading">Systems built to execute.</h2>
+  <div class="ea-preview-grid">
+    <a href="ea/apex.html" class="ea-preview-card reveal-card reveal-delay-1">
+      <span class="ea-preview-card-tag">HFT · v1.0</span>
+      <div class="ea-preview-card-name">APEX</div>
+      <div class="ea-preview-card-desc">Ultra-fast execution engine with adaptive scalping logic and multi-timeframe confirmation system.</div>
+      <div class="ea-preview-card-arrow">View system →</div>
+    </a>
+    <a href="ea/aurum.html" class="ea-preview-card reveal-card reveal-delay-2">
+      <span class="ea-preview-card-tag">HFT · v1.0</span>
+      <div class="ea-preview-card-name">AURUM</div>
+      <div class="ea-preview-card-desc">Gold-specialist HFT system with advanced liquidity-targeting algorithms and session-based filters.</div>
+      <div class="ea-preview-card-arrow">View system →</div>
+    </a>
+    <a href="ea/smc-ict.html" class="ea-preview-card reveal-card reveal-delay-3">
+      <span class="ea-preview-card-tag">SMC · ICT</span>
+      <div class="ea-preview-card-name">SMC ICT</div>
+      <div class="ea-preview-card-desc">Smart Money Concepts implementation with ICT methodology, FVG detection, and order block validation.</div>
+      <div class="ea-preview-card-arrow">View system →</div>
+    </a>
+    <a href="ea/404.html" class="ea-preview-card reveal-card reveal-delay-4">
+      <span class="ea-preview-card-tag">Coming Soon</span>
+      <div class="ea-preview-card-name">MORE SYSTEMS</div>
+      <div class="ea-preview-card-desc">Additional expert advisors currently in development and rigorous testing phases.</div>
+      <div class="ea-preview-card-arrow">View system →</div>
+    </a>
+  </div>
+  <div class="ea-cta-wrap reveal-btn">
+    <a href="ea-selection.html" class="btn btn-primary">
+      View All Expert Advisors
+      <span class="btn-arrow">→</span>
+    </a>
+  </div>
+</section>
+
+<!-- MARKET INTELLIGENCE DASHBOARD -->
+<section class="x-section" id="intelligence">
+  <div class="section-label reveal">04 — Market Intelligence</div>
+  <div class="x-head reveal">
+    <h2 class="x-title reveal-heading">Read the market before it moves.</h2>
+    <p class="x-desc reveal-para">A continuous read on confidence, volatility, liquidity, and positioning — the same signals our Expert Advisors evaluate on every tick.</p>
+  </div>
+
+  <div class="dash-grid">
+    <div class="dash-card reveal-card">
+      <div class="dash-card-label">AI Confidence Score</div>
+      <div class="gauge-wrap">
+        <svg class="gauge-svg" viewBox="0 0 100 100">
+          <circle class="gauge-track" cx="50" cy="50" r="42"/>
+          <circle class="gauge-fill" data-gauge="87" cx="50" cy="50" r="42" pathLength="100" stroke-dasharray="100" stroke-dashoffset="100"/>
+        </svg>
+        <div>
+          <div class="gauge-num" data-count-target="87" data-count-suffix="%">0%</div>
+          <div class="gauge-sub">High conviction</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="dash-card reveal-card reveal-delay-1">
+      <div class="dash-card-label">Market Volatility</div>
+      <div class="gauge-wrap">
+        <svg class="gauge-svg" viewBox="0 0 100 100">
+          <circle class="gauge-track" cx="50" cy="50" r="42"/>
+          <circle class="gauge-fill" data-gauge="34" cx="50" cy="50" r="42" pathLength="100" stroke-dasharray="100" stroke-dashoffset="100"/>
+        </svg>
+        <div>
+          <div class="gauge-num" data-count-target="34" data-count-suffix="%">0%</div>
+          <div class="gauge-sub">Below average</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="dash-card reveal-card reveal-delay-2">
+      <div class="dash-card-label">Session Activity</div>
+      <div class="session-bars">
+        <div class="session-bar" style="--bar-h:22%"></div>
+        <div class="session-bar" style="--bar-h:38%"></div>
+        <div class="session-bar" style="--bar-h:31%"></div>
+        <div class="session-bar active" style="--bar-h:74%"></div>
+        <div class="session-bar active" style="--bar-h:91%"></div>
+        <div class="session-bar active" style="--bar-h:82%"></div>
+        <div class="session-bar" style="--bar-h:46%"></div>
+        <div class="session-bar" style="--bar-h:28%"></div>
+        <div class="session-bar" style="--bar-h:19%"></div>
+      </div>
+      <div class="gauge-sub" style="margin-top:14px">London / NY overlap peak</div>
+    </div>
+
+    <div class="dash-card reveal-card">
+      <div class="dash-card-label">Liquidity Heat Map</div>
+      <div class="heatmap" id="heatmap">
+        <div class="heat-cell" style="--cell-o:.15"></div><div class="heat-cell" style="--cell-o:.3"></div><div class="heat-cell" style="--cell-o:.6"></div><div class="heat-cell" style="--cell-o:.85"></div><div class="heat-cell" style="--cell-o:.4"></div><div class="heat-cell" style="--cell-o:.2"></div><div class="heat-cell" style="--cell-o:.5"></div><div class="heat-cell" style="--cell-o:.1"></div>
+        <div class="heat-cell" style="--cell-o:.25"></div><div class="heat-cell" style="--cell-o:.55"></div><div class="heat-cell" style="--cell-o:.9"></div><div class="heat-cell" style="--cell-o:1"></div><div class="heat-cell" style="--cell-o:.65"></div><div class="heat-cell" style="--cell-o:.35"></div><div class="heat-cell" style="--cell-o:.2"></div><div class="heat-cell" style="--cell-o:.1"></div>
+        <div class="heat-cell" style="--cell-o:.15"></div><div class="heat-cell" style="--cell-o:.4"></div><div class="heat-cell" style="--cell-o:.7"></div><div class="heat-cell" style="--cell-o:.95"></div><div class="heat-cell" style="--cell-o:.5"></div><div class="heat-cell" style="--cell-o:.3"></div><div class="heat-cell" style="--cell-o:.18"></div><div class="heat-cell" style="--cell-o:.08"></div>
+        <div class="heat-cell" style="--cell-o:.1"></div><div class="heat-cell" style="--cell-o:.22"></div><div class="heat-cell" style="--cell-o:.45"></div><div class="heat-cell" style="--cell-o:.6"></div><div class="heat-cell" style="--cell-o:.38"></div><div class="heat-cell" style="--cell-o:.2"></div><div class="heat-cell" style="--cell-o:.12"></div><div class="heat-cell" style="--cell-o:.06"></div>
+      </div>
+      <div class="gauge-sub" style="margin-top:14px">Depth concentration by price band</div>
+    </div>
+
+    <div class="dash-card reveal-card reveal-delay-1">
+      <div class="dash-card-label">Institutional Flow &amp; Order Imbalance</div>
+      <div class="flow-row" style="--fw:68%">
+        <span class="flow-row-label">Buy Side</span>
+        <div class="flow-track"><div class="flow-fill"></div></div>
+      </div>
+      <div class="flow-row" style="--fw:32%">
+        <span class="flow-row-label">Sell Side</span>
+        <div class="flow-track"><div class="flow-fill"></div></div>
+      </div>
+      <div class="flow-row" style="--fw:74%">
+        <span class="flow-row-label">Net Bias</span>
+        <div class="flow-track"><div class="flow-fill"></div></div>
+      </div>
+    </div>
+
+    <div class="dash-card reveal-card reveal-delay-2">
+      <div class="dash-card-label">Smart Money Sentiment</div>
+      <div style="display:flex;justify-content:space-between;font-family:var(--font-m);font-size:10px;color:var(--muted);letter-spacing:.06em">
+        <span>Bearish</span><span>Neutral</span><span>Bullish</span>
+      </div>
+      <div class="sentiment-track" style="--pos:71%">
+        <div class="sentiment-dot"></div>
+      </div>
+      <div class="gauge-sub" style="margin-top:14px">Skewed bullish across major pairs</div>
+    </div>
+  </div>
+  <p class="terminal-caption reveal" style="margin-top:16px">Illustrative signal readout — not live data</p>
+</section>
+
+<!-- TRADING PERFORMANCE TIMELINE -->
+<section class="x-section" id="pipeline">
+  <div class="section-label reveal">05 — The Processing Pipeline</div>
+  <div class="x-head reveal">
+    <h2 class="x-title reveal-heading">From tick to execution.</h2>
+    <p class="x-desc reveal-para">Every price update passes through the same disciplined pipeline before a single order is placed.</p>
+  </div>
+
+  <div class="timeline-track">
+    <div class="timeline-step reveal-card">
+      <div class="timeline-num">01</div>
+      <div class="timeline-dot"></div>
+      <div class="timeline-title">Market Opens</div>
+      <div class="timeline-desc">Session context and instrument list are established.</div>
+    </div>
+    <div class="timeline-line"></div>
+    <div class="timeline-step reveal-card">
+      <div class="timeline-num">02</div>
+      <div class="timeline-dot"></div>
+      <div class="timeline-title">Liquidity Scan</div>
+      <div class="timeline-desc">Order book depth and resting liquidity are mapped.</div>
+    </div>
+    <div class="timeline-line"></div>
+    <div class="timeline-step reveal-card">
+      <div class="timeline-num">03</div>
+      <div class="timeline-dot"></div>
+      <div class="timeline-title">Volume Analysis</div>
+      <div class="timeline-desc">Participation and momentum are measured tick by tick.</div>
+    </div>
+    <div class="timeline-line"></div>
+    <div class="timeline-step reveal-card">
+      <div class="timeline-num">04</div>
+      <div class="timeline-dot"></div>
+      <div class="timeline-title">AI Processing</div>
+      <div class="timeline-desc">Signals are scored against the current market regime.</div>
+    </div>
+    <div class="timeline-line"></div>
+    <div class="timeline-step reveal-card">
+      <div class="timeline-num">05</div>
+      <div class="timeline-dot"></div>
+      <div class="timeline-title">Risk Evaluation</div>
+      <div class="timeline-desc">Position sizing and exposure limits are checked.</div>
+    </div>
+    <div class="timeline-line"></div>
+    <div class="timeline-step reveal-card">
+      <div class="timeline-num">06</div>
+      <div class="timeline-dot"></div>
+      <div class="timeline-title">Trade Confirmation</div>
+      <div class="timeline-desc">Entry, stop, and target levels are finalized.</div>
+    </div>
+    <div class="timeline-line"></div>
+    <div class="timeline-step reveal-card">
+      <div class="timeline-num">07</div>
+      <div class="timeline-dot"></div>
+      <div class="timeline-title">Execution</div>
+      <div class="timeline-desc">The order is routed and filled in milliseconds.</div>
+    </div>
+  </div>
+</section>
+
+<!-- WHY TRADERS CHOOSE NUKRAX -->
+<section class="x-section" id="why">
+  <div class="section-label reveal">06 — Why Traders Choose Nukrax</div>
+  <div class="x-head reveal">
+    <h2 class="x-title reveal-heading">Built different, on purpose.</h2>
+    <p class="x-desc reveal-para">Six principles that separate an institutional-grade system from a retail indicator pack.</p>
+  </div>
+  <div class="why-grid">
+    <div class="why-card reveal-card">
+      <div class="why-icon"><svg viewBox="0 0 24 24"><path d="M3 21h18M5 21V9l7-5 7 5v12M9 21v-6h6v6"/></svg></div>
+      <div class="why-title">Institutional Logic</div>
+      <div class="why-desc">Strategy rules rebuilt from market structure, not borrowed from retail indicator templates.</div>
+    </div>
+    <div class="why-card reveal-card reveal-delay-1">
+      <div class="why-icon"><svg viewBox="0 0 24 24"><path d="M12 2v4M12 18v4M2 12h4M18 12h4M12 12l6-6"/></svg></div>
+      <div class="why-title">Millisecond Analysis</div>
+      <div class="why-desc">Every tick is evaluated in real time with sub-10ms average processing latency.</div>
+    </div>
+    <div class="why-card reveal-card reveal-delay-2">
+      <div class="why-icon"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zM12 6v6l4 2"/></svg></div>
+      <div class="why-title">AI Assisted Decisions</div>
+      <div class="why-desc">Signal confidence is continuously scored against live market regime data.</div>
+    </div>
+    <div class="why-card reveal-card">
+      <div class="why-icon"><svg viewBox="0 0 24 24"><path d="M3 3v18h18M7 15l4-5 3 3 5-7"/></svg></div>
+      <div class="why-title">Multi-Timeframe Engine</div>
+      <div class="why-desc">Higher-timeframe bias filters every lower-timeframe entry before execution.</div>
+    </div>
+    <div class="why-card reveal-card reveal-delay-1">
+      <div class="why-icon"><svg viewBox="0 0 24 24"><path d="M4 12h16M4 6h10M4 18h13"/></svg></div>
+      <div class="why-title">Precision Execution</div>
+      <div class="why-desc">Orders route with minimal slippage through optimized broker connections.</div>
+    </div>
+    <div class="why-card reveal-card reveal-delay-2">
+      <div class="why-icon"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-11V5l-8-3-8 3v6c0 7 8 11 8 11z"/></svg></div>
+      <div class="why-title">Adaptive Risk Intelligence</div>
+      <div class="why-desc">Position sizing and drawdown limits adjust automatically to live volatility.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ADVANCED ANALYTICS -->
+<section class="x-section" id="analytics">
+  <div class="section-label reveal">07 — Advanced Analytics</div>
+  <div class="x-head reveal">
+    <h2 class="x-title reveal-heading">Every metric, at a glance.</h2>
+    <p class="x-desc reveal-para">A consolidated read on performance — from price action to portfolio-level risk.</p>
+  </div>
+
+  <div class="x-panel reveal-card">
+    <div class="x-panel-bar">
+      <div class="terminal-dot"></div><div class="terminal-dot"></div><div class="terminal-dot"></div>
+      <span style="margin-left:10px">nukrax // analytics module</span>
+    </div>
+    <div class="analytics-grid">
+      <div class="analytics-main">
+        <div style="padding:26px 26px 4px">
+          <div class="x-panel-bar" style="border:none;padding:0;margin-bottom:16px">Candlestick — Illustrative</div>
+        </div>
+        <svg class="candle-svg" viewBox="0 0 400 200" preserveAspectRatio="none" style="padding:0 26px 26px">
+          <line x1="0" y1="50" x2="400" y2="50" stroke="#1B2328" stroke-width="1"/>
+          <line x1="0" y1="100" x2="400" y2="100" stroke="#1B2328" stroke-width="1"/>
+          <line x1="0" y1="150" x2="400" y2="150" stroke="#1B2328" stroke-width="1"/>
+          <g class="candle" stroke="#46626B" stroke-width="1.4">
+            <line x1="20" y1="60" x2="20" y2="120"/><rect x="14" y="80" width="12" height="30" fill="#1B2328"/>
+            <line x1="52" y1="70" x2="52" y2="130"/><rect x="46" y="90" width="12" height="25" fill="#8FB8C4"/>
+            <line x1="84" y1="50" x2="84" y2="115"/><rect x="78" y="60" width="12" height="40" fill="#1B2328"/>
+            <line x1="116" y1="90" x2="116" y2="150"/><rect x="110" y="100" width="12" height="35" fill="#8FB8C4"/>
+            <line x1="148" y1="55" x2="148" y2="105"/><rect x="142" y="65" width="12" height="28" fill="#8FB8C4"/>
+            <line x1="180" y1="80" x2="180" y2="140"/><rect x="174" y="95" width="12" height="30" fill="#1B2328"/>
+            <line x1="212" y1="40" x2="212" y2="95"/><rect x="206" y="50" width="12" height="32" fill="#8FB8C4"/>
+            <line x1="244" y1="60" x2="244" y2="120"/><rect x="238" y="75" width="12" height="30" fill="#1B2328"/>
+            <line x1="276" y1="30" x2="276" y2="85"/><rect x="270" y="40" width="12" height="30" fill="#8FB8C4"/>
+            <line x1="308" y1="55" x2="308" y2="110"/><rect x="302" y="65" width="12" height="30" fill="#1B2328"/>
+            <line x1="340" y1="20" x2="340" y2="75"/><rect x="334" y="28" width="12" height="32" fill="#8FB8C4"/>
+            <line x1="372" y1="35" x2="372" y2="90"/><rect x="366" y="45" width="12" height="30" fill="#8FB8C4"/>
+          </g>
+        </svg>
+        <div class="pie-row">
+          <svg class="pie-svg" viewBox="0 0 42 42">
+            <circle cx="21" cy="21" r="15.9" fill="transparent" stroke="#1B2328" stroke-width="6"/>
+            <circle cx="21" cy="21" r="15.9" fill="transparent" stroke="#8FB8C4" stroke-width="6"
+              stroke-dasharray="62 100" stroke-dashoffset="25" transform="rotate(-90 21 21)"/>
+            <circle cx="21" cy="21" r="15.9" fill="transparent" stroke="#46626B" stroke-width="6"
+              stroke-dasharray="38 100" stroke-dashoffset="63" transform="rotate(-90 21 21)"/>
+          </svg>
+          <div class="pie-legend">
+            <span><span class="pie-legend-dot" style="background:var(--accent)"></span>Winning trades — 62%</span>
+            <span><span class="pie-legend-dot" style="background:var(--accent-dim)"></span>Losing trades — 38%</span>
+          </div>
+        </div>
+        <div class="monthly-bars" id="monthlyBars">
+          <div class="monthly-bar" style="--mb:38%"></div>
+          <div class="monthly-bar" style="--mb:52%"></div>
+          <div class="monthly-bar neg" style="--mb:18%"></div>
+          <div class="monthly-bar" style="--mb:64%"></div>
+          <div class="monthly-bar" style="--mb:71%"></div>
+          <div class="monthly-bar neg" style="--mb:24%"></div>
+          <div class="monthly-bar" style="--mb:58%"></div>
+          <div class="monthly-bar" style="--mb:83%"></div>
+          <div class="monthly-bar" style="--mb:69%"></div>
+          <div class="monthly-bar neg" style="--mb:15%"></div>
+          <div class="monthly-bar" style="--mb:77%"></div>
+          <div class="monthly-bar" style="--mb:90%"></div>
+        </div>
+      </div>
+      <div class="metrics-col">
+        <div class="metric-block" style="--mw:74%">
+          <div class="metric-top"><span class="metric-name">Win Rate</span><span class="metric-value" data-count-target="74" data-count-suffix="%">0%</span></div>
+          <div class="metric-bar-track"><div class="metric-bar-fill"></div></div>
+        </div>
+        <div class="metric-block" style="--mw:88%">
+          <div class="metric-top"><span class="metric-name">Profit Factor</span><span class="metric-value" data-count-target="1.8" data-count-decimals="1">0.0</span></div>
+          <div class="metric-bar-track"><div class="metric-bar-fill"></div></div>
+        </div>
+        <div class="metric-block" style="--mw:22%">
+          <div class="metric-top"><span class="metric-name">Max Drawdown</span><span class="metric-value" data-count-target="8.4" data-count-decimals="1" data-count-suffix="%">0%</span></div>
+          <div class="metric-bar-track"><div class="metric-bar-fill"></div></div>
+        </div>
+        <div class="metric-block" style="--mw:91%">
+          <div class="metric-top"><span class="metric-name">Risk Exposure</span><span class="metric-value" data-count-target="12" data-count-suffix="%">0%</span></div>
+          <div class="metric-bar-track"><div class="metric-bar-fill"></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <p class="terminal-caption reveal" style="margin-top:16px">Interface preview — illustrative, not live data</p>
+</section>
+
+<!-- TECHNOLOGY STACK -->
+<section class="x-section" id="stack">
+  <div class="section-label reveal">08 — Technology Stack</div>
+  <div class="x-head reveal">
+    <h2 class="x-title reveal-heading">The infrastructure underneath.</h2>
+    <p class="x-desc reveal-para">Six connected systems working in concert, from signal generation to secure order routing.</p>
+  </div>
+  <div class="stack-wrap">
+    <svg class="stack-lines" id="stackLines" viewBox="0 0 900 400" preserveAspectRatio="none">
+      <path class="draw-line" d="M150,66 L450,66"/>
+      <path class="draw-line" d="M450,66 L750,66"/>
+      <path class="draw-line" d="M150,200 L450,200"/>
+      <path class="draw-line" d="M450,200 L750,200"/>
+      <path class="draw-line" d="M300,133 L300,266"/>
+      <path class="draw-line" d="M600,133 L600,266"/>
+    </svg>
+    <div class="stack-grid">
+      <div class="stack-card reveal-card">
+        <div class="stack-icon"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zM12 6v6l4 2"/></svg></div>
+        <div class="stack-name">AI Engine</div>
+        <div class="stack-desc">Scores live signals against historical regime patterns in real time.</div>
+      </div>
+      <div class="stack-card reveal-card reveal-delay-1">
+        <div class="stack-icon"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-11V5l-8-3-8 3v6c0 7 8 11 8 11z"/></svg></div>
+        <div class="stack-name">Risk Engine</div>
+        <div class="stack-desc">Enforces position sizing, exposure caps, and drawdown limits automatically.</div>
+      </div>
+      <div class="stack-card reveal-card reveal-delay-2">
+        <div class="stack-icon"><svg viewBox="0 0 24 24"><path d="M4 16a4 4 0 010-8 5 5 0 019.6-1.5A4.5 4.5 0 1119 16H4z"/></svg></div>
+        <div class="stack-name">Cloud Infrastructure</div>
+        <div class="stack-desc">Redundant, low-latency servers positioned near major liquidity venues.</div>
+      </div>
+      <div class="stack-card reveal-card">
+        <div class="stack-icon"><svg viewBox="0 0 24 24"><path d="M3 12h4l3-8 4 16 3-8h4"/></svg></div>
+        <div class="stack-name">Market Scanner</div>
+        <div class="stack-desc">Continuously screens instruments for liquidity, volatility, and structure.</div>
+      </div>
+      <div class="stack-card reveal-card reveal-delay-1">
+        <div class="stack-icon"><svg viewBox="0 0 24 24"><path d="M12 2l8 4v6c0 5.5-3.8 8.7-8 10-4.2-1.3-8-4.5-8-10V6l8-4z"/></svg></div>
+        <div class="stack-name">Security Layer</div>
+        <div class="stack-desc">End-to-end encryption safeguards every credential and connection.</div>
+      </div>
+      <div class="stack-card reveal-card reveal-delay-2">
+        <div class="stack-icon"><svg viewBox="0 0 24 24"><path d="M13 2L3 14h7l-1 8 11-13h-7l1-7z"/></svg></div>
+        <div class="stack-name">Execution Core</div>
+        <div class="stack-desc">Routes and confirms orders with sub-10ms average execution latency.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- LIVE STATISTICS -->
+<div class="livestats-band">
+  <div class="livestats-grid">
+    <div class="livestat reveal reveal-delay-1">
+      <div class="livestat-num"><span data-count-target="99.98" data-count-decimals="2" data-count-suffix="%">0.00%</span></div>
+      <div class="livestat-label">Uptime</div>
+    </div>
+    <div class="livestat reveal reveal-delay-2">
+      <div class="livestat-num"><span data-count-target="24" data-count-suffix="/7">0</span></div>
+      <div class="livestat-label">Automated Execution</div>
+    </div>
+    <div class="livestat reveal reveal-delay-3">
+      <div class="livestat-num"><span data-count-target="15" data-count-suffix="M+">0</span></div>
+      <div class="livestat-label">Ticks Processed / Day</div>
+    </div>
+    <div class="livestat reveal reveal-delay-4">
+      <div class="livestat-num"><span data-count-target="120" data-count-suffix="+">0</span></div>
+      <div class="livestat-label">Instruments Monitored</div>
+    </div>
+    <div class="livestat reveal reveal-delay-1">
+      <div class="livestat-num"><span data-count-target="5" data-count-prefix="&lt;" data-count-suffix="ms">0ms</span></div>
+      <div class="livestat-label">Avg. Execution Latency</div>
+    </div>
+    <div class="livestat reveal reveal-delay-2">
+      <div class="livestat-num"><span data-count-target="365" data-count-suffix=" Days">0</span></div>
+      <div class="livestat-label">Continuous Operation</div>
+    </div>
+  </div>
+</div>
+
+<!-- SECURITY -->
+<section class="x-section" id="security">
+  <div class="section-label reveal">09 — Security</div>
+  <div class="x-head reveal">
+    <h2 class="x-title reveal-heading">Protected at every layer.</h2>
+    <p class="x-desc reveal-para">Capital and data security aren't an afterthought — they're engineered into the foundation.</p>
+  </div>
+  <div class="security-grid">
+    <div class="security-card reveal-card">
+      <div class="security-icon"><svg viewBox="0 0 24 24"><path d="M12 2l8 4v6c0 5.5-3.8 8.7-8 10-4.2-1.3-8-4.5-8-10V6l8-4z"/><path d="M9 12l2 2 4-4"/></svg></div>
+      <div class="security-title">Encryption</div>
+      <div class="security-desc">All traffic and stored credentials are protected with end-to-end encryption.</div>
+    </div>
+    <div class="security-card reveal-card reveal-delay-1">
+      <div class="security-icon"><svg viewBox="0 0 24 24"><path d="M4 16a4 4 0 010-8 5 5 0 019.6-1.5A4.5 4.5 0 1119 16H4z"/><path d="M9 13l2-3 2 2 2-4"/></svg></div>
+      <div class="security-title">Secure Infrastructure</div>
+      <div class="security-desc">Isolated cloud environments with strict access controls at every layer.</div>
+    </div>
+    <div class="security-card reveal-card reveal-delay-2">
+      <div class="security-icon"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 100 20 10 10 0 000-20z"/><path d="M12 7v6l4 2"/></svg></div>
+      <div class="security-title">Risk Protection</div>
+      <div class="security-desc">Hard exposure limits prevent any single position from threatening the account.</div>
+    </div>
+    <div class="security-card reveal-card">
+      <div class="security-icon"><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/><path d="M4 6l3-3M4 12l3-3M4 18l3-3"/></svg></div>
+      <div class="security-title">Server Redundancy</div>
+      <div class="security-desc">Failover infrastructure keeps execution running through outages.</div>
+    </div>
+    <div class="security-card reveal-card reveal-delay-1">
+      <div class="security-icon"><svg viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M7 15l4-5 3 3 5-7"/></svg></div>
+      <div class="security-title">Data Integrity</div>
+      <div class="security-desc">Every trade and log entry is checksummed and versioned for auditability.</div>
+    </div>
+    <div class="security-card reveal-card reveal-delay-2">
+      <div class="security-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg></div>
+      <div class="security-title">24/7 Monitoring</div>
+      <div class="security-desc">Automated systems watch latency, connectivity, and execution quality around the clock.</div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="x-section" id="testimonials">
+  <div class="section-label reveal">10 — From the Community</div>
+  <div class="x-head reveal">
+    <h2 class="x-title reveal-heading">What traders are saying.</h2>
+    <p class="x-desc reveal-para">Feedback from members running nukrax systems in live conditions.</p>
+  </div>
+  <div class="testimonial-grid">
+    <a href="feedback.html#r-k" class="testimonial-card reveal-card">
+      <div class="star-rating"><div class="star-row star-row-bg">★★★★★</div><div class="star-row star-row-fg" style="width:96%">★★★★★</div></div>
+      <p class="testimonial-quote">The risk engine alone changed how I size positions. It's the first system that feels engineered rather than assembled.</p>
+      <div class="testimonial-person">
+        <div class="avatar"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="8.5" r="4"/><path d="M4 20c0-4.2 3.8-7 8-7s8 2.8 8 7"/></svg></div>
+        <div>
+          <div class="testimonial-name">R. K.</div>
+          <div class="testimonial-role">Prop Desk Trader</div>
+        </div>
+      </div>
+    </a>
+    <a href="feedback.html#m-t" class="testimonial-card reveal-card reveal-delay-1">
+      <div class="star-rating"><div class="star-row star-row-bg">★★★★★</div><div class="star-row star-row-fg" style="width:90%">★★★★★</div></div>
+      <p class="testimonial-quote">Execution speed is genuinely different. Slippage on my fills dropped noticeably after switching over.</p>
+      <div class="testimonial-person">
+        <div class="avatar"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="8.5" r="4"/><path d="M4 20c0-4.2 3.8-7 8-7s8 2.8 8 7"/></svg></div>
+        <div>
+          <div class="testimonial-name">M. T.</div>
+          <div class="testimonial-role">Independent Trader</div>
+        </div>
+      </div>
+    </a>
+    <a href="feedback.html#a-v" class="testimonial-card reveal-card reveal-delay-2">
+      <div class="star-rating"><div class="star-row star-row-bg">★★★★★</div><div class="star-row star-row-fg" style="width:100%">★★★★★</div></div>
+      <p class="testimonial-quote">The SMC/ICT logic isn't a retail rehash — it actually respects liquidity the way institutions do.</p>
+      <div class="testimonial-person">
+        <div class="avatar"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="8.5" r="4"/><path d="M4 20c0-4.2 3.8-7 8-7s8 2.8 8 7"/></svg></div>
+        <div>
+          <div class="testimonial-name">A. V.</div>
+          <div class="testimonial-role">Portfolio Manager</div>
+        </div>
+      </div>
+    </a>
+    <a href="feedback.html#d-h" class="testimonial-card reveal-card">
+      <div class="star-rating"><div class="star-row star-row-bg">★★★★★</div><div class="star-row star-row-fg" style="width:86%">★★★★★</div></div>
+      <p class="testimonial-quote">Uptime has been flawless through every major news event I've traded so far this year.</p>
+      <div class="testimonial-person">
+        <div class="avatar"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="8.5" r="4"/><path d="M4 20c0-4.2 3.8-7 8-7s8 2.8 8 7"/></svg></div>
+        <div>
+          <div class="testimonial-name">D. H.</div>
+          <div class="testimonial-role">Algorithmic Trader</div>
+        </div>
+      </div>
+    </a>
+    <a href="feedback.html#s-l" class="testimonial-card reveal-card reveal-delay-1">
+      <div class="star-rating"><div class="star-row star-row-bg">★★★★★</div><div class="star-row star-row-fg" style="width:94%">★★★★★</div></div>
+      <p class="testimonial-quote">Support and documentation are as precise as the code. Rare for a system this sophisticated.</p>
+      <div class="testimonial-person">
+        <div class="avatar"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="8.5" r="4"/><path d="M4 20c0-4.2 3.8-7 8-7s8 2.8 8 7"/></svg></div>
+        <div>
+          <div class="testimonial-name">S. L.</div>
+          <div class="testimonial-role">Quant Analyst</div>
+        </div>
+      </div>
+    </a>
+    <a href="feedback.html#j-p" class="testimonial-card reveal-card reveal-delay-2">
+      <div class="star-rating"><div class="star-row star-row-bg">★★★★★</div><div class="star-row star-row-fg" style="width:92%">★★★★★</div></div>
+      <p class="testimonial-quote">Multi-timeframe confirmation cut my false entries dramatically. This is built for people who take it seriously.</p>
+      <div class="testimonial-person">
+        <div class="avatar"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="8.5" r="4"/><path d="M4 20c0-4.2 3.8-7 8-7s8 2.8 8 7"/></svg></div>
+        <div>
+          <div class="testimonial-name">J. P.</div>
+          <div class="testimonial-role">Full-Time Trader</div>
+        </div>
+      </div>
+    </a>
+  </div>
+  <div class="reveal-btn" style="margin-top:36px;text-align:center">
+    <a href="feedback.html" class="btn btn-primary">See more feedback <span class="btn-arrow">→</span></a>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="x-section" id="faq">
+  <div class="section-label reveal">11 — Frequently Asked Questions</div>
+  <div class="x-head reveal">
+    <h2 class="x-title reveal-heading">Everything you need to know.</h2>
+    <p class="x-desc reveal-para">Still have a question after reading through? Reach out on Telegram or X.</p>
+  </div>
+  <div class="accordion reveal-card">
+    <details class="acc-item">
+      <summary><span class="acc-num">01</span><span class="acc-title">What platform does nukrax run on?</span><span class="acc-chevron"></span></summary>
+      <div class="acc-body">All Expert Advisors are built natively for MetaTrader 5, with no bridging or third-party wrappers required.</div>
+    </details>
+    <details class="acc-item">
+      <summary><span class="acc-num">02</span><span class="acc-title">Do I need coding experience to use an EA?</span><span class="acc-chevron"></span></summary>
+      <div class="acc-body">No. Each system ships with sensible defaults and a clear setup guide — configuration is handled through simple input parameters.</div>
+    </details>
+    <details class="acc-item">
+      <summary><span class="acc-num">03</span><span class="acc-title">Which instruments are supported?</span><span class="acc-chevron"></span></summary>
+      <div class="acc-body">Coverage spans major and minor forex pairs, gold, and select indices, depending on the specific Expert Advisor.</div>
+    </details>
+    <details class="acc-item">
+      <summary><span class="acc-num">04</span><span class="acc-title">How is risk managed per trade?</span><span class="acc-chevron"></span></summary>
+      <div class="acc-body">Position sizing is calculated dynamically from account equity and a configurable risk-per-trade percentage, with hard exposure caps enforced automatically.</div>
+    </details>
+    <details class="acc-item">
+      <summary><span class="acc-num">05</span><span class="acc-title">Can I run multiple EAs on the same account?</span><span class="acc-chevron"></span></summary>
+      <div class="acc-body">Yes. Each EA tracks its own risk and position state, so multiple systems can operate side by side without conflict.</div>
+    </details>
+    <details class="acc-item">
+      <summary><span class="acc-num">06</span><span class="acc-title">What brokers are compatible?</span><span class="acc-chevron"></span></summary>
+      <div class="acc-body">Any MT5 broker offering standard order execution is compatible. Low-latency ECN brokers are recommended for HFT-class systems.</div>
+    </details>
+    <details class="acc-item">
+      <summary><span class="acc-num">07</span><span class="acc-title">Do you offer backtest results?</span><span class="acc-chevron"></span></summary>
+      <div class="acc-body">Each Expert Advisor page includes backtest methodology notes. Full historical reports are available on request.</div>
+    </details>
+    <details class="acc-item">
+      <summary><span class="acc-num">08</span><span class="acc-title">Is a VPS required?</span><span class="acc-chevron"></span></summary>
+      <div class="acc-body">A VPS is strongly recommended for continuous uptime, especially for latency-sensitive HFT strategies.</div>
+    </details>
+    <details class="acc-item">
+      <summary><span class="acc-num">09</span><span class="acc-title">How often are strategies updated?</span><span class="acc-chevron"></span></summary>
+      <div class="acc-body">Systems are reviewed on a rolling basis as market conditions shift, with updates released as needed rather than on a fixed schedule.</div>
+    </details>
+    <details class="acc-item">
+      <summary><span class="acc-num">10</span><span class="acc-title">What is the minimum account size?</span><span class="acc-chevron"></span></summary>
+      <div class="acc-body">Minimums vary by EA and are listed on each system's individual page, based on its position sizing model.</div>
+    </details>
+    <details class="acc-item">
+      <summary><span class="acc-num">11</span><span class="acc-title">Do the EAs trade news events?</span><span class="acc-chevron"></span></summary>
+      <div class="acc-body">Some systems include dedicated news-based logic; others include filters to reduce exposure around high-impact releases. This is configurable per EA.</div>
+    </details>
+    <details class="acc-item">
+      <summary><span class="acc-num">12</span><span class="acc-title">Can I customize the risk settings?</span><span class="acc-chevron"></span></summary>
+      <div class="acc-body">Yes. Risk-per-trade, maximum exposure, and session filters are all exposed as adjustable inputs.</div>
+    </details>
+    <details class="acc-item">
+      <summary><span class="acc-num">13</span><span class="acc-title">Is live support available?</span><span class="acc-chevron"></span></summary>
+      <div class="acc-body">Direct support is available through Telegram, with community discussion and updates posted on X.</div>
+    </details>
+    <details class="acc-item">
+      <summary><span class="acc-num">14</span><span class="acc-title">How does nukrax.tr differ from nukrax.cr?</span><span class="acc-chevron"></span></summary>
+      <div class="acc-body">Both are live trading platforms with journaling and analysis tools — they serve as parallel environments integrated with the EA suite.</div>
+    </details>
+    <details class="acc-item">
+      <summary><span class="acc-num">15</span><span class="acc-title">Will more Expert Advisors be released?</span><span class="acc-chevron"></span></summary>
+      <div class="acc-body">Yes — additional systems are in active development and testing, as noted in the Execution Systems section above.</div>
+    </details>
+  </div>
+</section>
+
+<!-- FINAL CTA -->
+<section class="final-cta" id="finalCta">
+  <div class="final-cta-grid"></div>
+  <div class="final-cta-glow"></div>
+  <div class="final-cta-content">
+    <div class="final-cta-label reveal">Ready when you are</div>
+    <h2 class="final-cta-title reveal-heading">Trade with <em>precision.</em> Trade with <em>nukrax.</em></h2>
+    <p class="final-cta-sub reveal-para">Join the traders running institutional-grade systems around the clock — no noise, no guesswork, just disciplined execution.</p>
+    <div class="final-cta-actions reveal-btn">
+      <a href="ea-selection.html" class="btn btn-primary">Explore Expert Advisors <span class="btn-arrow">→</span></a>
+      <a href="https://t.me/CosmoLanex" class="link-inline" target="_blank" rel="noopener noreferrer">Talk to us on Telegram <span class="btn-arrow">↗</span></a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="reveal-footer">
+  <div class="footer-content">
+    <div class="footer-grid">
+      <div class="footer-column">
+        <h3>EXPERT ADVISORS</h3>
+        <div class="footer-ea-list">
+          <a href="ea/apex.html" class="footer-ea-item">
+            <div class="footer-ea-name">APEX HFT</div>
+            <div class="footer-ea-desc">Ultra-fast execution with adaptive scalping logic</div>
+          </a>
+          <a href="ea/aurum.html" class="footer-ea-item">
+            <div class="footer-ea-name">AURUM HFT</div>
+            <div class="footer-ea-desc">Gold-specialist liquidity-targeting system</div>
+          </a>
+          <a href="ea/smc-ict.html" class="footer-ea-item">
+            <div class="footer-ea-name">SMC ICT</div>
+            <div class="footer-ea-desc">Smart Money Concepts with ICT methodology</div>
+          </a>
+        </div>
+      </div>
+
+      <div class="footer-column">
+        <h3>ABOUT THE CREATOR</h3>
+        <p class="footer-info">
+          Built by <strong>@CosmoLanex</strong> / <strong>@nukrax</strong> — a professional trading systems developer specializing in institutional-grade algorithmic strategies, high-frequency trading architectures, and comprehensive market analysis tools.
+        </p>
+        <div class="footer-social-title">Connect &amp; Follow</div>
+        <div class="footer-social-links">
+          <a href="https://github.com/CosmoLanex" class="social-icon" target="_blank" rel="noopener noreferrer" title="GitHub">
+            <svg viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+          </a>
+          <a href="https://x.com/CosmoLanex" class="social-icon" target="_blank" rel="noopener noreferrer" title="X/Twitter">
+            <svg viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+          </a>
+          <a href="https://t.me/CosmoLanex" class="social-icon" target="_blank" rel="noopener noreferrer" title="Telegram">
+            <svg viewBox="0 0 24 24"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
+          </a>
+          <a href="https://www.youtube.com/@CosmoLanex" class="social-icon" target="_blank" rel="noopener noreferrer" title="YouTube">
+            <svg viewBox="0 0 24 24"><path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z"/></svg>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <div class="footer-logo">NUKRAX</div>
+      <div class="footer-copy">© 2024 NUKRAX. All rights reserved. Built by @CosmoLanex</div>
+      <div class="footer-links">
+        <a href="ea-selection.html">Expert Advisors</a>
+        <a href="redirect.html?dest=tr">nukrax.tr</a>
+        <a href="nukrax-cr.html">nukrax.cr</a>
+        <a href="p.html" target="_blank">Privacy Policy</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+/* ── LOADING SCREEN ── */
+(function(){
+  const loader = document.getElementById('loader');
+  const dismiss = () => loader.classList.add('hidden');
+  const t = setTimeout(dismiss, 950);
+  window.addEventListener('load', () => {}); // keep min-display time regardless of load speed
+})();
+
+/* ── SCROLL PROGRESS ── */
+const progressBar = document.getElementById('scroll-progress');
+function updateProgress(){
+  const doc = document.documentElement;
+  const max = Math.max(1, doc.scrollHeight - window.innerHeight);
+  progressBar.style.width = (Math.min(1, window.scrollY / max) * 100) + '%';
+}
+window.addEventListener('scroll', updateProgress, { passive:true });
+updateProgress();
+
+/* ── HERO GLOW — cursor-reactive + scroll-linked parallax volumetric light ── */
+(function(){
+  const glow = document.getElementById('heroGlow');
+  const heroSection = document.getElementById('heroSection');
+  if(!glow || !heroSection) return;
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  requestAnimationFrame(()=>{
+    glow.classList.add('active');
+  });
+
+  let mx = 0, my = 0, scrollOffset = 0;
+  function render(){
+    glow.style.transform = `translate(calc(-50% + ${mx}px), calc(-50% + ${my + scrollOffset}px))`;
+  }
+  heroSection.addEventListener('mousemove', function(e){
+    if(reduceMotion) return;
+    const rect = heroSection.getBoundingClientRect();
+    mx = ((e.clientX - rect.left) / rect.width - 0.5) * 60;
+    my = ((e.clientY - rect.top) / rect.height - 0.5) * 60;
+    render();
+  }, { passive:true });
+  heroSection.addEventListener('mouseleave', function(){
+    mx = 0; my = 0; render();
+  });
+
+  if(!reduceMotion){
+    let ticking = false;
+    function onScroll(){
+      if(ticking) return;
+      ticking = true;
+      requestAnimationFrame(()=>{
+        // subtle 10–30px drift as the hero scrolls out of view
+        scrollOffset = Math.min(window.scrollY * 0.08, 26);
+        render();
+        ticking = false;
+      });
+    }
+    window.addEventListener('scroll', onScroll, { passive:true });
+  }
+})();
+
+/* ── PRECISION SIGNAL CORE — rotating faceted 3D gem, the hero's signature
+   element. Pure canvas 2D with hand-rolled 3D projection (no libraries):
+   an eight-facet core is depth-sorted and lit per-facet, tilts gently
+   toward the cursor, and throws a slow glint across its brightest face —
+   reads as a cut instrument rather than a generic sphere or cube. ── */
+(function(){
+  const wrap = document.getElementById('heroGlobeWrap');
+  const canvas = document.getElementById('heroGlobe');
+  if(!wrap || !canvas) return;
+  const ctx = canvas.getContext('2d');
+  const REDUCE = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  let DPR, size;
+  function resize(){
+    DPR = Math.min(window.devicePixelRatio || 1, 2);
+    size = wrap.clientWidth;
+    canvas.width = size * DPR;
+    canvas.height = size * DPR;
+    ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+    draw();
+  }
+
+  // Base geometry: an octahedron stretched vertically into a cut-gem
+  // silhouette (sharper than a sphere or cube, reads as "precision-cut").
+  const V = [
+    [0, 1.32, 0], [0, -1.32, 0],   // apex, base tip
+    [1, 0, 0], [-1, 0, 0],          // right, left
+    [0, 0, 1], [0, 0, -1],          // front, back
+  ];
+  const F = [
+    [0,2,4],[0,4,3],[0,3,5],[0,5,2],
+    [1,4,2],[1,3,4],[1,5,3],[1,2,5],
+  ];
+
+  let spin = 0;
+  let tiltX = 0, tiltY = 0;           // idle wobble
+  let mouseTiltX = 0, mouseTiltY = 0; // eased toward cursor target
+  let targetTiltX = 0, targetTiltY = 0;
+  let running = true;
+
+  function rotatePoint([x,y,z], rx, ry){
+    // rotate around X
+    let y1 = y * Math.cos(rx) - z * Math.sin(rx);
+    let z1 = y * Math.sin(rx) + z * Math.cos(rx);
+    // rotate around Y
+    let x2 = x * Math.cos(ry) + z1 * Math.sin(ry);
+    let z2 = -x * Math.sin(ry) + z1 * Math.cos(ry);
+    return [x2, y1, z2];
+  }
+
+  function draw(){
+    if(!size) return;
+    const cx = size / 2, cy = size / 2;
+    const R = size * 0.30;
+    const camDist = 3.4, focal = 3.0;
+    const rx = tiltX + mouseTiltY, ry = spin + mouseTiltX;
+
+    ctx.clearRect(0, 0, size, size);
+
+    // ambient glow behind the core
+    const glow = ctx.createRadialGradient(cx, cy, R*0.2, cx, cy, R*1.9);
+    glow.addColorStop(0, 'rgba(143,184,196,0.16)');
+    glow.addColorStop(1, 'rgba(143,184,196,0)');
+    ctx.fillStyle = glow;
+    ctx.fillRect(0, 0, size, size);
+
+    const rotated = V.map(v => rotatePoint(v, rx, ry));
+
+    const faces = F.map(f=>{
+      const [a,b,c] = f.map(i => rotated[i]);
+      // face normal
+      const ux=b[0]-a[0], uy=b[1]-a[1], uz=b[2]-a[2];
+      const vx=c[0]-a[0], vy=c[1]-a[1], vz=c[2]-a[2];
+      let nx = uy*vz - uz*vy, ny = uz*vx - ux*vz, nz = ux*vy - uy*vx;
+      const nl = Math.hypot(nx,ny,nz) || 1;
+      nx/=nl; ny/=nl; nz/=nl;
+      const cz = (a[2]+b[2]+c[2])/3;
+      const brightness = Math.max(0, nz*0.85 + 0.15);
+      return { pts:[a,b,c], cz, brightness };
+    }).sort((f1,f2)=> f1.cz - f2.cz);
+
+    function proj(p){
+      const denom = camDist - p[2];
+      const s = focal / denom;
+      return [cx + p[0]*s*R, cy + p[1]*s*R];
+    }
+
+    let brightestFace = null;
+    faces.forEach(f=>{
+      const pts = f.pts.map(proj);
+      const alpha = 0.05 + f.brightness * 0.30;
+      ctx.beginPath();
+      ctx.moveTo(pts[0][0], pts[0][1]);
+      ctx.lineTo(pts[1][0], pts[1][1]);
+      ctx.lineTo(pts[2][0], pts[2][1]);
+      ctx.closePath();
+      ctx.fillStyle = `rgba(143,184,196,${alpha.toFixed(3)})`;
+      ctx.fill();
+      ctx.strokeStyle = `rgba(143,184,196,${(0.18 + f.brightness*0.55).toFixed(3)})`;
+      ctx.lineWidth = 1;
+      ctx.stroke();
+      if(!brightestFace || f.brightness > brightestFace.brightness) brightestFace = { ...f, pts };
+    });
+
+    // slow glint sweeping across the brightest facet
+    if(brightestFace && brightestFace.brightness > 0.45){
+      const t = REDUCE ? 0.5 : (Math.sin(performance.now()/1400) * 0.5 + 0.5);
+      const [p0,p1,p2] = brightestFace.pts;
+      const gx = p0[0] + (p1[0]-p0[0])*t, gy = p0[1] + (p1[1]-p0[1])*t;
+      const glint = ctx.createRadialGradient(gx, gy, 0, gx, gy, R*0.5);
+      const ga = (brightestFace.brightness-0.45) * 0.5;
+      glint.addColorStop(0, `rgba(242,245,245,${ga.toFixed(3)})`);
+      glint.addColorStop(1, 'rgba(242,245,245,0)');
+      ctx.beginPath();
+      ctx.moveTo(p0[0], p0[1]); ctx.lineTo(p1[0], p1[1]); ctx.lineTo(p2[0], p2[1]);
+      ctx.closePath();
+      ctx.fillStyle = glint;
+      ctx.fill();
+    }
+  }
+
+  function tick(){
+    if(!running) return;
+    spin += 0.0032;
+    tiltX = Math.sin(performance.now()/2600) * 0.12;
+    mouseTiltX += (targetTiltX - mouseTiltX) * 0.06;
+    mouseTiltY += (targetTiltY - mouseTiltY) * 0.06;
+    draw();
+    if(!REDUCE) requestAnimationFrame(tick);
+  }
+
+  if(!REDUCE){
+    window.addEventListener('mousemove', (e)=>{
+      const rect = wrap.getBoundingClientRect();
+      const cx = rect.left + rect.width/2, cy = rect.top + rect.height/2;
+      const dx = (e.clientX - cx) / (window.innerWidth/2);
+      const dy = (e.clientY - cy) / (window.innerHeight/2);
+      targetTiltX = Math.max(-1,Math.min(1,dx)) * 0.5;
+      targetTiltY = Math.max(-1,Math.min(1,dy)) * 0.3;
+    }, { passive:true });
+  }
+
+  resize();
+  window.addEventListener('resize', resize, { passive:true });
+  document.addEventListener('visibilitychange', ()=>{
+    running = !document.hidden;
+    if(running && !REDUCE) requestAnimationFrame(tick);
+  });
+  requestAnimationFrame(()=>wrap.classList.add('active'));
+  if(REDUCE){ draw(); } else { requestAnimationFrame(tick); }
+})();
+
+/* ── 3D ICON TILT — feature icons tilt toward the pointer on hover, a
+   light touch of depth to match the hero's faceted core. ── */
+(function(){
+  if(window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  if(window.matchMedia('(hover: none)').matches) return; // touch devices: skip
+  const icons = document.querySelectorAll('.why-icon, .stack-icon, .security-icon');
+  icons.forEach(icon=>{
+    const card = icon.closest('.why-card, .stack-card, .security-card') || icon.parentElement;
+    if(!card) return;
+    card.addEventListener('mousemove', function(e){
+      const rect = icon.getBoundingClientRect();
+      const px = (e.clientX - rect.left) / rect.width - 0.5;
+      const py = (e.clientY - rect.top) / rect.height - 0.5;
+      icon.style.transition = 'transform .08s linear';
+      icon.style.transform = `perspective(320px) rotateX(${(-py*24).toFixed(2)}deg) rotateY(${(px*24).toFixed(2)}deg) translateZ(4px)`;
+    }, { passive:true });
+    card.addEventListener('mouseleave', function(){
+      icon.style.transition = 'transform .5s cubic-bezier(.22,1,.36,1)';
+      icon.style.transform = '';
+    });
+  });
+})();
+
+/* ── RIPPLE ── */
+document.querySelectorAll('.btn').forEach(btn=>{
+  btn.addEventListener('click',function(e){
+    const r=document.createElement('span');
+    r.classList.add('ripple');
+    const rect=this.getBoundingClientRect();
+    const size=Math.max(rect.width,rect.height)*2;
+    r.style.cssText=`width:${size}px;height:${size}px;left:${e.clientX-rect.left-size/2}px;top:${e.clientY-rect.top-size/2}px`;
+    this.appendChild(r);
+    setTimeout(()=>r.remove(),700);
+  });
+});
+
+/* ── PAGE TRANSITIONS ── */
+const curtain=document.getElementById('page-curtain');
+
+document.querySelectorAll('a[href]:not([href^="#"]):not([target="_blank"])').forEach(a=>{
+  a.addEventListener('click',function(e){
+    const href=this.getAttribute('href');
+    if(!href||href.startsWith('http')||href.startsWith('mailto')) return;
+    e.preventDefault();
+    curtain.classList.add('active');
+    setTimeout(()=>{
+      sessionStorage.setItem('nukrax_from_index', 'true');
+      window.location.href=href;
+    },500);
+  });
+});
+
+if(sessionStorage.getItem('nukrax_from_index')) {
+  sessionStorage.removeItem('nukrax_from_index');
+  curtain.classList.remove('active');
+}
+if(sessionStorage.getItem('nukrax_from_ea_selection')) {
+  sessionStorage.removeItem('nukrax_from_ea_selection');
+  curtain.classList.remove('active');
+}
+if(sessionStorage.getItem('nukrax_from_tr')) {
+  sessionStorage.removeItem('nukrax_from_tr');
+  curtain.classList.remove('active');
+}
+if(sessionStorage.getItem('nukrax_from_ea')) {
+  sessionStorage.removeItem('nukrax_from_ea');
+  curtain.classList.remove('active');
+}
+
+window.addEventListener('pageshow', function(event) {
+  if (event.persisted || (window.performance && window.performance.navigation.type === 2)) {
+    curtain.classList.remove('active');
+  }
+});
+
+/* ── NAVBAR SCROLL ── */
+const navbar=document.getElementById('navbar');
+window.addEventListener('scroll',()=>{
+  navbar.classList.toggle('scrolled',window.scrollY>60);
+});
+
+/* ── REVEAL ON SCROLL — reversible, scroll-linked entrance for every section ── */
+const reduceMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+const REDUCE_MOTION = reduceMotionQuery.matches;
+
+/* Split heading text into individually-animatable words, preserving inline
+   elements like <em> so markup/visuals never change. */
+function wrapWordsForReveal(root){
+  function walk(node){
+    Array.from(node.childNodes).forEach(child=>{
+      if(child.nodeType === 3){ // text node
+        if(!child.textContent.trim()) return;
+        const parts = child.textContent.split(/(\s+)/);
+        const frag = document.createDocumentFragment();
+        parts.forEach(part=>{
+          if(part === '') return;
+          if(/^\s+$/.test(part)){
+            frag.appendChild(document.createTextNode(part));
+          } else {
+            const span = document.createElement('span');
+            span.className = 'reveal-word';
+            span.textContent = part;
+            frag.appendChild(span);
+          }
+        });
+        child.replaceWith(frag);
+      } else if(child.nodeType === 1){
+        walk(child);
+      }
+    });
+  }
+  walk(root);
+  const words = root.querySelectorAll('.reveal-word');
+  words.forEach((w,i)=>{ w.style.transitionDelay = (i * 45) + 'ms'; });
+}
+
+document.querySelectorAll('.reveal-heading').forEach(h=>{
+  if(!REDUCE_MOTION) wrapWordsForReveal(h);
+});
+
+const revealEls = document.querySelectorAll(
+  '.reveal, .reveal-heading, .reveal-para, .reveal-btn, .reveal-card, .reveal-image, .reveal-footer, .reveal-metrics, ' +
+  '.heatmap, .session-bars, .sentiment-track, .flow-row, .metric-block, .monthly-bars, .final-cta, .timeline-line'
+);
+
+if(REDUCE_MOTION){
+  revealEls.forEach(el=>el.classList.add('visible'));
+} else {
+  const revealIO = new IntersectionObserver(entries=>{
+    entries.forEach(entry=>{
+      entry.target.classList.toggle('visible', entry.isIntersecting);
+    });
+  },{ threshold:0.12, rootMargin:'0px 0px -8% 0px' });
+  revealEls.forEach(el=>revealIO.observe(el));
+}
+
+/* ── NUMBER COUNT-UP — supports decimals, prefixes, suffixes ── */
+(function(){
+  const nums = document.querySelectorAll('[data-count-target]');
+  if(!nums.length) return;
+  function format(el, value, decimals){
+    const prefix = el.dataset.countPrefix || '';
+    const suffix = el.dataset.countSuffix || '';
+    const num = decimals > 0 ? value.toFixed(decimals) : Math.round(value);
+    return prefix + num + suffix;
+  }
+  function animateCount(el, target, decimals){
+    if(REDUCE_MOTION){ el.textContent = format(el, target, decimals); return; }
+    const duration = 1200;
+    const start = performance.now();
+    function tick(now){
+      const p = Math.min(1, (now - start) / duration);
+      const eased = 1 - Math.pow(1 - p, 3);
+      el.textContent = format(el, eased * target, decimals);
+      if(p < 1) requestAnimationFrame(tick);
+      else el.textContent = format(el, target, decimals);
+    }
+    requestAnimationFrame(tick);
+  }
+  const countIO = new IntersectionObserver(entries=>{
+    entries.forEach(entry=>{
+      const el = entry.target;
+      const target = parseFloat(el.dataset.countTarget);
+      const decimals = parseInt(el.dataset.countDecimals || '0', 10);
+      if(entry.isIntersecting){
+        animateCount(el, target, decimals);
+      } else if(entry.boundingClientRect.top > 0){
+        el.textContent = format(el, 0, decimals);
+      }
+    });
+  }, { threshold:0.5 });
+  nums.forEach(el=>countIO.observe(el));
+})();
+
+/* ── CIRCULAR GAUGES — AI Confidence / Volatility rings ── */
+(function(){
+  const gauges = document.querySelectorAll('.gauge-fill');
+  if(!gauges.length) return;
+  const gaugeIO = new IntersectionObserver(entries=>{
+    entries.forEach(entry=>{
+      const el = entry.target;
+      const value = parseFloat(el.dataset.gauge) || 0;
+      el.style.strokeDashoffset = entry.isIntersecting ? (100 - value) : 100;
+      el.classList.toggle('idle-alive', entry.isIntersecting && !REDUCE_MOTION);
+    });
+  }, { threshold:0.4 });
+  gauges.forEach(g=>gaugeIO.observe(g));
+})();
+
+/* ── LIQUIDITY HEATMAP — staggered cell wave ── */
+(function(){
+  document.querySelectorAll('.heatmap').forEach(map=>{
+    map.querySelectorAll('.heat-cell').forEach((cell,i)=>{
+      cell.style.transitionDelay = (i * 18) + 'ms';
+    });
+  });
+})();
+
+/* ── TECHNOLOGY STACK — connecting line draw ── */
+(function(){
+  const wrap = document.querySelector('.stack-wrap');
+  const paths = document.querySelectorAll('#stackLines .draw-line');
+  if(!wrap || !paths.length) return;
+
+  if(REDUCE_MOTION){
+    paths.forEach(p=>{ p.style.strokeDasharray='none'; p.style.strokeDashoffset='0'; });
+    return;
+  }
+
+  const lengths = [];
+  paths.forEach((p,i)=>{
+    const len = p.getTotalLength();
+    lengths[i] = len;
+    p.style.strokeDasharray = len;
+    p.style.strokeDashoffset = len;
+    p.style.transition = `stroke-dashoffset 1s var(--ease) ${i * 0.08}s`;
+  });
+
+  const stackIO = new IntersectionObserver(entries=>{
+    entries.forEach(entry=>{
+      paths.forEach((p,i)=>{
+        p.style.strokeDashoffset = entry.isIntersecting ? 0 : lengths[i];
+      });
+    });
+  }, { threshold:0.25 });
+  stackIO.observe(wrap);
+})();
+
+/* ── EQUITY GRAPH — progressive scroll-linked draw ── */
+(function(){
+  const line = document.getElementById('equityLine');
+  const fill = document.getElementById('equityFill');
+  const liveDot = document.getElementById('equityLiveDot');
+  const chartWrap = document.querySelector('.terminal-chart');
+  if(!line || !fill || !chartWrap) return;
+
+  if(REDUCE_MOTION){
+    fill.style.opacity = 1;
+    if(liveDot) liveDot.classList.add('on');
+    return;
+  }
+
+  const length = line.getTotalLength();
+  line.style.strokeDasharray = length;
+  line.style.strokeDashoffset = length;
+  fill.style.opacity = 0;
+
+  let ticking = false;
+  function updateGraph(){
+    const rect = chartWrap.getBoundingClientRect();
+    const vh = window.innerHeight;
+    let progress = (vh - rect.top) / (vh * 0.75 + rect.height * 0.5);
+    progress = Math.max(0, Math.min(1, progress));
+    line.style.strokeDashoffset = length * (1 - progress);
+    fill.style.opacity = progress;
+    if(liveDot) liveDot.classList.toggle('on', progress > 0.92);
+    ticking = false;
+  }
+  function onScroll(){
+    if(ticking) return;
+    ticking = true;
+    requestAnimationFrame(updateGraph);
+  }
+  window.addEventListener('scroll', onScroll, { passive:true });
+  window.addEventListener('resize', onScroll, { passive:true });
+  updateGraph();
+})();
+
+/* ── EA CARDS — subtle 3D mouse parallax tilt ── */
+if(!REDUCE_MOTION){
+  document.querySelectorAll('.ea-preview-card').forEach(card=>{
+    card.addEventListener('mousemove', function(e){
+      const rect = card.getBoundingClientRect();
+      const px = (e.clientX - rect.left) / rect.width - 0.5;
+      const py = (e.clientY - rect.top) / rect.height - 0.5;
+      const rx = (-py * 3).toFixed(2);
+      const ry = (px * 3).toFixed(2);
+      card.style.transform = `translateY(-4px) scale(1.008) rotateX(${rx}deg) rotateY(${ry}deg)`;
+    }, { passive:true });
+    card.addEventListener('mouseleave', function(){
+      card.style.transform = '';
+    });
+  });
+}
+
+/* ── ACCORDION — smooth height + fade expand/collapse, arrow rotate ── */
+(function(){
+  const items = document.querySelectorAll('.acc-item');
+
+  // sync any already-open item (e.g. the first, open by default)
+  items.forEach(item=>{
+    if(item.hasAttribute('open')){
+      const body = item.querySelector('.acc-body');
+      body.style.height = 'auto';
+      body.style.opacity = '1';
+    }
+  });
+
+  function openItem(item, body){
+    item.classList.add('opening');
+    item.setAttribute('open','');
+    body.style.overflow = 'hidden';
+    body.style.height = '0px';
+    body.style.opacity = '0';
+    // force reflow so the transition kicks off from 0
+    void body.offsetHeight;
+    const target = body.scrollHeight;
+    body.style.transition = 'height .45s var(--ease), opacity .4s var(--ease-out)';
+    body.style.height = target + 'px';
+    body.style.opacity = '1';
+    body.addEventListener('transitionend', function te(e){
+      if(e.propertyName === 'height'){
+        body.style.height = 'auto';
+        body.style.overflow = 'visible';
+        body.removeEventListener('transitionend', te);
+      }
+    });
+  }
+
+  function closeItem(item, body){
+    item.classList.remove('opening');
+    const current = body.scrollHeight;
+    body.style.overflow = 'hidden';
+    body.style.height = current + 'px';
+    body.style.opacity = '1';
+    void body.offsetHeight;
+    body.style.transition = 'height .4s var(--ease), opacity .3s var(--ease-out)';
+    body.style.height = '0px';
+    body.style.opacity = '0';
+    body.addEventListener('transitionend', function te(e){
+      if(e.propertyName === 'height'){
+        item.removeAttribute('open');
+        body.removeEventListener('transitionend', te);
+      }
+    });
+  }
+
+  items.forEach(item=>{
+    const summary = item.querySelector('summary');
+    const body = item.querySelector('.acc-body');
+    const group = item.closest('.accordion');
+    const siblings = group ? group.querySelectorAll('.acc-item') : items;
+    summary.addEventListener('click', function(e){
+      e.preventDefault();
+      const isOpen = item.hasAttribute('open');
+      if(isOpen){
+        closeItem(item, body);
+      } else {
+        siblings.forEach(other=>{
+          if(other !== item && other.hasAttribute('open')){
+            closeItem(other, other.querySelector('.acc-body'));
+          }
+        });
+        openItem(item, body);
+      }
+    });
+  });
+})();
+
+/* ══════════ NUKRAX SIGNAL FIELD — ambient neural mesh + heartbeat + finale convergence ══════════ */
+(function(){
+  const canvas = document.getElementById('nkxField');
+  if(!canvas) return;
+  if(REDUCE_MOTION){ canvas.style.display = 'none'; return; }
+  if(window.matchMedia('(max-width: 768px)').matches){ canvas.style.display = 'none'; return; }
+
+  const ctx = canvas.getContext('2d');
+  let W, H, DPR;
+  let particles = [];
+  let running = true;
+  let pulseBoost = 0;
+  const finalCta = document.getElementById('finalCta');
+
+  function resize(){
+    DPR = Math.min(window.devicePixelRatio || 1, 2);
+    W = window.innerWidth;
+    H = window.innerHeight;
+    canvas.width = W * DPR;
+    canvas.height = H * DPR;
+    canvas.style.width = W + 'px';
+    canvas.style.height = H + 'px';
+    ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+    const count = W < 700 ? 20 : (W < 1200 ? 34 : 48);
+    particles = Array.from({ length: count }, makeParticle);
+  }
+
+  function makeParticle(){
+    return {
+      x: Math.random() * W,
+      y: Math.random() * H,
+      vx: (Math.random() - 0.5) * 0.12,
+      vy: (Math.random() - 0.5) * 0.12 - 0.02,
+      r: Math.random() * 1.1 + 0.6,
+    };
+  }
+
+  function finaleIntensity(){
+    if(!finalCta) return 0;
+    const rect = finalCta.getBoundingClientRect();
+    const vh = window.innerHeight;
+    const dist = rect.top - vh * 0.4;
+    return 1 - Math.min(1, Math.max(0, dist / (vh * 1.2)));
+  }
+
+  let last = performance.now();
+  function tick(now){
+    if(!running){ return; }
+    const dt = Math.min(48, now - last);
+    last = now;
+    ctx.clearRect(0, 0, W, H);
+
+    const intensity = finaleIntensity();
+    const speedMul = 1 + intensity * 0.8;
+    pulseBoost = Math.max(0, pulseBoost - dt * 0.0012);
+    const baseAlpha = 0.22 + intensity * 0.22 + pulseBoost;
+
+    particles.forEach(p=>{
+      p.x += p.vx * speedMul * (dt / 16);
+      p.y += p.vy * speedMul * (dt / 16);
+      if(p.x < -20) p.x = W + 20; if(p.x > W + 20) p.x = -20;
+      if(p.y < -20) p.y = H + 20; if(p.y > H + 20) p.y = -20;
+    });
+
+    const linkDist = W < 700 ? 100 : 150;
+    ctx.strokeStyle = `rgba(143,184,196,${(0.08 + intensity * 0.1).toFixed(3)})`;
+    ctx.lineWidth = 0.6;
+    for(let i = 0; i < particles.length; i++){
+      for(let j = i + 1; j < particles.length; j++){
+        const a = particles[i], b = particles[j];
+        const dx = a.x - b.x, dy = a.y - b.y;
+        const d = Math.sqrt(dx * dx + dy * dy);
+        if(d < linkDist){
+          ctx.globalAlpha = (1 - d / linkDist) * (0.7 + pulseBoost * 2);
+          ctx.beginPath();
+          ctx.moveTo(a.x, a.y);
+          ctx.lineTo(b.x, b.y);
+          ctx.stroke();
+        }
+      }
+    }
+    ctx.globalAlpha = 1;
+
+    ctx.fillStyle = `rgba(143,184,196,${baseAlpha.toFixed(3)})`;
+    particles.forEach(p=>{
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      ctx.fill();
+    });
+
+    requestAnimationFrame(tick);
+  }
+
+  resize();
+  window.addEventListener('resize', resize, { passive: true });
+  document.addEventListener('visibilitychange', ()=>{
+    running = !document.hidden;
+    if(running){ last = performance.now(); requestAnimationFrame(tick); }
+  });
+  requestAnimationFrame(tick);
+
+  /* Every 8–12s, an extremely subtle synchronized pulse across the page —
+     the website's heartbeat. Barely noticeable, always present. */
+  function scheduleHeartbeat(){
+    const delay = 8000 + Math.random() * 4000;
+    setTimeout(()=>{
+      document.body.classList.add('nkx-pulse');
+      pulseBoost = 0.16;
+      setTimeout(()=>document.body.classList.remove('nkx-pulse'), 1000);
+      scheduleHeartbeat();
+    }, delay);
+  }
+  scheduleHeartbeat();
+})();
+
+</script>
+
+<!-- COOKIE BANNER -->
+<div id="cookie-banner" role="dialog" aria-label="Cookie consent">
+  <div class="cookie-body">
+    We use cookies to improve your experience. <a href="p.html" target="_blank">Privacy Policy</a>
+  </div>
+  <div class="cookie-actions">
+    <button class="cookie-btn cookie-btn-reject" id="cookie-reject">Reject</button>
+    <button class="cookie-btn cookie-btn-accept" id="cookie-accept">Accept</button>
+  </div>
+</div>
+
+<script>
+/* ── COOKIE BANNER ── */
+(function(){
+  const banner = document.getElementById('cookie-banner');
+  const STORAGE_KEY = 'nukrax_cookie_consent';
+
+  try { if (localStorage.getItem(STORAGE_KEY)) return; } catch(e) {}
+
+  setTimeout(() => banner.classList.add('visible'), 1400);
+
+  function dismiss(choice) {
+    banner.classList.add('hiding');
+    banner.classList.remove('visible');
+    try { localStorage.setItem(STORAGE_KEY, choice); } catch(e) {}
+    setTimeout(() => banner.remove(), 650);
+  }
+
+  document.getElementById('cookie-accept').addEventListener('click', () => dismiss('accepted'));
+  document.getElementById('cookie-reject').addEventListener('click', () => dismiss('rejected'));
+})();
+</script>
+
+<script type="module" src="assets/ai/widget.js"></script>
+<script type="module" src="assets/auth/auth-widget.js"></script>
+</body>
+</html>
