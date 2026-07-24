@@ -1,0 +1,34 @@
+/* ═══════════════════════════════════════════════
+   heroCube.css
+   Container + canvas sizing for the hero cube only. Colors/materials
+   live in heroCubeMaterial.js (it's a real 3D scene, not CSS-styled
+   boxes) — this file only handles layout/sizing of the canvas host.
+   ═══════════════════════════════════════════════ */
+
+.cube-scene {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cube-scene canvas {
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.hero-globe-label {
+  font-family: var(--font-m);
+  font-size: 9.5px;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+}
+.hero-globe-label .nav-dot { width: 4px; height: 4px; }
